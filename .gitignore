@@ -1,0 +1,35 @@
+# Models
+models/*.pkl
+
+# Data
+data/*.csv
+uploads/
+processed/
+test_data/
+
+# Logs
+logs/*.csv
+logs/*.db
+logs/*.log
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.Python
+venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+
+# Secrets
+.env
+config_local.json
+
+# Keep folder structure
+!logs/.gitkeep
+!models/.gitkeep
+!processed/.gitkeep
+!uploads/.gitkeep

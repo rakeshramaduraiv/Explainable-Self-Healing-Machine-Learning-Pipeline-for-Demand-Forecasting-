@@ -1,0 +1,21 @@
+{
+  "version": "v1_20260305_212428",
+  "saved_at": "2026-03-05T21:24:28.838480",
+  "params": {
+    "n_estimators": 200,
+    "min_samples_split": 2,
+    "min_samples_leaf": 1,
+    "min_impurity_decrease": 0.0001,
+    "max_features": 0.7,
+    "max_depth": 30
+  },
+  "metrics": {
+    "train": {
+      "RMSE": 8999.839733546818,
+      "MAE": 6846.922289717028,
+      "R2": 0.9997549909000965,
+      "MAPE": 0.8309978580636597,
+      "WMAPE": 0.6535249269189776
+    }
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "rows": 120,
+  "columns": [
+    "Date",
+    "Weekly_Sales",
+    "Holiday_Flag",
+    "Temperature",
+    "Store",
+    "Fuel_Price",
+    "CPI",
+    "Unemployment"
+  ],
+  "date_range": [
+    "2012-01-01 00:00:00",
+    "2014-04-13 00:00:00"
+  ],
+  "stores": 5,
+  "missing_values": 0,
+  "weekly_sales_stats": {
+    "mean": 137253.20958333332,
+    "min": 80662.65,
+    "max": 198426.43
+  }
+}

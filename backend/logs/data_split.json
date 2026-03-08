@@ -1,0 +1,5 @@
+{
+  "train_rows": 44,
+  "test_rows": 76,
+  "cutoff_date": "2012-11-01"
+}

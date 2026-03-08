@@ -1,0 +1,9 @@
+{
+  "ks_mild": 0.05,
+  "ks_severe": 0.15,
+  "psi_mild": 0.10,
+  "psi_severe": 0.25,
+  "error_drift_threshold": 0.10,
+  "retrain_trigger": "severe",
+  "scheduler_interval_seconds": 3600
+}

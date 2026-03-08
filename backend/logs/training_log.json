@@ -1,0 +1,487 @@
+[
+  {
+    "timestamp": "2026-03-04T13:05:54.252854",
+    "feature_count": 29,
+    "params": {
+      "n_estimators": 100,
+      "min_samples_split": 2,
+      "min_samples_leaf": 1,
+      "max_depth": 10
+    },
+    "metrics": {
+      "train": {
+        "RMSE": 35900.52521846324,
+        "MAE": 24362.8058733335,
+        "R2": 0.9957085625709169,
+        "MAPE": 2.8144144811247114,
+        "WMAPE": 2.3754114028185747
+      }
+    }
+  },
+  {
+    "timestamp": "2026-03-04T13:08:22.688692",
+    "feature_count": 29,
+    "params": {
+      "n_estimators": 100,
+      "min_samples_split": 2,
+      "min_samples_leaf": 1,
+      "max_depth": 10
+    },
+    "metrics": {
+      "train": {
+        "RMSE": 35900.525218463255,
+        "MAE": 24362.80587333351,
+        "R2": 0.9957085625709169,
+        "MAPE": 2.8144144811247105,
+        "WMAPE": 2.375411402818575
+      }
+    }
+  },
+  {
+    "timestamp": "2026-03-04T13:09:47.150419",
+    "feature_count": 29,
+    "params": {
+      "n_estimators": 100,
+      "min_samples_split": 2,
+      "min_samples_leaf": 1,
+      "max_depth": 10
+    },
+    "metrics": {
+      "train": {
+        "RMSE": 35900.52521846321,
+        "MAE": 24362.8058733335,
+        "R2": 0.9957085625709169,
+        "MAPE": 2.81441448112471,
+        "WMAPE": 2.3754114028185747
+      }
+    }
+  },
+  {
+    "timestamp": "2026-03-04T20:57:39.355917",
+    "feature_count": 29,
+    "params": {
+      "n_estimators": 100,
+      "min_samples_split": 2,
+      "min_samples_leaf": 1,
+      "max_depth": 10
+    },
+    "metrics": {
+      "train": {
+        "RMSE": 35900.525218463255,
+        "MAE": 24362.80587333351,
+        "R2": 0.9957085625709169,
+        "MAPE": 2.814414481124711,
+        "WMAPE": 2.375411402818575
+      }
+    }
+  },
+  {
+    "timestamp": "2026-03-04T21:23:37.118911",
+    "feature_count": 29,
+    "params": {
+      "n_estimators": 100,
+      "min_samples_split": 2,
+      "min_samples_leaf": 1,
+      "max_depth": 10
+    },
+    "metrics": {
+      "train": {
+        "RMSE": 35900.52521846324,
+        "MAE": 24362.8058733335,
+        "R2": 0.9957085625709169,
+        "MAPE": 2.8144144811247123,
+        "WMAPE": 2.3754114028185747
+      }
+    }
+  },
+  {
+    "timestamp": "2026-03-04T21:25:54.300079",
+    "feature_count": 29,
+    "params": {
+      "n_estimators": 100,
+      "min_samples_split": 2,
+      "min_samples_leaf": 1,
+      "max_depth": 10
+    },
+    "metrics": {
+      "train": {
+        "RMSE": 35900.52521846325,
+        "MAE": 24362.8058733335,
+        "R2": 0.9957085625709169,
+        "MAPE": 2.81441448112471,
+        "WMAPE": 2.3754114028185747
+      }
+    }
+  },
+  {
+    "timestamp": "2026-03-04T21:26:17.417996",
+    "feature_count": 29,
+    "params": {
+      "n_estimators": 100,
+      "min_samples_split": 2,
+      "min_samples_leaf": 1,
+      "max_depth": 10
+    },
+    "metrics": {
+      "train": {
+        "RMSE": 35900.52521846325,
+        "MAE": 24362.8058733335,
+        "R2": 0.9957085625709169,
+        "MAPE": 2.8144144811247105,
+        "WMAPE": 2.3754114028185747
+      }
+    }
+  },
+  {
+    "timestamp": "2026-03-04T21:28:10.246164",
+    "feature_count": 29,
+    "params": {
+      "n_estimators": 100,
+      "min_samples_split": 2,
+      "min_samples_leaf": 1,
+      "max_depth": 10
+    },
+    "metrics": {
+      "train": {
+        "RMSE": 35900.52521846325,
+        "MAE": 24362.80587333351,
+        "R2": 0.9957085625709169,
+        "MAPE": 2.8144144811247127,
+        "WMAPE": 2.375411402818575
+      }
+    }
+  },
+  {
+    "timestamp": "2026-03-04T21:54:12.568402",
+    "feature_count": 29,
+    "params": {
+      "n_estimators": 100,
+      "min_samples_split": 2,
+      "min_samples_leaf": 1,
+      "max_depth": 10
+    },
+    "metrics": {
+      "train": {
+        "RMSE": 35900.52521846323,
+        "MAE": 24362.80587333349,
+        "R2": 0.9957085625709169,
+        "MAPE": 2.8144144811247105,
+        "WMAPE": 2.3754114028185738
+      }
+    }
+  },
+  {
+    "timestamp": "2026-03-04T22:07:33.869619",
+    "feature_count": 29,
+    "params": {
+      "n_estimators": 100,
+      "min_samples_split": 2,
+      "min_samples_leaf": 1,
+      "max_depth": 10
+    },
+    "metrics": {
+      "train": {
+        "RMSE": 35900.52521846325,
+        "MAE": 24362.8058733335,
+        "R2": 0.9957085625709169,
+        "MAPE": 2.8144144811247114,
+        "WMAPE": 2.3754114028185747
+      }
+    }
+  },
+  {
+    "timestamp": "2026-03-04T22:36:59.205104",
+    "feature_count": 49,
+    "params": {
+      "n_estimators": 500,
+      "min_samples_split": 2,
+      "min_samples_leaf": 1,
+      "min_impurity_decrease": 0.0,
+      "max_features": "sqrt",
+      "max_depth": 15
+    },
+    "metrics": {
+      "train": {
+        "RMSE": 2532.8049047646123,
+        "MAE": 1239.2598271204838,
+        "R2": 0.9999786398323406,
+        "MAPE": 0.1436989813558216,
+        "WMAPE": 0.12082975744674301
+      }
+    }
+  },
+  {
+    "timestamp": "2026-03-05T18:43:49.793386",
+    "feature_count": 49,
+    "params": {
+      "n_estimators": 500,
+      "min_samples_split": 2,
+      "min_samples_leaf": 1,
+      "min_impurity_decrease": 0.0,
+      "max_features": "sqrt",
+      "max_depth": 15
+    },
+    "metrics": {
+      "train": {
+        "RMSE": 2532.8049047646123,
+        "MAE": 1239.2598271204838,
+        "R2": 0.9999786398323406,
+        "MAPE": 0.1436989813558216,
+        "WMAPE": 0.12082975744674301
+      }
+    }
+  },
+  {
+    "timestamp": "2026-03-05T19:16:14.347331",
+    "feature_count": 49,
+    "params": {
+      "n_estimators": 500,
+      "min_samples_split": 2,
+      "min_samples_leaf": 1,
+      "min_impurity_decrease": 0.0,
+      "max_features": "sqrt",
+      "max_depth": 15
+    },
+    "metrics": {
+      "train": {
+        "RMSE": 2532.8049047646123,
+        "MAE": 1239.2598271204838,
+        "R2": 0.9999786398323406,
+        "MAPE": 0.1436989813558216,
+        "WMAPE": 0.12082975744674301
+      }
+    }
+  },
+  {
+    "timestamp": "2026-03-05T19:19:24.734109",
+    "feature_count": 49,
+    "params": {
+      "n_estimators": 500,
+      "min_samples_split": 2,
+      "min_samples_leaf": 1,
+      "min_impurity_decrease": 0.0,
+      "max_features": "sqrt",
+      "max_depth": 15
+    },
+    "metrics": {
+      "train": {
+        "RMSE": 2532.8049047646123,
+        "MAE": 1239.2598271204838,
+        "R2": 0.9999786398323406,
+        "MAPE": 0.1436989813558216,
+        "WMAPE": 0.12082975744674301
+      }
+    }
+  },
+  {
+    "timestamp": "2026-03-05T19:28:08.150167",
+    "feature_count": 49,
+    "params": {
+      "n_estimators": 100,
+      "min_samples_split": 2,
+      "min_samples_leaf": 1,
+      "min_impurity_decrease": 0.0,
+      "max_features": 0.7,
+      "max_depth": 20
+    },
+    "metrics": {
+      "train": {
+        "RMSE": 9117.76503036338,
+        "MAE": 6909.965340889314,
+        "R2": 0.9997485281044657,
+        "MAPE": 0.8405228249047767,
+        "WMAPE": 0.6595422590379638
+      }
+    }
+  },
+  {
+    "timestamp": "2026-03-05T19:33:32.290476",
+    "feature_count": 49,
+    "params": {
+      "n_estimators": 100,
+      "min_samples_split": 2,
+      "min_samples_leaf": 1,
+      "min_impurity_decrease": 0.0,
+      "max_features": 0.7,
+      "max_depth": 20
+    },
+    "metrics": {
+      "train": {
+        "RMSE": 9117.76503036338,
+        "MAE": 6909.965340889314,
+        "R2": 0.9997485281044657,
+        "MAPE": 0.8405228249047767,
+        "WMAPE": 0.6595422590379638
+      }
+    }
+  },
+  {
+    "timestamp": "2026-03-05T20:59:16.102483",
+    "feature_count": 48,
+    "params": {
+      "n_estimators": 200,
+      "min_samples_split": 2,
+      "min_samples_leaf": 1,
+      "min_impurity_decrease": 0.0001,
+      "max_features": 0.7,
+      "max_depth": 30
+    },
+    "metrics": {
+      "train": {
+        "RMSE": 8999.839733546818,
+        "MAE": 6846.922289717028,
+        "R2": 0.9997549909000965,
+        "MAPE": 0.8309978580636597,
+        "WMAPE": 0.6535249269189776
+      }
+    }
+  },
+  {
+    "timestamp": "2026-03-05T21:01:04.252451",
+    "feature_count": 48,
+    "params": {
+      "n_estimators": 200,
+      "min_samples_split": 2,
+      "min_samples_leaf": 1,
+      "min_impurity_decrease": 0.0001,
+      "max_features": 0.7,
+      "max_depth": 30
+    },
+    "metrics": {
+      "train": {
+        "RMSE": 8999.839733546818,
+        "MAE": 6846.922289717028,
+        "R2": 0.9997549909000965,
+        "MAPE": 0.8309978580636597,
+        "WMAPE": 0.6535249269189776
+      }
+    }
+  },
+  {
+    "timestamp": "2026-03-05T21:24:29.295914",
+    "feature_count": 48,
+    "params": {
+      "n_estimators": 200,
+      "min_samples_split": 2,
+      "min_samples_leaf": 1,
+      "min_impurity_decrease": 0.0001,
+      "max_features": 0.7,
+      "max_depth": 30
+    },
+    "metrics": {
+      "train": {
+        "RMSE": 8999.839733546818,
+        "MAE": 6846.922289717028,
+        "R2": 0.9997549909000965,
+        "MAPE": 0.8309978580636597,
+        "WMAPE": 0.6535249269189776
+      }
+    }
+  },
+  {
+    "timestamp": "2026-03-06T13:27:38.481133",
+    "feature_count": 48,
+    "params": {
+      "n_estimators": 200,
+      "min_samples_split": 2,
+      "min_samples_leaf": 1,
+      "min_impurity_decrease": 0.0001,
+      "max_features": 0.7,
+      "max_depth": 30
+    },
+    "metrics": {
+      "train": {
+        "RMSE": 8999.839733546818,
+        "MAE": 6846.922289717028,
+        "R2": 0.9997549909000965,
+        "MAPE": 0.8309978580636597,
+        "WMAPE": 0.6535249269189776
+      }
+    }
+  },
+  {
+    "timestamp": "2026-03-06T13:36:03.446381",
+    "feature_count": 48,
+    "params": {
+      "n_estimators": 200,
+      "min_samples_split": 2,
+      "min_samples_leaf": 1,
+      "min_impurity_decrease": 0.0001,
+      "max_features": 0.7,
+      "max_depth": 30
+    },
+    "metrics": {
+      "train": {
+        "RMSE": 8999.839733546818,
+        "MAE": 6846.922289717028,
+        "R2": 0.9997549909000965,
+        "MAPE": 0.8309978580636597,
+        "WMAPE": 0.6535249269189776
+      }
+    }
+  },
+  {
+    "timestamp": "2026-03-06T15:11:38.542622",
+    "feature_count": 31,
+    "params": {
+      "n_estimators": 200,
+      "min_samples_split": 2,
+      "min_samples_leaf": 1,
+      "min_impurity_decrease": 0.0001,
+      "max_features": 0.7,
+      "max_depth": 30
+    },
+    "metrics": {
+      "train": {
+        "RMSE": 4058.4386251713936,
+        "MAE": 3151.6733954545634,
+        "R2": 0.9871107325756038,
+        "MAPE": 2.3778332084053866,
+        "WMAPE": 2.351442358646286
+      }
+    }
+  },
+  {
+    "timestamp": "2026-03-06T16:50:13.654912",
+    "feature_count": 31,
+    "params": {
+      "n_estimators": 200,
+      "min_samples_split": 2,
+      "min_samples_leaf": 1,
+      "min_impurity_decrease": 0.0001,
+      "max_features": 0.7,
+      "max_depth": 30
+    },
+    "metrics": {
+      "train": {
+        "RMSE": 4058.438625171397,
+        "MAE": 3151.6733954545653,
+        "R2": 0.9871107325756038,
+        "MAPE": 2.3778332084053875,
+        "WMAPE": 2.3514423586462874
+      }
+    }
+  },
+  {
+    "timestamp": "2026-03-06T21:13:00.088408",
+    "feature_count": 67,
+    "params": {
+      "n_estimators": 200,
+      "min_samples_split": 5,
+      "min_samples_leaf": 2,
+      "min_impurity_decrease": 0.0001,
+      "max_features": 0.7,
+      "max_depth": 30
+    },
+    "metrics": {
+      "train": {
+        "RMSE": 4253.531552895122,
+        "MAE": 3407.183597778189,
+        "R2": 0.985841749670085,
+        "MAPE": 2.581451583069799,
+        "WMAPE": 2.5420768049936044,
+        "model": "RF"
+      }
+    }
+  }
+]
