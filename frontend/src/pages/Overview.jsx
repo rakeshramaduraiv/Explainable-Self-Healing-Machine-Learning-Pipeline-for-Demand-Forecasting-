@@ -112,7 +112,7 @@ export default function Overview() {
 
           <div className="grid-2">
             <SectionCard title="Error Trend — Baseline vs Current MAE">
-              <ResponsiveContainer width="100%" height={230}>
+              <ResponsiveContainer width="100%" height={230} debounce={200}>
                 <LineChart data={errorData} margin={{ top: 4, right: 8, bottom: 0, left: 0 }}
                   onClick={e => e?.activeLabel && setActiveMonth(p => p === e.activeLabel ? null : e.activeLabel)}>
                   <CartesianGrid strokeDasharray="3 3" />
@@ -131,7 +131,7 @@ export default function Overview() {
             </SectionCard>
 
             <SectionCard title="Drifted Features per Month">
-              <ResponsiveContainer width="100%" height={230}>
+              <ResponsiveContainer width="100%" height={230} debounce={200}>
                 <ComposedChart data={featureData} margin={{ top: 4, right: 8, bottom: 0, left: 0 }}
                   onClick={e => e?.activeLabel && setActiveMonth(p => p === e.activeLabel ? null : e.activeLabel)}>
                   <CartesianGrid strokeDasharray="3 3" />
@@ -148,7 +148,7 @@ export default function Overview() {
 
           {monthlySalesData.length > 0 && (
             <SectionCard title="Monthly Avg Sales — Actual vs Predicted (drag to zoom)">
-              <ResponsiveContainer width="100%" height={270}>
+              <ResponsiveContainer width="100%" height={270} debounce={200}>
                 <AreaChart data={monthlySalesData} margin={{ top: 4, right: 16, bottom: 24, left: 0 }}>
                   {GRADIENT_DEFS}
                   <CartesianGrid strokeDasharray="3 3" />

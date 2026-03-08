@@ -2,11 +2,13 @@ import json, os, glob, shutil, subprocess, sys, time
 from pathlib import Path
 from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.responses import JSONResponse
 import pandas as pd
 from demand_analyzer import DemandAnalyzer
 
 app = FastAPI(title="SH-DFS API", version="2.0.0")
+app.add_middleware(GZipMiddleware, minimum_size=500)
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
 
 BASE      = Path(__file__).parent.resolve()

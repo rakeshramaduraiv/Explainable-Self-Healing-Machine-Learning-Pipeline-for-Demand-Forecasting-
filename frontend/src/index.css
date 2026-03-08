@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap&display=swap');
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -31,7 +31,7 @@
   --shadow:    0 8px 32px rgba(0,0,0,0.5);
   --shadow2:   0 2px 12px rgba(0,0,0,0.3);
   --glow-blue: 0 0 20px rgba(59,130,246,0.15);
-  --transition: all 0.18s cubic-bezier(0.4,0,0.2,1);
+  --transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
 }
 
 html, body, #root {
@@ -170,8 +170,9 @@ html, body, #root {
   border: 1px solid var(--border);
   border-radius: var(--radius2);
   padding: 18px 20px;
-  transition: var(--transition);
+  transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
   cursor: default; position: relative; overflow: hidden;
+  will-change: transform;
 }
 .kpi::before {
   content: '';
@@ -333,6 +334,10 @@ html, body, #root {
   100% { background-position: -200% 0; }
 }
 
+/* ── Perf: contain paint for cards ── */
+.card { contain: layout style paint; }
+.kpi  { contain: layout style paint; }
+
 /* ── Animations ── */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(8px); }
@@ -342,7 +347,7 @@ html, body, #root {
   from { opacity: 0; transform: translateX(-8px); }
   to   { opacity: 1; transform: none; }
 }
-.page-enter { animation: fadeIn 0.22s cubic-bezier(0.4,0,0.2,1); }
+.page-enter { animation: fadeIn 0.15s ease-out; }
 
 /* ── Progress bar ── */
 .progress-bar { height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; margin-top: 8px; }

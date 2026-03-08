@@ -25,6 +25,9 @@ const SEV_LABELS = { severe: '● Severe', mild: '◐ Mild', none: '○ None' }
 export const SlicerPanel = memo(({ months = [], stores = [], slicer }) => {
   const active = slicer.months.length || slicer.stores.length || slicer.severity
   const count  = slicer.months.length + slicer.stores.length + (slicer.severity ? 1 : 0)
+  // Cap pill render to 30 items to avoid layout thrash on large store lists
+  const visibleMonths = months.slice(0, 30)
+  const visibleStores = stores.slice(0, 30)
 
   return (
     <div style={{
@@ -36,12 +39,12 @@ export const SlicerPanel = memo(({ months = [], stores = [], slicer }) => {
         Filter
       </span>
 
-      {months.map(m => (
+      {visibleMonths.map(m => (
         <button key={m} className={`slicer-pill${slicer.months.includes(m) ? ' active' : ''}`}
           onClick={() => slicerActions.toggleMonth(m)}>{m}</button>
       ))}
 
-      {stores.map(s => (
+      {visibleStores.map(s => (
         <button key={s} className={`slicer-pill${slicer.stores.includes(s) ? ' active' : ''}`}
           onClick={() => slicerActions.toggleStore(s)}>Store {s}</button>
       ))}

@@ -12,6 +12,14 @@ const Upload      = lazy(() => import('./pages/Upload.jsx'))
 const Datasets    = lazy(() => import('./pages/Datasets.jsx'))
 const Demand      = lazy(() => import('./pages/Demand.jsx'))
 
+// Prefetch all chunks on idle so navigation is instant after first load
+const prefetchAll = () => [
+  import('./pages/Drift.jsx'), import('./pages/Performance.jsx'),
+  import('./pages/Features.jsx'), import('./pages/StoreStats.jsx'),
+  import('./pages/Predictions.jsx'), import('./pages/Upload.jsx'),
+  import('./pages/Datasets.jsx'), import('./pages/Demand.jsx'),
+]
+
 const PAGES = [
   { id: 'overview',     label: 'Overview',           icon: '⬡', group: 'Monitor' },
   { id: 'drift',        label: 'Drift Analysis',     icon: '◈', group: 'Monitor' },
@@ -53,13 +61,15 @@ const PageLoader = memo(() => (
 ))
 
 export default function App() {
-  const [page, setPage]   = useState('overview')
+  const [page, setPage] = useState('overview')
   const [apiOk, setApiOk] = useState(null)
-  const [key, setKey]     = useState(0)
 
-  const navigate = useCallback(id => {
-    setPage(id)
-    setKey(k => k + 1)
+  const navigate = useCallback(id => setPage(id), [])
+
+  useEffect(() => {
+    // Prefetch all page chunks after first paint
+    if ('requestIdleCallback' in window) requestIdleCallback(prefetchAll)
+    else setTimeout(prefetchAll, 1000)
   }, [])
 
   useEffect(() => {
@@ -139,7 +149,7 @@ export default function App() {
 
         <main className="main">
           <Suspense fallback={<PageLoader />}>
-            <div key={key} className="page-enter">
+            <div className="page-enter">
               <Page />
             </div>
           </Suspense>

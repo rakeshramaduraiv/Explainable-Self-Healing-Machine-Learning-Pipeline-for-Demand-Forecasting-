@@ -2,57 +2,62 @@ import { useEffect, useState, useCallback, useRef } from 'react'
 
 const BASE = import.meta.env.VITE_API_URL || ''
 
-// ── In-flight deduplication: same URL won't fire twice simultaneously ────────
+// ── Client-side memory cache (5s TTL) + in-flight dedup ──────────────────────
 const inflight = new Map()
+const memCache = new Map()
+const MEM_TTL  = 5_000
 
 function dedupFetch(url, signal) {
+  const hit = memCache.get(url)
+  if (hit && Date.now() - hit.ts < MEM_TTL) return Promise.resolve(hit.data)
   if (inflight.has(url)) return inflight.get(url)
   const p = fetch(url, { signal })
     .then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json() })
+    .then(d => { memCache.set(url, { data: d, ts: Date.now() }); return d })
     .finally(() => inflight.delete(url))
   inflight.set(url, p)
   return p
 }
 
-// ── Core fetch hook with polling + retry ─────────────────────────────────────
+// ── Core fetch hook — no skeleton flash on background polls ──────────────────
 export function useFetch(path, { pollMs = 0 } = {}) {
   const [data,    setData]    = useState(null)
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(!!path)
   const [error,   setError]   = useState(null)
   const retries = useRef(0)
   const mounted = useRef(true)
+  const hasData = useRef(false)
 
-  const load = useCallback(() => {
+  const load = useCallback((bg = false) => {
     if (!path) return
     const ctrl = new AbortController()
-    setLoading(true); setError(null)
+    if (!bg) { setLoading(true); setError(null) }
 
     dedupFetch(BASE + path, ctrl.signal)
-      .then(d => { if (mounted.current) { setData(d); setLoading(false); retries.current = 0 } })
+      .then(d => {
+        if (!mounted.current) return
+        setData(d); setLoading(false); retries.current = 0; hasData.current = true
+      })
       .catch(e => {
         if (e.name === 'AbortError' || !mounted.current) return
-        if (retries.current < 2) {
-          retries.current++
-          setTimeout(load, retries.current * 1500)
-        } else {
-          setError(e.message); setLoading(false)
-        }
+        if (retries.current < 2) { retries.current++; setTimeout(() => load(bg), retries.current * 1500) }
+        else { if (!hasData.current) setError(e.message); setLoading(false) }
       })
     return () => ctrl.abort()
   }, [path])
 
   useEffect(() => {
-    mounted.current = true
-    const cleanup = load()
+    mounted.current = true; hasData.current = false
+    const cleanup = load(false)
     if (!pollMs) return () => { mounted.current = false; cleanup?.() }
-    const id = setInterval(load, pollMs)
+    const id = setInterval(() => load(true), pollMs)
     return () => { mounted.current = false; cleanup?.(); clearInterval(id) }
   }, [load, pollMs])
 
-  return { data, loading, error, reload: load }
+  return { data, loading, error, reload: () => load(false) }
 }
 
-// ── Smart predictions hook ────────────────────────────────────────────────────
+// ── Smart predictions hook — polls meta, re-fetches only on file change ───────
 export function usePredictions(month) {
   const [data,      setData]      = useState(null)
   const [loading,   setLoading]   = useState(false)
@@ -69,24 +74,18 @@ export function usePredictions(month) {
     const ctrl = new AbortController()
     abortRef.current = ctrl
     setLoading(true); setError(null)
-
     fetch(`${BASE}/api/predictions/${m}`, { signal: ctrl.signal })
       .then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json() })
       .then(d => {
         if (!mounted.current) return
-        setData(d); setLoading(false)
-        setUpdatedAt(new Date())
-        setFresh(true)
-        setTimeout(() => { if (mounted.current) setFresh(false) }, 2500)
+        setData(d); setLoading(false); setUpdatedAt(new Date())
+        setFresh(true); setTimeout(() => { if (mounted.current) setFresh(false) }, 2500)
       })
-      .catch(e => {
-        if (e.name !== 'AbortError' && mounted.current) { setError(e.message); setLoading(false) }
-      })
+      .catch(e => { if (e.name !== 'AbortError' && mounted.current) { setError(e.message); setLoading(false) } })
   }, [])
 
   useEffect(() => {
-    mounted.current = true
-    knownMtime.current = null
+    mounted.current = true; knownMtime.current = null
     fetchData(month)
     return () => { mounted.current = false; abortRef.current?.abort() }
   }, [month, fetchData])
@@ -94,15 +93,12 @@ export function usePredictions(month) {
   useEffect(() => {
     if (!month) return
     const id = setInterval(() => {
-      fetch(`${BASE}/api/predictions-meta`)
-        .then(r => r.json())
-        .then(meta => {
-          const mtime = meta[month]
-          if (mtime == null) return
-          if (knownMtime.current !== null && mtime !== knownMtime.current) fetchData(month)
-          knownMtime.current = mtime
-        })
-        .catch(() => {})
+      fetch(`${BASE}/api/predictions-meta`).then(r => r.json()).then(meta => {
+        const mtime = meta[month]
+        if (mtime == null) return
+        if (knownMtime.current !== null && mtime !== knownMtime.current) fetchData(month)
+        knownMtime.current = mtime
+      }).catch(() => {})
     }, 12_000)
     return () => clearInterval(id)
   }, [month, fetchData])

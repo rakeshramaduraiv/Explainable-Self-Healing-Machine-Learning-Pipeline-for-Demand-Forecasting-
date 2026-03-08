@@ -10,7 +10,6 @@ const DriftRow = memo(({ d, isActive, isSelected, onClick }) => (
   <tr onClick={onClick} style={{
     cursor: 'pointer', opacity: isActive ? 1 : 0.25,
     background: isSelected ? 'rgba(59,130,246,0.07)' : undefined,
-    transition: 'opacity 0.15s, background 0.1s',
   }}>
     <td className="mono" style={{ fontWeight: 600 }}>{d.month}</td>
     <td><SevBadge severity={d.severity} /></td>
@@ -77,7 +76,7 @@ export default function Drift() {
 
       <div className="grid-2">
         <SectionCard title="Error Increase % — click bar to filter">
-          <ResponsiveContainer width="100%" height={230}>
+          <ResponsiveContainer width="100%" height={230} debounce={200}>
             <BarChart data={errorData} margin={{ top: 4, right: 8, bottom: 0, left: 0 }} onClick={onBarClick}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="month" tick={{ fontSize: 10 }} />
@@ -98,7 +97,7 @@ export default function Drift() {
         </SectionCard>
 
         <SectionCard title="Drifted Feature Count — click bar to filter">
-          <ResponsiveContainer width="100%" height={230}>
+          <ResponsiveContainer width="100%" height={230} debounce={200}>
             <BarChart data={featureData} margin={{ top: 4, right: 8, bottom: 0, left: 0 }} onClick={onBarClick}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="month" tick={{ fontSize: 10 }} />
