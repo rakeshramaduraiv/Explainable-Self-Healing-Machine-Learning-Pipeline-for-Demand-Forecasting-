@@ -1,4 +1,4 @@
-import { useSyncExternalStore } from 'react'
+import { useSyncExternalStore, memo, useCallback } from 'react'
 
 let state = { months: [], stores: [], severity: '' }
 const listeners = new Set()
@@ -20,44 +20,44 @@ export const slicerActions = {
 export const useSlicerStore = () =>
   useSyncExternalStore(cb => { listeners.add(cb); return () => listeners.delete(cb) }, () => state)
 
-export function SlicerPanel({ months = [], stores = [], slicer }) {
+const SEV_LABELS = { severe: '● Severe', mild: '◐ Mild', none: '○ None' }
+
+export const SlicerPanel = memo(({ months = [], stores = [], slicer }) => {
   const active = slicer.months.length || slicer.stores.length || slicer.severity
+  const count  = slicer.months.length + slicer.stores.length + (slicer.severity ? 1 : 0)
+
   return (
-    <div style={{ display:'flex', flexWrap:'wrap', gap:6, marginBottom:12, alignItems:'center' }}>
+    <div style={{
+      background: 'var(--card)', border: '1px solid var(--border)',
+      borderRadius: 10, padding: '10px 14px', marginBottom: 16,
+      display: 'flex', flexWrap: 'wrap', gap: 6, alignItems: 'center',
+    }}>
+      <span style={{ fontSize: 10, fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '1.2px', marginRight: 4 }}>
+        Filter
+      </span>
+
       {months.map(m => (
-        <button key={m} onClick={() => slicerActions.toggleMonth(m)}
-          style={{ fontSize:11, padding:'2px 8px', borderRadius:4, cursor:'pointer', border:'1px solid',
-            borderColor: slicer.months.includes(m) ? 'var(--blue)' : 'var(--border)',
-            background: slicer.months.includes(m) ? 'rgba(59,130,246,.15)' : 'transparent',
-            color: slicer.months.includes(m) ? 'var(--blue)' : 'var(--text2)' }}>
-          {m}
-        </button>
+        <button key={m} className={`slicer-pill${slicer.months.includes(m) ? ' active' : ''}`}
+          onClick={() => slicerActions.toggleMonth(m)}>{m}</button>
       ))}
+
       {stores.map(s => (
-        <button key={s} onClick={() => slicerActions.toggleStore(s)}
-          style={{ fontSize:11, padding:'2px 8px', borderRadius:4, cursor:'pointer', border:'1px solid',
-            borderColor: slicer.stores.includes(s) ? 'var(--blue)' : 'var(--border)',
-            background: slicer.stores.includes(s) ? 'rgba(59,130,246,.15)' : 'transparent',
-            color: slicer.stores.includes(s) ? 'var(--blue)' : 'var(--text2)' }}>
-          Store {s}
-        </button>
+        <button key={s} className={`slicer-pill${slicer.stores.includes(s) ? ' active' : ''}`}
+          onClick={() => slicerActions.toggleStore(s)}>Store {s}</button>
       ))}
-      {['severe','mild','none'].map(v => (
-        <button key={v} onClick={() => slicerActions.setSeverity(v)}
-          style={{ fontSize:11, padding:'2px 8px', borderRadius:4, cursor:'pointer', border:'1px solid',
-            borderColor: slicer.severity === v ? 'var(--blue)' : 'var(--border)',
-            background: slicer.severity === v ? 'rgba(59,130,246,.15)' : 'transparent',
-            color: slicer.severity === v ? 'var(--blue)' : 'var(--text2)' }}>
-          {v}
-        </button>
+
+      {['severe', 'mild', 'none'].map(v => (
+        <button key={v} className={`slicer-pill${slicer.severity === v ? ' active' : ''}`}
+          onClick={() => slicerActions.setSeverity(v)}>{SEV_LABELS[v]}</button>
       ))}
+
       {active ? (
-        <button onClick={slicerActions.clear}
-          style={{ fontSize:11, padding:'2px 8px', borderRadius:4, cursor:'pointer',
-            border:'1px solid var(--red)', background:'rgba(239,68,68,.1)', color:'var(--red)' }}>
-          Clear
+        <button className="slicer-pill clear" onClick={slicerActions.clear}>
+          ✕ Clear {count > 1 ? `(${count})` : ''}
         </button>
-      ) : null}
+      ) : (
+        <span style={{ fontSize: 11, color: 'var(--text3)', marginLeft: 4 }}>No filters active</span>
+      )}
     </div>
   )
-}
+})

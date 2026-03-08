@@ -10,14 +10,14 @@ export default function Performance() {
   const { data: summary,  loading: ls, error: es } = useFetch('/api/summary')
   const slicer = useSlicerStore()
 
-  const months = useMemo(() => (drift||[]).map(d => d.month), [drift])
+  const months = useMemo(() => (drift || []).map(d => d.month), [drift])
 
   const filtered = useMemo(() =>
-    slicer.months.length ? (drift||[]).filter(d => slicer.months.includes(d.month)) : (drift||[]),
+    slicer.months.length ? (drift || []).filter(d => slicer.months.includes(d.month)) : (drift || []),
   [drift, slicer.months])
 
-  if (eb||ed||es) return <ErrorBox msg={eb||ed||es} />
-  if (lb||ld||ls) return <Spinner />
+  if (eb || ed || es) return <ErrorBox msg={eb || ed || es} />
+  if (lb || ld || ls) return <Spinner />
 
   const m = baseline?.train || summary?.train_metrics || {}
 
@@ -29,10 +29,18 @@ export default function Performance() {
 
   const errorPct = filtered.map(d => ({
     month:     d.month,
-    'Error %': d.error_trend?.error_increase ? +(d.error_trend.error_increase*100).toFixed(1) : 0,
+    'Error %': d.error_trend?.error_increase ? +(d.error_trend.error_increase * 100).toFixed(1) : 0,
   }))
 
   const onLineClick = e => { if (e?.activeLabel) slicerActions.toggleMonth(e.activeLabel) }
+
+  const dotProps = (payload, slicer) => ({
+    r:           slicer.months.includes(payload.month) ? 5 : 3,
+    fill:        slicer.months.includes(payload.month) ? 'var(--blue)' : 'var(--red)',
+    stroke:      slicer.months.includes(payload.month) ? '#fff' : 'none',
+    strokeWidth: 2,
+    style:       { cursor: 'pointer' },
+  })
 
   return (
     <>
@@ -44,69 +52,61 @@ export default function Performance() {
       <SlicerPanel months={months} slicer={slicer} />
 
       <div className="kpi-grid">
-        <KPI label="R²"    value={m.R2?.toFixed(4)}                          delta="Training" />
-        <KPI label="MAE"   value={m.MAE   ? fmtD(m.MAE)   : '—'}            delta="Train MAE" />
-        <KPI label="RMSE"  value={m.RMSE  ? fmtD(m.RMSE)  : '—'}            delta="Train RMSE" />
-        <KPI label="MAPE"  value={m.MAPE  ? m.MAPE.toFixed(2)+'%'  : '—'}   delta="Train MAPE" />
-        <KPI label="WMAPE" value={m.WMAPE ? m.WMAPE.toFixed(2)+'%' : '—'}   delta="Weighted MAPE" />
+        <KPI label="R²"    value={m.R2?.toFixed(4)}                        delta="Training" />
+        <KPI label="MAE"   value={m.MAE   ? fmtD(m.MAE)   : '—'}          delta="Train MAE" />
+        <KPI label="RMSE"  value={m.RMSE  ? fmtD(m.RMSE)  : '—'}          delta="Train RMSE" />
+        <KPI label="MAPE"  value={m.MAPE  ? m.MAPE.toFixed(2)  + '%' : '—'} delta="Train MAPE" />
+        <KPI label="WMAPE" value={m.WMAPE ? m.WMAPE.toFixed(2) + '%' : '—'} delta="Weighted MAPE" />
       </div>
 
       <SectionCard title="MAE Trend — click point to filter month">
-        <ResponsiveContainer width="100%" height={260}>
-          <LineChart data={maeTrend} margin={{ top:4, right:16, bottom:24, left:0 }} onClick={onLineClick}>
+        <ResponsiveContainer width="100%" height={270}>
+          <LineChart data={maeTrend} margin={{ top: 4, right: 16, bottom: 24, left: 0 }} onClick={onLineClick}>
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="month" tick={{ fontSize:10 }} />
-            <YAxis tick={{ fontSize:10 }} tickFormatter={v => '$'+(v/1000).toFixed(0)+'K'} />
-            <Tooltip {...CHART_STYLE} formatter={v => ['$'+Number(v).toLocaleString()]} />
+            <XAxis dataKey="month" tick={{ fontSize: 10 }} />
+            <YAxis tick={{ fontSize: 10 }} tickFormatter={v => '$' + (v / 1000).toFixed(0) + 'K'} />
+            <Tooltip {...CHART_STYLE} formatter={v => ['$' + Number(v).toLocaleString()]} />
             <Legend />
             <Line type="monotone" dataKey="Baseline MAE" stroke="var(--green)" strokeWidth={2} dot={false} strokeDasharray="5 3" />
             <Line type="monotone" dataKey="Test MAE"     stroke="var(--red)"   strokeWidth={2}
-              dot={({ cx, cy, payload }) => (
-                <circle key={cx+cy} cx={cx} cy={cy} r={slicer.months.includes(payload.month)?5:3}
-                  fill={slicer.months.includes(payload.month)?'var(--blue)':'var(--red)'}
-                  stroke={slicer.months.includes(payload.month)?'#fff':'none'} strokeWidth={2}
-                  style={{ cursor:'pointer' }} />
-              )} />
-            <Brush dataKey="month" height={20} stroke="var(--border2)" fill="var(--card2)" travellerWidth={6} />
+              dot={({ cx, cy, payload }) => <circle key={cx + cy} cx={cx} cy={cy} {...dotProps(payload, slicer)} />} />
+            <Brush dataKey="month" height={22} stroke="var(--border2)" fill="var(--card2)" travellerWidth={6} />
           </LineChart>
         </ResponsiveContainer>
       </SectionCard>
 
       <SectionCard title="Error Increase % vs Baseline — click point to filter">
-        <ResponsiveContainer width="100%" height={220}>
-          <LineChart data={errorPct} margin={{ top:4, right:16, bottom:0, left:0 }} onClick={onLineClick}>
+        <ResponsiveContainer width="100%" height={230}>
+          <LineChart data={errorPct} margin={{ top: 4, right: 16, bottom: 0, left: 0 }} onClick={onLineClick}>
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="month" tick={{ fontSize:10 }} />
-            <YAxis tick={{ fontSize:10 }} tickFormatter={v => v+'%'} />
-            <Tooltip {...CHART_STYLE} formatter={v => [v+'%','Error Increase']} />
+            <XAxis dataKey="month" tick={{ fontSize: 10 }} />
+            <YAxis tick={{ fontSize: 10 }} tickFormatter={v => v + '%'} />
+            <Tooltip {...CHART_STYLE} formatter={v => [v + '%', 'Error Increase']} />
             <ReferenceLine y={10} stroke="var(--orange)" strokeDasharray="4 2"
-              label={{ value:'Mild threshold', fill:'var(--orange)', fontSize:10, position:'insideTopRight' }} />
+              label={{ value: 'Mild threshold', fill: 'var(--orange)', fontSize: 10, position: 'insideTopRight' }} />
             <Line type="monotone" dataKey="Error %" stroke="var(--red)" strokeWidth={2}
-              dot={({ cx, cy, payload }) => (
-                <circle key={cx+cy} cx={cx} cy={cy} r={slicer.months.includes(payload.month)?5:3}
-                  fill={slicer.months.includes(payload.month)?'var(--blue)':'var(--red)'}
-                  stroke={slicer.months.includes(payload.month)?'#fff':'none'} strokeWidth={2}
-                  style={{ cursor:'pointer' }} />
-              )} />
+              dot={({ cx, cy, payload }) => <circle key={cx + cy} cx={cx} cy={cy} {...dotProps(payload, slicer)} />} />
           </LineChart>
         </ResponsiveContainer>
       </SectionCard>
 
-      <SectionCard title="Confidence Intervals">
-        <table className="tbl">
-          <tbody>
-            {[
-              ['Coverage',  summary?.confidence_intervals?.coverage != null ? (summary.confidence_intervals.coverage*100).toFixed(0)+'%' : '—'],
-              ['Avg Width', summary?.confidence_intervals?.avg_width != null ? '$'+summary.confidence_intervals.avg_width.toLocaleString(undefined,{maximumFractionDigits:0}) : '—'],
-            ].map(([k,v]) => (
-              <tr key={k}>
-                <td style={{ color:'var(--text3)', width:200 }}>{k}</td>
-                <td className="mono">{v}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </SectionCard>
+      {summary?.confidence_intervals && (
+        <SectionCard title="Confidence Intervals">
+          <table className="tbl">
+            <tbody>
+              {[
+                ['Coverage',  summary.confidence_intervals.coverage != null ? (summary.confidence_intervals.coverage * 100).toFixed(0) + '%' : '—'],
+                ['Avg Width', summary.confidence_intervals.avg_width != null ? '$' + summary.confidence_intervals.avg_width.toLocaleString(undefined, { maximumFractionDigits: 0 }) : '—'],
+              ].map(([k, v]) => (
+                <tr key={k}>
+                  <td style={{ color: 'var(--text3)', width: 200, fontWeight: 500 }}>{k}</td>
+                  <td className="mono">{v}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </SectionCard>
+      )}
     </>
   )
 }

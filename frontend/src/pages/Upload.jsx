@@ -1,9 +1,37 @@
-import { useState, useRef, useCallback } from 'react'
+import { useState, useRef, useCallback, memo } from 'react'
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, LineChart, Line, Legend } from 'recharts'
 import { API } from '../api.js'
 import { KPI, SectionCard, SevBadge, fmtD, CHART_STYLE, toast } from '../ui.jsx'
 
 const MAX_MB = 50
+
+const CSV_COLS = [
+  ['Store',        'integer', '1'],
+  ['Date',         'date',    '2011-02-04'],
+  ['Weekly_Sales', 'float',   '1643690.90'],
+  ['Holiday_Flag', '0 or 1',  '0'],
+  ['Temperature',  'float',   '42.31'],
+  ['Fuel_Price',   'float',   '2.572'],
+  ['CPI',          'float',   '211.096'],
+  ['Unemployment', 'float',   '8.106'],
+]
+
+const FormatCard = memo(() => (
+  <SectionCard title="Expected CSV Format" style={{ marginTop: 24 }}>
+    <table className="tbl">
+      <thead><tr><th>Column</th><th>Type</th><th>Example</th></tr></thead>
+      <tbody>
+        {CSV_COLS.map(([col, type, ex]) => (
+          <tr key={col}>
+            <td className="mono" style={{ color: 'var(--blue)', fontWeight: 600 }}>{col}</td>
+            <td style={{ color: 'var(--text3)' }}>{type}</td>
+            <td className="mono">{ex}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </SectionCard>
+))
 
 export default function Upload() {
   const [tab,     setTab]     = useState('upload')
@@ -12,6 +40,7 @@ export default function Upload() {
   const [running, setRunning] = useState(false)
   const [result,  setResult]  = useState(null)
   const [error,   setError]   = useState(null)
+  const [progress, setProgress] = useState(0)
   const inputRef = useRef()
 
   const pickFile = useCallback(f => {
@@ -21,24 +50,23 @@ export default function Upload() {
     setError(null); setFile(f)
   }, [])
 
-  const onDrop = useCallback(e => {
-    e.preventDefault(); setDrag(false)
-    pickFile(e.dataTransfer.files[0])
-  }, [pickFile])
-
-  const onDragOver  = useCallback(e => { e.preventDefault(); setDrag(true)  }, [])
+  const onDrop      = useCallback(e => { e.preventDefault(); setDrag(false); pickFile(e.dataTransfer.files[0]) }, [pickFile])
+  const onDragOver  = useCallback(e => { e.preventDefault(); setDrag(true) }, [])
   const onDragLeave = useCallback(() => setDrag(false), [])
   const onInputChange = useCallback(e => pickFile(e.target.files[0]), [pickFile])
   const onZoneClick = useCallback(() => inputRef.current?.click(), [])
 
   const run = useCallback(async () => {
     if (!file) return
-    setRunning(true); setError(null); setResult(null)
+    setRunning(true); setError(null); setResult(null); setProgress(10)
     try {
       const r = await API.uploadPredict(file)
+      setProgress(70)
       const data = await r.json()
       if (!r.ok) throw new Error(data.detail || data.message || 'Pipeline failed')
+      setProgress(90)
       const drift = await API.drift()
+      setProgress(100)
       setResult({ stdout: data.stdout, drift })
       setTab('results')
       toast.success('Pipeline complete — drift analysis updated')
@@ -47,23 +75,15 @@ export default function Upload() {
       toast.error(e.message)
     } finally {
       setRunning(false)
+      setTimeout(() => setProgress(0), 800)
     }
   }, [file])
 
   const drift   = result?.drift || []
   const latest  = drift[drift.length - 1]
 
-  const errorData = drift.map(d => ({
-    month:    d.month,
-    Current:  d.error_trend?.current_error,
-    Baseline: d.error_trend?.baseline_error,
-  }))
-
-  const featureData = drift.map(d => ({
-    month:  d.month,
-    Severe: d.severe_features || 0,
-    Mild:   d.mild_features   || 0,
-  }))
+  const errorData   = drift.map(d => ({ month: d.month, Current: d.error_trend?.current_error, Baseline: d.error_trend?.baseline_error }))
+  const featureData = drift.map(d => ({ month: d.month, Severe: d.severe_features || 0, Mild: d.mild_features || 0 }))
 
   return (
     <>
@@ -73,25 +93,23 @@ export default function Upload() {
       </div>
 
       <div className="tabs">
-        <div className={`tab${tab === 'upload'  ? ' active' : ''}`} onClick={() => setTab('upload')}>Upload & Run</div>
-        <div className={`tab${tab === 'results' ? ' active' : ''}`} onClick={() => setTab('results')}>Prediction Results</div>
+        <div className={`tab${tab === 'upload'  ? ' active' : ''}`} onClick={() => setTab('upload')}>⬆ Upload & Run</div>
+        <div className={`tab${tab === 'results' ? ' active' : ''}`} onClick={() => setTab('results')}>
+          📊 Results {result && <span style={{ marginLeft: 6, background: 'var(--green)', color: '#fff', borderRadius: 10, padding: '1px 7px', fontSize: 10, fontWeight: 700 }}>✓</span>}
+        </div>
       </div>
 
       {tab === 'upload' && (
         <>
-          <div
-            className={`upload-zone${drag ? ' drag' : ''}`}
-            onDragOver={onDragOver}
-            onDragLeave={onDragLeave}
-            onDrop={onDrop}
-            onClick={onZoneClick}
-          >
-            <div className="upload-zone-icon">⬆</div>
-            <p style={{ fontWeight: 600, color: 'var(--text)' }}>
+          <div className={`upload-zone${drag ? ' drag' : ''}`}
+            onDragOver={onDragOver} onDragLeave={onDragLeave}
+            onDrop={onDrop} onClick={onZoneClick}>
+            <div className="upload-zone-icon">{file ? '📄' : '⬆'}</div>
+            <p style={{ fontWeight: 700, color: 'var(--text)', fontSize: 15 }}>
               {file ? file.name : 'Drop a CSV here or click to browse'}
             </p>
             {file
-              ? <p>{(file.size / 1024).toFixed(1)} KB · ready to run</p>
+              ? <p style={{ color: 'var(--green)' }}>{(file.size / 1024).toFixed(1)} KB · ready to run</p>
               : <p className="hint">Max {MAX_MB} MB · .csv only</p>
             }
             <input ref={inputRef} type="file" accept=".csv" style={{ display: 'none' }} onChange={onInputChange} />
@@ -99,46 +117,36 @@ export default function Upload() {
 
           {error && <div className="alert alert-r" style={{ marginTop: 12 }}>⚠ {error}</div>}
 
+          {running && progress > 0 && (
+            <div style={{ marginTop: 12 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, color: 'var(--text3)', marginBottom: 6 }}>
+                <span>Pipeline running…</span>
+                <span>{progress}%</span>
+              </div>
+              <div className="progress-bar" style={{ height: 6 }}>
+                <div className="progress-fill" style={{ width: `${progress}%`, background: 'linear-gradient(90deg, var(--blue), var(--purple))' }} />
+              </div>
+            </div>
+          )}
+
           {file && (
-            <div style={{ marginTop: 14, display: 'flex', gap: 10, alignItems: 'center' }}>
+            <div style={{ marginTop: 16, display: 'flex', gap: 10, alignItems: 'center' }}>
               <button className="btn btn-primary" onClick={run} disabled={running}>
                 {running ? '⟳ Running pipeline…' : '▶ Run Pipeline'}
               </button>
               <button className="btn btn-outline" onClick={() => { setFile(null); setError(null) }} disabled={running}>
-                Clear
+                ✕ Clear
               </button>
             </div>
           )}
 
           {running && (
             <div className="alert alert-b" style={{ marginTop: 14 }}>
-              Pipeline running — feature engineering + model inference + drift detection. This may take 30–60 s…
+              Feature engineering + model inference + drift detection. This may take 30–60 s…
             </div>
           )}
 
-          <SectionCard title="Expected CSV Format" style={{ marginTop: 24 }}>
-            <table className="tbl">
-              <thead><tr><th>Column</th><th>Type</th><th>Example</th></tr></thead>
-              <tbody>
-                {[
-                  ['Store',        'integer', '1'],
-                  ['Date',         'date',    '2011-02-04'],
-                  ['Weekly_Sales', 'float',   '1643690.90'],
-                  ['Holiday_Flag', '0 or 1',  '0'],
-                  ['Temperature',  'float',   '42.31'],
-                  ['Fuel_Price',   'float',   '2.572'],
-                  ['CPI',          'float',   '211.096'],
-                  ['Unemployment', 'float',   '8.106'],
-                ].map(([col, type, ex]) => (
-                  <tr key={col}>
-                    <td className="mono" style={{ color: 'var(--blue)' }}>{col}</td>
-                    <td style={{ color: 'var(--text3)' }}>{type}</td>
-                    <td className="mono">{ex}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </SectionCard>
+          <FormatCard />
         </>
       )}
 
@@ -161,7 +169,7 @@ export default function Upload() {
 
               <div className="grid-2">
                 <SectionCard title="MAE Trend After Upload">
-                  <ResponsiveContainer width="100%" height={200}>
+                  <ResponsiveContainer width="100%" height={210}>
                     <LineChart data={errorData} margin={{ top: 4, right: 8, bottom: 0, left: 0 }}>
                       <CartesianGrid strokeDasharray="3 3" />
                       <XAxis dataKey="month" tick={{ fontSize: 10 }} />
@@ -175,7 +183,7 @@ export default function Upload() {
                 </SectionCard>
 
                 <SectionCard title="Drifted Features per Month">
-                  <ResponsiveContainer width="100%" height={200}>
+                  <ResponsiveContainer width="100%" height={210}>
                     <BarChart data={featureData} margin={{ top: 4, right: 8, bottom: 0, left: 0 }}>
                       <CartesianGrid strokeDasharray="3 3" />
                       <XAxis dataKey="month" tick={{ fontSize: 10 }} />
@@ -183,7 +191,7 @@ export default function Upload() {
                       <Tooltip {...CHART_STYLE} />
                       <Legend />
                       <Bar dataKey="Severe" fill="var(--red)"    stackId="a" />
-                      <Bar dataKey="Mild"   fill="var(--orange)" stackId="a" radius={[3, 3, 0, 0]} />
+                      <Bar dataKey="Mild"   fill="var(--orange)" stackId="a" radius={[4, 4, 0, 0]} />
                     </BarChart>
                   </ResponsiveContainer>
                 </SectionCard>
@@ -198,12 +206,12 @@ export default function Upload() {
                     <tbody>
                       {drift.map(d => (
                         <tr key={d.month}>
-                          <td className="mono">{d.month}</td>
+                          <td className="mono" style={{ fontWeight: 600 }}>{d.month}</td>
                           <td><SevBadge severity={d.severity} /></td>
-                          <td style={{ color: 'var(--red)' }}>{d.severe_features}</td>
+                          <td style={{ color: 'var(--red)', fontWeight: 600 }}>{d.severe_features}</td>
                           <td style={{ color: 'var(--orange)' }}>{d.mild_features}</td>
                           <td className="mono">{fmtD(d.error_trend?.current_error)}</td>
-                          <td className="mono" style={{ color: 'var(--red)' }}>
+                          <td className="mono" style={{ color: 'var(--red)', fontWeight: 600 }}>
                             +{((d.error_trend?.error_increase || 0) * 100).toFixed(0)}%
                           </td>
                         </tr>
@@ -215,7 +223,7 @@ export default function Upload() {
 
               {result.stdout && (
                 <SectionCard title="Pipeline Output">
-                  <pre style={{ fontFamily: 'var(--mono)', fontSize: 11, color: 'var(--text2)', whiteSpace: 'pre-wrap', maxHeight: 200, overflow: 'auto' }}>
+                  <pre style={{ fontFamily: 'var(--mono)', fontSize: 11, color: 'var(--text2)', whiteSpace: 'pre-wrap', maxHeight: 220, overflow: 'auto', lineHeight: 1.6 }}>
                     {result.stdout}
                   </pre>
                 </SectionCard>
