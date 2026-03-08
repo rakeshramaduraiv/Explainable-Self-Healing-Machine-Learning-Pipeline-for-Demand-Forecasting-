@@ -180,6 +180,49 @@ def predictions(month: str):
                 df[col] = None
     return df.head(500).to_dict(orient="records")
 
+@app.get("/api/alerts")
+def alerts():
+    drift = dedup(rj("drift_history.json") or [])
+    result = []
+    for i, d in enumerate(reversed(drift)):
+        sev = d.get("severity", "none")
+        if sev not in ("severe", "mild"): continue
+        result.append({
+            "id": f"ALT-{len(drift)-i:03d}",
+            "severity": sev,
+            "month": d["month"],
+            "severe_features": d["severe_features"],
+            "mild_features": d["mild_features"],
+            "mae": d["error_trend"]["current_error"],
+            "error_ratio": d["error_trend"]["error_increase"],
+        })
+    return result[:20]
+
+@app.get("/api/datasets")
+def datasets():
+    split = rj("data_split.json") or {}
+    insp  = rj("data_inspection.json") or {}
+    drift = dedup(rj("drift_history.json") or [])
+    bats  = dedup(rj("prediction_batches.json") or [])
+    dbm   = {d["month"]: d for d in drift}
+    rows  = []
+    for b in bats:
+        d = dbm.get(b["month"], {})
+        rows.append({
+            "month": b["month"],
+            "records": b.get("count", 0),
+            "mean_actual": b.get("mean_actual"),
+            "mean_pred": b.get("mean_pred"),
+            "mae": abs(b.get("mean_actual",0) - b.get("mean_pred",0)) if "mean_actual" in b else None,
+            "error_ratio": d.get("error_trend", {}).get("error_increase"),
+            "severity": d.get("severity", "N/A"),
+        })
+    return {
+        "split": split,
+        "inspection": insp,
+        "batches": rows,
+    }
+
 @app.get("/api/demand-metrics")
 def demand_metrics():
     """Get demand analysis metrics"""
