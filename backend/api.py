@@ -4,8 +4,8 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
+from fastapi.responses import JSONResponse
 import pandas as pd
-from demand_analyzer import DemandAnalyzer
 
 BASE      = Path(__file__).parent.resolve()
 LOGS      = BASE / "logs"
@@ -77,21 +77,30 @@ def _build_store_stats():
     return agg.round(2).to_dict(orient="records")
 
 def _get_analyzer():
+    from demand_analyzer import DemandAnalyzer   # lazy import — saves 0.66s on startup
     a = DemandAnalyzer()
     a.load_data(str(DATA / "uploaded_data.csv"))
     return a
 
 def _build_demand_metrics():
-    return _get_analyzer().calculate_demand_metrics()
+    a = _get_analyzer()
+    return a.calculate_demand_metrics()
 
 def _build_demand_trend():
-    return _get_analyzer().get_demand_trend_data()
+    a = _get_analyzer()
+    df = a.get_demand_trend_data()
+    return {"dates": df["Date"].astype(str).tolist(), "demand": df["Weekly_Sales"].tolist()}
 
 def _build_monthly_demand():
-    return _get_analyzer().get_monthly_demand_data()
+    a = _get_analyzer()
+    df = a.get_monthly_demand_data()
+    return {"months": df["Date"].tolist(), "demand": df["Weekly_Sales"].tolist()}
 
 def _build_store_demand():
-    return _get_analyzer().get_store_demand_data()
+    a = _get_analyzer()
+    df = a.get_store_demand_data()
+    if df is None or df.empty: return {"stores": [], "demand": []}
+    return {"stores": df["Store"].tolist(), "demand": df["Weekly_Sales"].tolist()}
 
 # ── Startup: warm all slow caches before first request ───────────────────────
 @asynccontextmanager
@@ -110,6 +119,14 @@ async def lifespan(app):
 app = FastAPI(title="SH-DFS API", version="2.0.0", lifespan=lifespan)
 app.add_middleware(GZipMiddleware, minimum_size=500)
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
+
+# ── Cache-Control header on all GET responses ─────────────────────────────────
+@app.middleware("http")
+async def cache_headers(request, call_next):
+    response = await call_next(request)
+    if request.method == "GET" and response.status_code == 200:
+        response.headers["Cache-Control"] = "public, max-age=20, stale-while-revalidate=60"
+    return response
 
 # ── Endpoints ─────────────────────────────────────────────────────────────────
 @app.get("/api/health")

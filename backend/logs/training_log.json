@@ -505,5 +505,27 @@
         "model": "RF"
       }
     }
+  },
+  {
+    "timestamp": "2026-03-08T22:10:43.303565",
+    "feature_count": 67,
+    "params": {
+      "n_estimators": 200,
+      "min_samples_split": 5,
+      "min_samples_leaf": 2,
+      "min_impurity_decrease": 0.0001,
+      "max_features": 0.7,
+      "max_depth": 30
+    },
+    "metrics": {
+      "train": {
+        "RMSE": 4253.53155289512,
+        "MAE": 3407.183597778189,
+        "R2": 0.985841749670085,
+        "MAPE": 2.5814515830697995,
+        "WMAPE": 2.5420768049936044,
+        "model": "RF"
+      }
+    }
   }
 ]
