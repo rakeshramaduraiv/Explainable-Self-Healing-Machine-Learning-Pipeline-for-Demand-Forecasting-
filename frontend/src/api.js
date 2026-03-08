@@ -2,14 +2,27 @@ import { useEffect, useState, useCallback, useRef } from 'react'
 
 const BASE = import.meta.env.VITE_API_URL || ''
 
-// ── Client-side memory cache (5s TTL) + in-flight dedup ──────────────────────
+// ── Client-side memory cache (30s TTL) + stale-while-revalidate + in-flight dedup ──
 const inflight = new Map()
 const memCache = new Map()
-const MEM_TTL  = 5_000
+const MEM_TTL  = 30_000   // serve from cache instantly, revalidate in background
 
 function dedupFetch(url, signal) {
   const hit = memCache.get(url)
-  if (hit && Date.now() - hit.ts < MEM_TTL) return Promise.resolve(hit.data)
+  const fresh = hit && Date.now() - hit.ts < MEM_TTL
+  // Always revalidate in background after TTL, but return stale immediately
+  if (hit && !fresh) {
+    // stale — return old data now, kick off background refresh
+    if (!inflight.has(url)) {
+      const p = fetch(url)
+        .then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json() })
+        .then(d => { memCache.set(url, { data: d, ts: Date.now() }); return d })
+        .finally(() => inflight.delete(url))
+      inflight.set(url, p)
+    }
+    return Promise.resolve(hit.data)
+  }
+  if (fresh) return Promise.resolve(hit.data)
   if (inflight.has(url)) return inflight.get(url)
   const p = fetch(url, { signal })
     .then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json() })
