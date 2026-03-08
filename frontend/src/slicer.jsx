@@ -1,31 +1,14 @@
-import { useSyncExternalStore, memo, useCallback } from 'react'
+// Re-export store for backward compat
+export { slicerActions, useSlicerStore } from './slicerStore.js'
 
-let state = { months: [], stores: [], severity: '' }
-const listeners = new Set()
-const notify = () => listeners.forEach(l => l())
-
-export const slicerActions = {
-  toggleMonth: m => {
-    state = { ...state, months: state.months.includes(m) ? state.months.filter(x => x !== m) : [...state.months, m] }
-    notify()
-  },
-  toggleStore: s => {
-    state = { ...state, stores: state.stores.includes(s) ? state.stores.filter(x => x !== s) : [...state.stores, s] }
-    notify()
-  },
-  setSeverity: v => { state = { ...state, severity: state.severity === v ? '' : v }; notify() },
-  clear: () => { state = { months: [], stores: [], severity: '' }; notify() },
-}
-
-export const useSlicerStore = () =>
-  useSyncExternalStore(cb => { listeners.add(cb); return () => listeners.delete(cb) }, () => state)
+import { memo } from 'react'
+import { slicerActions } from './slicerStore.js'
 
 const SEV_LABELS = { severe: '● Severe', mild: '◐ Mild', none: '○ None' }
 
 export const SlicerPanel = memo(({ months = [], stores = [], slicer }) => {
   const active = slicer.months.length || slicer.stores.length || slicer.severity
   const count  = slicer.months.length + slicer.stores.length + (slicer.severity ? 1 : 0)
-  // Cap pill render to 30 items to avoid layout thrash on large store lists
   const visibleMonths = months.slice(0, 30)
   const visibleStores = stores.slice(0, 30)
 

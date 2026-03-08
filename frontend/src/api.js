@@ -2,17 +2,17 @@ import { useEffect, useState, useCallback, useRef } from 'react'
 
 const BASE = import.meta.env.VITE_API_URL || ''
 
-// ── Client cache (30s TTL) + stale-while-revalidate + in-flight dedup ─────────
+// ── Cache + dedup ─────────────────────────────────────────────────────────────
 const inflight = new Map()
-const memCache = new Map()
-const MEM_TTL  = 30_000
+export const memCache = new Map()   // exported so useFetch can read synchronously
+const MEM_TTL = 30_000
 
 function dedupFetch(url, signal) {
   const hit   = memCache.get(url)
   const fresh = hit && Date.now() - hit.ts < MEM_TTL
   if (fresh) return Promise.resolve(hit.data)
-  // stale: return old data immediately, refresh in background
   if (hit && !inflight.has(url)) {
+    // stale: serve immediately, refresh in background
     const p = fetch(url)
       .then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json() })
       .then(d => { memCache.set(url, { data: d, ts: Date.now() }); return d })
@@ -29,23 +29,21 @@ function dedupFetch(url, signal) {
   return p
 }
 
-// ── useFetch — instant render from cache, zero loading flash on revisit ───────
+// ── useFetch — hooks always called in same order, lazy init from cache ─────────
 export function useFetch(path, { pollMs = 0 } = {}) {
-  const url    = path ? BASE + path : null
-  const cached = url ? memCache.get(url) : null
+  const url = path ? BASE + path : null
 
-  // Initialise directly from cache — loading=false if we already have data
-  const [data,    setData]    = useState(cached?.data ?? null)
-  const [loading, setLoading] = useState(!cached && !!path)
+  // Lazy initialisers run once — safe, no conditional hook calls
+  const [data,    setData]    = useState(() => (url ? memCache.get(url)?.data : null) ?? null)
+  const [loading, setLoading] = useState(() => !!url && !memCache.has(url))
   const [error,   setError]   = useState(null)
   const mounted = useRef(true)
-  const hasData = useRef(!!cached)
+  const hasData = useRef(!!url && memCache.has(url))
 
   const load = useCallback((bg = false) => {
     if (!url) return
     const ctrl = new AbortController()
     if (!bg && !hasData.current) { setLoading(true); setError(null) }
-
     dedupFetch(url, ctrl.signal)
       .then(d => {
         if (!mounted.current) return
@@ -61,8 +59,7 @@ export function useFetch(path, { pollMs = 0 } = {}) {
 
   useEffect(() => {
     mounted.current = true
-    // If we have cached data, load in background (no spinner)
-    const cleanup = load(!!cached)
+    const cleanup = load(hasData.current)   // bg=true if cache hit → no spinner
     if (!pollMs) return () => { mounted.current = false; cleanup?.() }
     const id = setInterval(() => load(true), pollMs)
     return () => { mounted.current = false; cleanup?.(); clearInterval(id) }
@@ -71,7 +68,7 @@ export function useFetch(path, { pollMs = 0 } = {}) {
   return { data, loading, error, reload: () => load(false) }
 }
 
-// ── usePredictions — polls meta, re-fetches only when file changes ─────────────
+// ── usePredictions ─────────────────────────────────────────────────────────────
 export function usePredictions(month) {
   const [data,      setData]      = useState(null)
   const [loading,   setLoading]   = useState(false)
