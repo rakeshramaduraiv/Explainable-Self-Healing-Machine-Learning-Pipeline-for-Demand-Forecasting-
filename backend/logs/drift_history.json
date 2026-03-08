@@ -3946,5 +3946,89 @@
       "error_increase": 0.4398,
       "drift": true
     }
+  },
+  {
+    "timestamp": "2026-03-08T13:58:17.396288",
+    "month": "2012-12",
+    "severity": "severe",
+    "severe_features": 120,
+    "mild_features": 4,
+    "total_features": 67,
+    "error_trend": {
+      "baseline_error": 3407.18,
+      "current_error": 9741.86,
+      "error_increase": 1.8592,
+      "drift": true
+    }
+  },
+  {
+    "timestamp": "2026-03-08T13:58:18.664163",
+    "month": "2013-03",
+    "severity": "severe",
+    "severe_features": 117,
+    "mild_features": 6,
+    "total_features": 67,
+    "error_trend": {
+      "baseline_error": 3407.18,
+      "current_error": 8970.41,
+      "error_increase": 1.6328,
+      "drift": true
+    }
+  },
+  {
+    "timestamp": "2026-03-08T13:58:19.959722",
+    "month": "2013-06",
+    "severity": "severe",
+    "severe_features": 118,
+    "mild_features": 6,
+    "total_features": 67,
+    "error_trend": {
+      "baseline_error": 3407.18,
+      "current_error": 8379.63,
+      "error_increase": 1.4594,
+      "drift": true
+    }
+  },
+  {
+    "timestamp": "2026-03-08T13:58:21.264024",
+    "month": "2013-09",
+    "severity": "severe",
+    "severe_features": 115,
+    "mild_features": 8,
+    "total_features": 67,
+    "error_trend": {
+      "baseline_error": 3407.18,
+      "current_error": 8679.38,
+      "error_increase": 1.5474,
+      "drift": true
+    }
+  },
+  {
+    "timestamp": "2026-03-08T13:58:22.611778",
+    "month": "2013-12",
+    "severity": "severe",
+    "severe_features": 122,
+    "mild_features": 4,
+    "total_features": 67,
+    "error_trend": {
+      "baseline_error": 3407.18,
+      "current_error": 9940.06,
+      "error_increase": 1.9174,
+      "drift": true
+    }
+  },
+  {
+    "timestamp": "2026-03-08T13:58:23.912477",
+    "month": "2014-03",
+    "severity": "severe",
+    "severe_features": 117,
+    "mild_features": 6,
+    "total_features": 67,
+    "error_trend": {
+      "baseline_error": 3407.18,
+      "current_error": 4905.51,
+      "error_increase": 0.4398,
+      "drift": true
+    }
   }
 ]

@@ -20,9 +20,6 @@ export default function Features() {
   const [activeGroup, setGroup] = useState(null)
   const [selectedFeat, setFeat] = useState(null)
 
-  if (es||et) return <ErrorBox msg={es||et} />
-  if (ls||lt) return <Spinner />
-
   const features    = summary?.feature_names || []
   const importances = tlog?.feature_importances || null
 
@@ -39,6 +36,9 @@ export default function Features() {
   const groupCounts = useMemo(() =>
     Object.fromEntries(Object.keys(GROUPS).map(g => [g, features.filter(GROUPS[g]).length])),
   [features])
+
+  if (es||et) return <ErrorBox msg={es||et} />
+  if (ls||lt) return <Spinner />
 
   return (
     <>
