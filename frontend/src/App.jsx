@@ -1,5 +1,5 @@
-import { useState, lazy, Suspense, useEffect, useCallback, memo } from 'react'
-import { Spinner, ToastContainer } from './ui.jsx'
+import { useState, lazy, Suspense, useEffect, useCallback, memo, useTransition } from 'react'
+import { ToastContainer } from './ui.jsx'
 import { API } from './api.js'
 
 const Overview    = lazy(() => import('./pages/Overview.jsx'))
@@ -12,7 +12,6 @@ const Upload      = lazy(() => import('./pages/Upload.jsx'))
 const Datasets    = lazy(() => import('./pages/Datasets.jsx'))
 const Demand      = lazy(() => import('./pages/Demand.jsx'))
 
-// Prefetch all chunks on idle so navigation is instant after first load
 const prefetchAll = () => [
   import('./pages/Drift.jsx'), import('./pages/Performance.jsx'),
   import('./pages/Features.jsx'), import('./pages/StoreStats.jsx'),
@@ -21,15 +20,15 @@ const prefetchAll = () => [
 ]
 
 const PAGES = [
-  { id: 'overview',     label: 'Overview',           icon: '⬡', group: 'Monitor' },
-  { id: 'drift',        label: 'Drift Analysis',     icon: '◈', group: 'Monitor' },
-  { id: 'performance',  label: 'Model Performance',  icon: '▲', group: 'Monitor' },
-  { id: 'features',     label: 'Feature Importance', icon: '◉', group: 'Analysis' },
-  { id: 'storestats',   label: 'Store Analytics',    icon: '▦', group: 'Analysis' },
-  { id: 'predictions',  label: 'Predictions',        icon: '◎', group: 'Analysis' },
-  { id: 'demand',       label: 'Demand Insights',    icon: '📈', group: 'Analysis' },
-  { id: 'datasets',     label: 'Datasets',           icon: '🗄', group: 'Data' },
-  { id: 'upload',       label: 'Upload & Monitor',   icon: '⬆', group: 'Data' },
+  { id: 'overview',    label: 'Overview',           icon: '📊', group: 'Monitor' },
+  { id: 'drift',       label: 'Drift Analysis',     icon: '🔍', group: 'Monitor' },
+  { id: 'performance', label: 'Model Performance',  icon: '📈', group: 'Monitor' },
+  { id: 'features',    label: 'Feature Importance', icon: '🧩', group: 'Analysis' },
+  { id: 'storestats',  label: 'Store Analytics',    icon: '🏪', group: 'Analysis' },
+  { id: 'predictions', label: 'Predictions',        icon: '🎯', group: 'Analysis' },
+  { id: 'demand',      label: 'Demand Insights',    icon: '💡', group: 'Analysis' },
+  { id: 'datasets',    label: 'Datasets',           icon: '🗄️',  group: 'Data' },
+  { id: 'upload',      label: 'Upload & Monitor',   icon: '⬆️',  group: 'Data' },
 ]
 
 const MAP = {
@@ -40,36 +39,31 @@ const MAP = {
 
 const groups = [...new Set(PAGES.map(p => p.group))]
 
-const NavItem = memo(({ p, active, onClick }) => (
+const NavItem = memo(({ p, active, onClick, pending }) => (
   <div
     className={`nav-item${active ? ' active' : ''}`}
     onClick={onClick}
     title={p.label}
+    style={{ opacity: pending ? 0.6 : 1 }}
   >
     <span className="nav-icon">{p.icon}</span>
     <span className="nav-label">{p.label}</span>
-  </div>
-))
-
-const PageLoader = memo(() => (
-  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '60vh' }}>
-    <div style={{ textAlign: 'center' }}>
-      <Spinner />
-      <div style={{ color: 'var(--text3)', fontSize: 12, marginTop: 8 }}>Loading…</div>
-    </div>
+    {active && pending && <span style={{ marginLeft: 'auto', fontSize: 10, opacity: 0.5 }}>…</span>}
   </div>
 ))
 
 export default function App() {
-  const [page, setPage] = useState('overview')
+  const [page, setPage]   = useState('overview')
   const [apiOk, setApiOk] = useState(null)
+  const [isPending, startTransition] = useTransition()
 
-  const navigate = useCallback(id => setPage(id), [])
+  const navigate = useCallback(id => {
+    startTransition(() => setPage(id))
+  }, [])
 
   useEffect(() => {
-    // Prefetch all page chunks after first paint
     if ('requestIdleCallback' in window) requestIdleCallback(prefetchAll)
-    else setTimeout(prefetchAll, 1000)
+    else setTimeout(prefetchAll, 800)
   }, [])
 
   useEffect(() => {
@@ -79,7 +73,6 @@ export default function App() {
     return () => clearInterval(id)
   }, [])
 
-  // Keyboard shortcut: Alt+1..9
   useEffect(() => {
     const handler = e => {
       if (!e.altKey) return
@@ -108,14 +101,17 @@ export default function App() {
           <div key={g}>
             <div className="sidebar-section">{g}</div>
             {PAGES.filter(p => p.group === g).map(p => (
-              <NavItem key={p.id} p={p} active={page === p.id} onClick={() => navigate(p.id)} />
+              <NavItem key={p.id} p={p} active={page === p.id}
+                pending={isPending && page === p.id}
+                onClick={() => navigate(p.id)} />
             ))}
           </div>
         ))}
 
         <div className="sidebar-footer">
           <div>
-            <span className="status-dot" style={apiOk === false ? { background: 'var(--red)', animation: 'none' } : {}} />
+            <span className="status-dot"
+              style={apiOk === false ? { background: 'var(--red)', animation: 'none' } : {}} />
             {apiOk === false ? 'API offline' : apiOk === null ? 'Connecting…' : 'API connected'}
           </div>
           <div style={{ marginTop: 2 }}>45 stores · 6,435 rows</div>
@@ -126,7 +122,8 @@ export default function App() {
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
         <div className="topbar">
           <span className="topbar-breadcrumb">
-            SH-DFS &rsaquo; <span>{currentPage?.group}</span> &rsaquo; <span>{currentPage?.label}</span>
+            SH-DFS &rsaquo; <span>{currentPage?.group}</span> &rsaquo;
+            <span> {currentPage?.icon} {currentPage?.label}</span>
           </span>
           <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 8 }}>
             <div style={{
@@ -142,16 +139,20 @@ export default function App() {
                 display: 'inline-block',
                 boxShadow: apiOk !== false ? '0 0 6px var(--green)' : 'none',
               }} />
-              {apiOk === false ? 'Offline' : 'Live'}
+              {apiOk === false ? '🔴 Offline' : '🟢 Live'}
             </div>
           </div>
         </div>
 
-        <main className="main">
-          <Suspense fallback={<PageLoader />}>
-            <div className="page-enter">
-              <Page />
+        <main className="main" style={{ opacity: isPending ? 0.7 : 1, transition: 'opacity 0.1s' }}>
+          <Suspense fallback={
+            <div style={{ display:'flex', alignItems:'center', justifyContent:'center', height:'60vh' }}>
+              <div style={{ textAlign:'center', color:'var(--text3)', fontSize:13 }}>
+                <div className="spinner" />Loading…
+              </div>
             </div>
+          }>
+            <div className="page-enter"><Page /></div>
           </Suspense>
         </main>
       </div>

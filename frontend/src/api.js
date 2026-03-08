@@ -2,27 +2,24 @@ import { useEffect, useState, useCallback, useRef } from 'react'
 
 const BASE = import.meta.env.VITE_API_URL || ''
 
-// ── Client-side memory cache (30s TTL) + stale-while-revalidate + in-flight dedup ──
+// ── Client cache (30s TTL) + stale-while-revalidate + in-flight dedup ─────────
 const inflight = new Map()
 const memCache = new Map()
-const MEM_TTL  = 30_000   // serve from cache instantly, revalidate in background
+const MEM_TTL  = 30_000
 
 function dedupFetch(url, signal) {
-  const hit = memCache.get(url)
+  const hit   = memCache.get(url)
   const fresh = hit && Date.now() - hit.ts < MEM_TTL
-  // Always revalidate in background after TTL, but return stale immediately
-  if (hit && !fresh) {
-    // stale — return old data now, kick off background refresh
-    if (!inflight.has(url)) {
-      const p = fetch(url)
-        .then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json() })
-        .then(d => { memCache.set(url, { data: d, ts: Date.now() }); return d })
-        .finally(() => inflight.delete(url))
-      inflight.set(url, p)
-    }
+  if (fresh) return Promise.resolve(hit.data)
+  // stale: return old data immediately, refresh in background
+  if (hit && !inflight.has(url)) {
+    const p = fetch(url)
+      .then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json() })
+      .then(d => { memCache.set(url, { data: d, ts: Date.now() }); return d })
+      .finally(() => inflight.delete(url))
+    inflight.set(url, p)
     return Promise.resolve(hit.data)
   }
-  if (fresh) return Promise.resolve(hit.data)
   if (inflight.has(url)) return inflight.get(url)
   const p = fetch(url, { signal })
     .then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json() })
@@ -32,36 +29,40 @@ function dedupFetch(url, signal) {
   return p
 }
 
-// ── Core fetch hook — no skeleton flash on background polls ──────────────────
+// ── useFetch — instant render from cache, zero loading flash on revisit ───────
 export function useFetch(path, { pollMs = 0 } = {}) {
-  const [data,    setData]    = useState(null)
-  const [loading, setLoading] = useState(!!path)
+  const url    = path ? BASE + path : null
+  const cached = url ? memCache.get(url) : null
+
+  // Initialise directly from cache — loading=false if we already have data
+  const [data,    setData]    = useState(cached?.data ?? null)
+  const [loading, setLoading] = useState(!cached && !!path)
   const [error,   setError]   = useState(null)
-  const retries = useRef(0)
   const mounted = useRef(true)
-  const hasData = useRef(false)
+  const hasData = useRef(!!cached)
 
   const load = useCallback((bg = false) => {
-    if (!path) return
+    if (!url) return
     const ctrl = new AbortController()
-    if (!bg) { setLoading(true); setError(null) }
+    if (!bg && !hasData.current) { setLoading(true); setError(null) }
 
-    dedupFetch(BASE + path, ctrl.signal)
+    dedupFetch(url, ctrl.signal)
       .then(d => {
         if (!mounted.current) return
-        setData(d); setLoading(false); retries.current = 0; hasData.current = true
+        setData(d); setLoading(false); hasData.current = true
       })
       .catch(e => {
         if (e.name === 'AbortError' || !mounted.current) return
-        if (retries.current < 2) { retries.current++; setTimeout(() => load(bg), retries.current * 1500) }
-        else { if (!hasData.current) setError(e.message); setLoading(false) }
+        if (!hasData.current) setError(e.message)
+        setLoading(false)
       })
     return () => ctrl.abort()
-  }, [path])
+  }, [url])
 
   useEffect(() => {
-    mounted.current = true; hasData.current = false
-    const cleanup = load(false)
+    mounted.current = true
+    // If we have cached data, load in background (no spinner)
+    const cleanup = load(!!cached)
     if (!pollMs) return () => { mounted.current = false; cleanup?.() }
     const id = setInterval(() => load(true), pollMs)
     return () => { mounted.current = false; cleanup?.(); clearInterval(id) }
@@ -70,7 +71,7 @@ export function useFetch(path, { pollMs = 0 } = {}) {
   return { data, loading, error, reload: () => load(false) }
 }
 
-// ── Smart predictions hook — polls meta, re-fetches only on file change ───────
+// ── usePredictions — polls meta, re-fetches only when file changes ─────────────
 export function usePredictions(month) {
   const [data,      setData]      = useState(null)
   const [loading,   setLoading]   = useState(false)
