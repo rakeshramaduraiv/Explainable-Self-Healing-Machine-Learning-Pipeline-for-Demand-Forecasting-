@@ -94,6 +94,47 @@ export default function Performance() {
         </ResponsiveContainer>}
       </SectionCard>
 
+      <SectionCard title="Metrics Glossary">
+        <div className="grid-2" style={{ gap: 0 }}>
+          <div style={{ padding: '4px 16px 4px 0', borderRight: '1px solid var(--border)' }}>
+            <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '1.2px', marginBottom: 12 }}>Model Performance — Regression</div>
+            {[
+              ['R²',    'How well the model explains variance in sales. 1.0 = perfect fit.'],
+              ['MAE',   'Mean Absolute Error — average prediction error in dollars.'],
+              ['RMSE',  'Root Mean Squared Error — penalises large errors more heavily.'],
+              ['MAPE',  'Mean Absolute Percentage Error — average % error per prediction.'],
+              ['WMAPE', 'Weighted MAPE — volume-weighted percentage error across all stores.'],
+            ].map(([k, v]) => (
+              <div key={k} style={{ display: 'flex', gap: 12, marginBottom: 10, alignItems: 'flex-start' }}>
+                <span style={{ fontFamily: 'var(--mono)', fontSize: 11, fontWeight: 700, color: 'var(--blue)', minWidth: 52, paddingTop: 1 }}>{k}</span>
+                <span style={{ fontSize: 12, color: 'var(--text2)', lineHeight: 1.5 }}>{v}</span>
+              </div>
+            ))}
+          </div>
+          <div style={{ padding: '4px 0 4px 16px' }}>
+            <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '1.2px', marginBottom: 12 }}>Drift Detection</div>
+            {[
+              ['KS Test',     'Kolmogorov-Smirnov — detects if feature distributions have shifted.'],
+              ['PSI',         'Population Stability Index — measures magnitude of distribution shift.'],
+              ['Wasserstein', 'Earth mover\'s distance — how much effort to transform one distribution to another.'],
+              ['JS Div.',     'Jensen-Shannon divergence — symmetric measure of distribution difference.'],
+              ['Error Trend', 'Tracks MAE increase over time. Drift triggered when increase > 10%.'],
+            ].map(([k, v]) => (
+              <div key={k} style={{ display: 'flex', gap: 12, marginBottom: 10, alignItems: 'flex-start' }}>
+                <span style={{ fontFamily: 'var(--mono)', fontSize: 11, fontWeight: 700, color: 'var(--purple)', minWidth: 80, paddingTop: 1 }}>{k}</span>
+                <span style={{ fontSize: 12, color: 'var(--text2)', lineHeight: 1.5 }}>{v}</span>
+              </div>
+            ))}
+            <div style={{ marginTop: 14, padding: '10px 12px', background: 'var(--card3)', borderRadius: 8, border: '1px solid var(--border)' }}>
+              <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--text3)', marginBottom: 6 }}>NOT APPLICABLE HERE</div>
+              <div style={{ fontSize: 12, color: 'var(--text3)', lineHeight: 1.6 }}>
+                Precision, Recall, F1, Accuracy — these are <strong style={{ color: 'var(--text2)' }}>classification metrics</strong> for yes/no predictions. Demand forecasting is a <strong style={{ color: 'var(--text2)' }}>regression problem</strong> — use the metrics above.
+              </div>
+            </div>
+          </div>
+        </div>
+      </SectionCard>
+
       {summary?.confidence_intervals && (
         <SectionCard title="Confidence Intervals">
           <table className="tbl">
