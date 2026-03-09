@@ -103,9 +103,9 @@ export const ToastContainer = memo(() => {
 
   const dismiss = useCallback(id => setToasts(p => p.filter(x => x.id !== id)), [])
 
-  const bgMap = { g: 'rgba(16,185,129,0.12)', r: 'rgba(239,68,68,0.12)', b: 'rgba(59,130,246,0.12)', y: 'rgba(245,158,11,0.12)' }
+  const bgMap = { g: '#f0fdf4', r: '#fef2f2', b: '#eff6ff', y: '#fffbeb' }
   const clrMap = { g: 'var(--green)', r: 'var(--red)', b: 'var(--blue)', y: 'var(--orange)' }
-  const bdrMap = { g: 'rgba(16,185,129,0.25)', r: 'rgba(239,68,68,0.25)', b: 'rgba(59,130,246,0.25)', y: 'rgba(245,158,11,0.25)' }
+  const bdrMap = { g: '#bbf7d0', r: '#fecaca', b: '#bfdbfe', y: '#fde68a' }
 
   return (
     <div style={{ position: 'fixed', bottom: 24, right: 24, zIndex: 9999, display: 'flex', flexDirection: 'column', gap: 8 }}>
@@ -130,12 +130,12 @@ export const fmtPct = n => n == null ? '—' : Number(n).toFixed(2) + '%'
 // ── Chart tooltip style ──────────────────────────────────────────────────────
 export const CHART_STYLE = {
   contentStyle: {
-    background: 'var(--card)',
+    background: '#ffffff',
     border: '1px solid var(--border2)',
     color: 'var(--text)',
     fontSize: 12,
     borderRadius: 8,
-    boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
+    boxShadow: '0 4px 20px rgba(37,99,235,0.12)',
     padding: '10px 14px',
   },
   labelStyle: { color: 'var(--text2)', fontWeight: 600, marginBottom: 4 },

@@ -33,11 +33,13 @@ def rj(fname: str):
     with open(p, encoding="utf-8") as f: return json.load(f)
 
 def dedup(records: list, key="month"):
-    seen, out = set(), []
-    for d in reversed(records):
-        if d.get(key) not in seen:
-            seen.add(d[key]); out.insert(0, d)
-    return sorted(out, key=lambda x: x[key])
+    seen = set()
+    out  = {}
+    for d in records:
+        k = d.get(key)
+        if k not in seen:
+            seen.add(k); out[k] = d
+    return sorted(out.values(), key=lambda x: x[key])
 
 # ── Extracted build functions (called at startup + on demand) ─────────────────
 def _build_store_stats():

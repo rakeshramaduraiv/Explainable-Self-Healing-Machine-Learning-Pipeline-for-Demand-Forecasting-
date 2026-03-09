@@ -24,7 +24,7 @@ const PredTooltip = memo(({ active, payload }) => {
   if (!d) return null
   const q = QUALITY(d.Error_Pct || 0)
   return (
-    <div style={{ background: 'var(--card)', border: '1px solid var(--border2)', padding: '12px 16px', borderRadius: 10, fontSize: 12, minWidth: 210, boxShadow: '0 8px 24px rgba(0,0,0,0.4)' }}>
+    <div style={{ background: '#ffffff', border: '1px solid var(--border2)', padding: '12px 16px', borderRadius: 10, fontSize: 12, minWidth: 210, boxShadow: '0 4px 20px rgba(37,99,235,0.12)' }}>
       <div style={{ fontWeight: 700, color: 'var(--text)', marginBottom: 8 }}>
         {d.Store ? `Store ${d.Store}` : `Row ${d.idx}`}
         {d.Date && <span style={{ color: 'var(--text3)', fontWeight: 400, marginLeft: 8, fontSize: 11 }}>{d.Date?.slice(0, 10)}</span>}

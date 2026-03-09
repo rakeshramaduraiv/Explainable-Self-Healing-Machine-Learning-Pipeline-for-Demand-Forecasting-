@@ -17,9 +17,9 @@ export default function Performance() {
   [drift, slicer.months])
 
   if (eb || ed || es) return <ErrorBox msg={eb || ed || es} />
-  if (lb || ld || ls) return <Spinner />
 
   const m = baseline?.train || summary?.train_metrics || {}
+  const loading = lb || ld || ls
 
   const maeTrend = filtered.map(d => ({
     month:          d.month,
@@ -52,14 +52,17 @@ export default function Performance() {
       <SlicerPanel months={months} slicer={slicer} />
 
       <div className="kpi-grid">
+        {loading ? Array.from({length:5}).map((_,i)=><div key={i} className="kpi"><div className="skel" style={{height:60}}/></div>) : <>
         <KPI label="R²"    value={m.R2?.toFixed(4)}                        delta="Training" />
         <KPI label="MAE"   value={m.MAE   ? fmtD(m.MAE)   : '—'}          delta="Train MAE" />
         <KPI label="RMSE"  value={m.RMSE  ? fmtD(m.RMSE)  : '—'}          delta="Train RMSE" />
         <KPI label="MAPE"  value={m.MAPE  ? m.MAPE.toFixed(2)  + '%' : '—'} delta="Train MAPE" />
         <KPI label="WMAPE" value={m.WMAPE ? m.WMAPE.toFixed(2) + '%' : '—'} delta="Weighted MAPE" />
+        </>}
       </div>
 
       <SectionCard title="MAE Trend — click point to filter month">
+        {loading ? <div className="skel" style={{height:270}}/> :
         <ResponsiveContainer width="100%" height={270}>
           <LineChart data={maeTrend} margin={{ top: 4, right: 16, bottom: 24, left: 0 }} onClick={onLineClick}>
             <CartesianGrid strokeDasharray="3 3" />
@@ -72,10 +75,11 @@ export default function Performance() {
               dot={({ cx, cy, payload }) => <circle key={cx + cy} cx={cx} cy={cy} {...dotProps(payload, slicer)} />} />
             <Brush dataKey="month" height={22} stroke="var(--border2)" fill="var(--card2)" travellerWidth={6} />
           </LineChart>
-        </ResponsiveContainer>
+        </ResponsiveContainer>}
       </SectionCard>
 
       <SectionCard title="Error Increase % vs Baseline — click point to filter">
+        {loading ? <div className="skel" style={{height:230}}/> :
         <ResponsiveContainer width="100%" height={230}>
           <LineChart data={errorPct} margin={{ top: 4, right: 16, bottom: 0, left: 0 }} onClick={onLineClick}>
             <CartesianGrid strokeDasharray="3 3" />
@@ -87,7 +91,7 @@ export default function Performance() {
             <Line type="monotone" dataKey="Error %" stroke="var(--red)" strokeWidth={2}
               dot={({ cx, cy, payload }) => <circle key={cx + cy} cx={cx} cy={cy} {...dotProps(payload, slicer)} />} />
           </LineChart>
-        </ResponsiveContainer>
+        </ResponsiveContainer>}
       </SectionCard>
 
       {summary?.confidence_intervals && (
