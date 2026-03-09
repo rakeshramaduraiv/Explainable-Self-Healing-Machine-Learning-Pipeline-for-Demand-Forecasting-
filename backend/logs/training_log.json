@@ -549,5 +549,71 @@
         "model": "RF"
       }
     }
+  },
+  {
+    "timestamp": "2026-03-09T11:07:29.168635",
+    "feature_count": 67,
+    "params": {
+      "n_estimators": 200,
+      "min_samples_split": 5,
+      "min_samples_leaf": 2,
+      "min_impurity_decrease": 0.0,
+      "max_features": 0.7,
+      "max_depth": 30
+    },
+    "metrics": {
+      "train": {
+        "RMSE": 4253.531552895122,
+        "MAE": 3407.183597778191,
+        "R2": 0.985841749670085,
+        "MAPE": 2.5814515830698004,
+        "WMAPE": 2.542076804993606,
+        "model": "RF"
+      }
+    }
+  },
+  {
+    "timestamp": "2026-03-09T15:26:51.845073",
+    "feature_count": 67,
+    "params": {
+      "n_estimators": 200,
+      "min_samples_split": 5,
+      "min_samples_leaf": 2,
+      "min_impurity_decrease": 0.0001,
+      "max_features": 0.7,
+      "max_depth": 30
+    },
+    "metrics": {
+      "train": {
+        "RMSE": 4253.531552895119,
+        "MAE": 3407.183597778189,
+        "R2": 0.985841749670085,
+        "MAPE": 2.581451583069799,
+        "WMAPE": 2.5420768049936044,
+        "model": "RF"
+      }
+    }
+  },
+  {
+    "timestamp": "2026-03-09T15:39:56.840366",
+    "feature_count": 67,
+    "params": {
+      "n_estimators": 200,
+      "min_samples_split": 5,
+      "min_samples_leaf": 2,
+      "min_impurity_decrease": 0.0,
+      "max_features": 0.7,
+      "max_depth": 30
+    },
+    "metrics": {
+      "train": {
+        "RMSE": 4253.531552895123,
+        "MAE": 3407.1835977781916,
+        "R2": 0.985841749670085,
+        "MAPE": 2.5814515830698013,
+        "WMAPE": 2.5420768049936067,
+        "model": "RF"
+      }
+    }
   }
 ]

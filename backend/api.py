@@ -6,6 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.responses import JSONResponse
 import pandas as pd
+import joblib
 
 BASE      = Path(__file__).parent.resolve()
 LOGS      = BASE / "logs"
@@ -170,6 +171,34 @@ def store_stats():
 @app.get("/api/training-log")
 def training_log():
     return _cached("training_log", 60, lambda: rj("training_log.json") or {})
+
+@app.get("/api/feature-importances")
+def feature_importances():
+    def _build():
+        summary_fn = (rj("phase1_summary.json") or {}).get("feature_names", [])
+        model_path = BASE / "models" / "active_model.pkl"
+        if not model_path.exists():
+            raise HTTPException(404, "Model not found")
+        model = joblib.load(str(model_path))
+        fi = getattr(model, "feature_importances_", None)
+        if fi is None:
+            # unwrap stacking — try base estimators
+            for attr in ["estimators_", "named_estimators_"]:
+                est = getattr(model, attr, None)
+                if est is not None:
+                    candidates = list(est.values()) if isinstance(est, dict) else [e for _, e in est]
+                    for e in candidates:
+                        fi = getattr(e, "feature_importances_", None)
+                        if fi is not None: break
+                if fi is not None: break
+        if fi is None:
+            raise HTTPException(404, "Model has no feature_importances_")
+        fi = [float(v) for v in fi]
+        raw_fn = getattr(model, "feature_names_in_", None)
+        fn = list(raw_fn) if raw_fn is not None else summary_fn[:len(fi)]
+        result = {str(n): round(v, 6) for n, v in zip(fn, fi)}
+        return {"importances": result, "feature_names": [str(n) for n in fn]}
+    return _cached("feature_importances", 300, _build)
 
 @app.get("/api/data-split")
 def data_split():

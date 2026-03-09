@@ -2161,5 +2161,131 @@
     "count": 5,
     "mean_pred": 163312.38,
     "mean_actual": 159277.45
+  },
+  {
+    "timestamp": "2026-03-09T11:07:30.377038",
+    "month": "2012-12",
+    "count": 5,
+    "mean_pred": 159599.51,
+    "mean_actual": 161978.75
+  },
+  {
+    "timestamp": "2026-03-09T11:07:31.593734",
+    "month": "2013-03",
+    "count": 5,
+    "mean_pred": 125760.88,
+    "mean_actual": 134731.29
+  },
+  {
+    "timestamp": "2026-03-09T11:07:32.837860",
+    "month": "2013-06",
+    "count": 5,
+    "mean_pred": 140836.13,
+    "mean_actual": 143351.49
+  },
+  {
+    "timestamp": "2026-03-09T11:07:34.079518",
+    "month": "2013-09",
+    "count": 5,
+    "mean_pred": 146043.32,
+    "mean_actual": 147915.78
+  },
+  {
+    "timestamp": "2026-03-09T11:07:35.357553",
+    "month": "2013-12",
+    "count": 5,
+    "mean_pred": 138793.87,
+    "mean_actual": 137559.99
+  },
+  {
+    "timestamp": "2026-03-09T11:07:36.610495",
+    "month": "2014-03",
+    "count": 5,
+    "mean_pred": 163312.38,
+    "mean_actual": 159277.45
+  },
+  {
+    "timestamp": "2026-03-09T15:26:52.244348",
+    "month": "2012-12",
+    "count": 5,
+    "mean_pred": 159599.51,
+    "mean_actual": 161978.75
+  },
+  {
+    "timestamp": "2026-03-09T15:26:52.641865",
+    "month": "2013-03",
+    "count": 5,
+    "mean_pred": 125760.88,
+    "mean_actual": 134731.29
+  },
+  {
+    "timestamp": "2026-03-09T15:26:53.015241",
+    "month": "2013-06",
+    "count": 5,
+    "mean_pred": 140836.13,
+    "mean_actual": 143351.49
+  },
+  {
+    "timestamp": "2026-03-09T15:26:53.386937",
+    "month": "2013-09",
+    "count": 5,
+    "mean_pred": 146043.32,
+    "mean_actual": 147915.78
+  },
+  {
+    "timestamp": "2026-03-09T15:26:53.756005",
+    "month": "2013-12",
+    "count": 5,
+    "mean_pred": 138793.87,
+    "mean_actual": 137559.99
+  },
+  {
+    "timestamp": "2026-03-09T15:26:54.146034",
+    "month": "2014-03",
+    "count": 5,
+    "mean_pred": 163312.38,
+    "mean_actual": 159277.45
+  },
+  {
+    "timestamp": "2026-03-09T15:39:57.175367",
+    "month": "2012-12",
+    "count": 5,
+    "mean_pred": 159599.51,
+    "mean_actual": 161978.75
+  },
+  {
+    "timestamp": "2026-03-09T15:39:57.537578",
+    "month": "2013-03",
+    "count": 5,
+    "mean_pred": 125760.88,
+    "mean_actual": 134731.29
+  },
+  {
+    "timestamp": "2026-03-09T15:39:57.925567",
+    "month": "2013-06",
+    "count": 5,
+    "mean_pred": 140836.13,
+    "mean_actual": 143351.49
+  },
+  {
+    "timestamp": "2026-03-09T15:39:58.309794",
+    "month": "2013-09",
+    "count": 5,
+    "mean_pred": 146043.32,
+    "mean_actual": 147915.78
+  },
+  {
+    "timestamp": "2026-03-09T15:39:58.706814",
+    "month": "2013-12",
+    "count": 5,
+    "mean_pred": 138793.87,
+    "mean_actual": 137559.99
+  },
+  {
+    "timestamp": "2026-03-09T15:39:59.063664",
+    "month": "2014-03",
+    "count": 5,
+    "mean_pred": 163312.38,
+    "mean_actual": 159277.45
   }
 ]

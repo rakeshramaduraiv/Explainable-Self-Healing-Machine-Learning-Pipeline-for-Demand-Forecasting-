@@ -1,0 +1,23 @@
+{
+  "version": "v1_20260309_153956",
+  "saved_at": "2026-03-09T15:39:56.508247",
+  "params": {
+    "n_estimators": 200,
+    "min_samples_split": 5,
+    "min_samples_leaf": 2,
+    "min_impurity_decrease": 0.0,
+    "max_features": 0.7,
+    "max_depth": 30
+  },
+  "metrics": {
+    "train": {
+      "RMSE": 4253.531552895123,
+      "MAE": 3407.1835977781916,
+      "R2": 0.985841749670085,
+      "MAPE": 2.5814515830698013,
+      "WMAPE": 2.5420768049936067,
+      "model": "RF"
+    }
+  },
+  "model_type": "RF"
+}

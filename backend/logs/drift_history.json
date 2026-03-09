@@ -4198,5 +4198,257 @@
       "error_increase": 0.4398,
       "drift": true
     }
+  },
+  {
+    "timestamp": "2026-03-09T11:07:30.640522",
+    "month": "2012-12",
+    "severity": "severe",
+    "severe_features": 120,
+    "mild_features": 4,
+    "total_features": 67,
+    "error_trend": {
+      "baseline_error": 3407.18,
+      "current_error": 9741.86,
+      "error_increase": 1.8592,
+      "drift": true
+    }
+  },
+  {
+    "timestamp": "2026-03-09T11:07:31.878414",
+    "month": "2013-03",
+    "severity": "severe",
+    "severe_features": 117,
+    "mild_features": 6,
+    "total_features": 67,
+    "error_trend": {
+      "baseline_error": 3407.18,
+      "current_error": 8970.41,
+      "error_increase": 1.6328,
+      "drift": true
+    }
+  },
+  {
+    "timestamp": "2026-03-09T11:07:33.112800",
+    "month": "2013-06",
+    "severity": "severe",
+    "severe_features": 118,
+    "mild_features": 6,
+    "total_features": 67,
+    "error_trend": {
+      "baseline_error": 3407.18,
+      "current_error": 8379.63,
+      "error_increase": 1.4594,
+      "drift": true
+    }
+  },
+  {
+    "timestamp": "2026-03-09T11:07:34.357068",
+    "month": "2013-09",
+    "severity": "severe",
+    "severe_features": 115,
+    "mild_features": 8,
+    "total_features": 67,
+    "error_trend": {
+      "baseline_error": 3407.18,
+      "current_error": 8679.38,
+      "error_increase": 1.5474,
+      "drift": true
+    }
+  },
+  {
+    "timestamp": "2026-03-09T11:07:35.653665",
+    "month": "2013-12",
+    "severity": "severe",
+    "severe_features": 122,
+    "mild_features": 4,
+    "total_features": 67,
+    "error_trend": {
+      "baseline_error": 3407.18,
+      "current_error": 9940.06,
+      "error_increase": 1.9174,
+      "drift": true
+    }
+  },
+  {
+    "timestamp": "2026-03-09T11:07:36.878955",
+    "month": "2014-03",
+    "severity": "severe",
+    "severe_features": 117,
+    "mild_features": 6,
+    "total_features": 67,
+    "error_trend": {
+      "baseline_error": 3407.18,
+      "current_error": 4905.51,
+      "error_increase": 0.4398,
+      "drift": true
+    }
+  },
+  {
+    "timestamp": "2026-03-09T15:26:52.337714",
+    "month": "2012-12",
+    "severity": "severe",
+    "severe_features": 120,
+    "mild_features": 4,
+    "total_features": 67,
+    "error_trend": {
+      "baseline_error": 3407.18,
+      "current_error": 9741.86,
+      "error_increase": 1.8592,
+      "drift": true
+    }
+  },
+  {
+    "timestamp": "2026-03-09T15:26:52.722251",
+    "month": "2013-03",
+    "severity": "severe",
+    "severe_features": 117,
+    "mild_features": 6,
+    "total_features": 67,
+    "error_trend": {
+      "baseline_error": 3407.18,
+      "current_error": 8970.41,
+      "error_increase": 1.6328,
+      "drift": true
+    }
+  },
+  {
+    "timestamp": "2026-03-09T15:26:53.104685",
+    "month": "2013-06",
+    "severity": "severe",
+    "severe_features": 118,
+    "mild_features": 6,
+    "total_features": 67,
+    "error_trend": {
+      "baseline_error": 3407.18,
+      "current_error": 8379.63,
+      "error_increase": 1.4594,
+      "drift": true
+    }
+  },
+  {
+    "timestamp": "2026-03-09T15:26:53.460644",
+    "month": "2013-09",
+    "severity": "severe",
+    "severe_features": 115,
+    "mild_features": 8,
+    "total_features": 67,
+    "error_trend": {
+      "baseline_error": 3407.18,
+      "current_error": 8679.38,
+      "error_increase": 1.5474,
+      "drift": true
+    }
+  },
+  {
+    "timestamp": "2026-03-09T15:26:53.839576",
+    "month": "2013-12",
+    "severity": "severe",
+    "severe_features": 122,
+    "mild_features": 4,
+    "total_features": 67,
+    "error_trend": {
+      "baseline_error": 3407.18,
+      "current_error": 9940.06,
+      "error_increase": 1.9174,
+      "drift": true
+    }
+  },
+  {
+    "timestamp": "2026-03-09T15:26:54.222594",
+    "month": "2014-03",
+    "severity": "severe",
+    "severe_features": 117,
+    "mild_features": 6,
+    "total_features": 67,
+    "error_trend": {
+      "baseline_error": 3407.18,
+      "current_error": 4905.51,
+      "error_increase": 0.4398,
+      "drift": true
+    }
+  },
+  {
+    "timestamp": "2026-03-09T15:39:57.253760",
+    "month": "2012-12",
+    "severity": "severe",
+    "severe_features": 120,
+    "mild_features": 4,
+    "total_features": 67,
+    "error_trend": {
+      "baseline_error": 3407.18,
+      "current_error": 9741.86,
+      "error_increase": 1.8592,
+      "drift": true
+    }
+  },
+  {
+    "timestamp": "2026-03-09T15:39:57.628687",
+    "month": "2013-03",
+    "severity": "severe",
+    "severe_features": 117,
+    "mild_features": 6,
+    "total_features": 67,
+    "error_trend": {
+      "baseline_error": 3407.18,
+      "current_error": 8970.41,
+      "error_increase": 1.6328,
+      "drift": true
+    }
+  },
+  {
+    "timestamp": "2026-03-09T15:39:58.009543",
+    "month": "2013-06",
+    "severity": "severe",
+    "severe_features": 118,
+    "mild_features": 6,
+    "total_features": 67,
+    "error_trend": {
+      "baseline_error": 3407.18,
+      "current_error": 8379.63,
+      "error_increase": 1.4594,
+      "drift": true
+    }
+  },
+  {
+    "timestamp": "2026-03-09T15:39:58.393087",
+    "month": "2013-09",
+    "severity": "severe",
+    "severe_features": 115,
+    "mild_features": 8,
+    "total_features": 67,
+    "error_trend": {
+      "baseline_error": 3407.18,
+      "current_error": 8679.38,
+      "error_increase": 1.5474,
+      "drift": true
+    }
+  },
+  {
+    "timestamp": "2026-03-09T15:39:58.789864",
+    "month": "2013-12",
+    "severity": "severe",
+    "severe_features": 122,
+    "mild_features": 4,
+    "total_features": 67,
+    "error_trend": {
+      "baseline_error": 3407.18,
+      "current_error": 9940.06,
+      "error_increase": 1.9174,
+      "drift": true
+    }
+  },
+  {
+    "timestamp": "2026-03-09T15:39:59.158449",
+    "month": "2014-03",
+    "severity": "severe",
+    "severe_features": 117,
+    "mild_features": 6,
+    "total_features": 67,
+    "error_trend": {
+      "baseline_error": 3407.18,
+      "current_error": 4905.51,
+      "error_increase": 0.4398,
+      "drift": true
+    }
   }
 ]
