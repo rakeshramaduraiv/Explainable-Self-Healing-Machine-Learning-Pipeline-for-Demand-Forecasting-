@@ -136,7 +136,7 @@ export default function Drift() {
           </table>
         </div>
         <div style={{ marginTop: 10, fontSize: 11, color: 'var(--text3)' }}>
-          Click row or bar to add to month filter
+          Click row or bar to filter by month
         </div>
       </SectionCard>
     </>

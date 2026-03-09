@@ -34,12 +34,12 @@ const FormatCard = memo(() => (
 ))
 
 export default function Upload() {
-  const [tab,     setTab]     = useState('upload')
-  const [file,    setFile]    = useState(null)
-  const [drag,    setDrag]    = useState(false)
-  const [running, setRunning] = useState(false)
-  const [result,  setResult]  = useState(null)
-  const [error,   setError]   = useState(null)
+  const [tab,      setTab]      = useState('upload')
+  const [file,     setFile]     = useState(null)
+  const [drag,     setDrag]     = useState(false)
+  const [running,  setRunning]  = useState(false)
+  const [result,   setResult]   = useState(null)
+  const [error,    setError]    = useState(null)
   const [progress, setProgress] = useState(0)
   const inputRef = useRef()
 
@@ -50,11 +50,11 @@ export default function Upload() {
     setError(null); setFile(f)
   }, [])
 
-  const onDrop      = useCallback(e => { e.preventDefault(); setDrag(false); pickFile(e.dataTransfer.files[0]) }, [pickFile])
-  const onDragOver  = useCallback(e => { e.preventDefault(); setDrag(true) }, [])
-  const onDragLeave = useCallback(() => setDrag(false), [])
+  const onDrop        = useCallback(e => { e.preventDefault(); setDrag(false); pickFile(e.dataTransfer.files[0]) }, [pickFile])
+  const onDragOver    = useCallback(e => { e.preventDefault(); setDrag(true) }, [])
+  const onDragLeave   = useCallback(() => setDrag(false), [])
   const onInputChange = useCallback(e => pickFile(e.target.files[0]), [pickFile])
-  const onZoneClick = useCallback(() => inputRef.current?.click(), [])
+  const onZoneClick   = useCallback(() => inputRef.current?.click(), [])
 
   const run = useCallback(async () => {
     if (!file) return
@@ -81,7 +81,6 @@ export default function Upload() {
 
   const drift   = result?.drift || []
   const latest  = drift[drift.length - 1]
-
   const errorData   = drift.map(d => ({ month: d.month, Current: d.error_trend?.current_error, Baseline: d.error_trend?.baseline_error }))
   const featureData = drift.map(d => ({ month: d.month, Severe: d.severe_features || 0, Mild: d.mild_features || 0 }))
 
@@ -95,7 +94,7 @@ export default function Upload() {
       <div className="tabs">
         <div className={`tab${tab === 'upload'  ? ' active' : ''}`} onClick={() => setTab('upload')}>Upload & Run</div>
         <div className={`tab${tab === 'results' ? ' active' : ''}`} onClick={() => setTab('results')}>
-          Results {result && <span style={{ marginLeft: 6, background: 'var(--green)', color: '#fff', borderRadius: 10, padding: '1px 7px', fontSize: 10, fontWeight: 700 }}>Done</span>}
+          Results {result && <span style={{ marginLeft: 8, background: 'var(--green)', color: '#fff', borderRadius: 4, padding: '1px 8px', fontSize: 10, fontWeight: 700, letterSpacing: '0.5px' }}>Done</span>}
         </div>
       </div>
 
@@ -104,26 +103,28 @@ export default function Upload() {
           <div className={`upload-zone${drag ? ' drag' : ''}`}
             onDragOver={onDragOver} onDragLeave={onDragLeave}
             onDrop={onDrop} onClick={onZoneClick}>
-            <div className="upload-zone-icon" style={{ fontSize: 32, opacity: 0.3, fontFamily: 'sans-serif' }}>{file ? '[ CSV ]' : '[ + ]'}</div>
-            <p style={{ fontWeight: 700, color: 'var(--text)', fontSize: 15 }}>
-              {file ? file.name : 'Drop a CSV here or click to browse'}
+            <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '2px', marginBottom: 10 }}>
+              {file ? 'CSV Selected' : 'Drop CSV Here'}
+            </div>
+            <p style={{ fontWeight: 600, color: 'var(--text)', fontSize: 15 }}>
+              {file ? file.name : 'or click to browse files'}
             </p>
             {file
-              ? <p style={{ color: 'var(--green)' }}>{(file.size / 1024).toFixed(1)} KB · ready to run</p>
-              : <p className="hint">Max {MAX_MB} MB · .csv only</p>
+              ? <p style={{ color: 'var(--green)', marginTop: 6, fontSize: 12 }}>{(file.size / 1024).toFixed(1)} KB — ready to run</p>
+              : <p className="hint">Max {MAX_MB} MB · .csv format only</p>
             }
             <input ref={inputRef} type="file" accept=".csv" style={{ display: 'none' }} onChange={onInputChange} />
           </div>
 
-          {error && <div className="alert alert-r" style={{ marginTop: 12 }}>⚠ {error}</div>}
+          {error && <div className="alert alert-r" style={{ marginTop: 12 }}>{error}</div>}
 
           {running && progress > 0 && (
-            <div style={{ marginTop: 12 }}>
+            <div style={{ marginTop: 14 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, color: 'var(--text3)', marginBottom: 6 }}>
-                <span>Pipeline running…</span>
+                <span style={{ fontWeight: 600 }}>Pipeline running</span>
                 <span>{progress}%</span>
               </div>
-              <div className="progress-bar" style={{ height: 6 }}>
+              <div className="progress-bar" style={{ height: 5 }}>
                 <div className="progress-fill" style={{ width: `${progress}%`, background: 'linear-gradient(90deg, var(--blue), var(--purple))' }} />
               </div>
             </div>
@@ -132,17 +133,17 @@ export default function Upload() {
           {file && (
             <div style={{ marginTop: 16, display: 'flex', gap: 10, alignItems: 'center' }}>
               <button className="btn btn-primary" onClick={run} disabled={running}>
-                {running ? '⟳ Running pipeline…' : '▶ Run Pipeline'}
+                {running ? 'Running Pipeline…' : 'Run Pipeline'}
               </button>
               <button className="btn btn-outline" onClick={() => { setFile(null); setError(null) }} disabled={running}>
-                ✕ Clear
+                Clear
               </button>
             </div>
           )}
 
           {running && (
             <div className="alert alert-b" style={{ marginTop: 14 }}>
-              Feature engineering + model inference + drift detection. This may take 30–60 s…
+              Feature engineering, model inference, and drift detection in progress. This may take 30–60 seconds.
             </div>
           )}
 
@@ -197,7 +198,7 @@ export default function Upload() {
                 </SectionCard>
               </div>
 
-              <SectionCard title="Drift Results Table">
+              <SectionCard title="Drift Results">
                 <div style={{ overflowX: 'auto' }}>
                   <table className="tbl">
                     <thead>

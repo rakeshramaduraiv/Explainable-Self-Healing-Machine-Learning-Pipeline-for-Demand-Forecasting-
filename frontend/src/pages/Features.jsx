@@ -20,7 +20,7 @@ const GroupCard = memo(({ group, feats, isActive, isSelected, selectedFeat, onFi
     style={{ opacity: isActive ? 1 : 0.3, cursor: 'pointer', transition: 'opacity 0.15s' }}
     action={
       <button className="btn btn-outline" style={{ padding: '2px 10px', fontSize: 10 }} onClick={onFilter}>
-        {isSelected ? '✕ Clear' : 'Filter'}
+        {isSelected ? 'Clear' : 'Filter'}
       </button>
     }
   >
@@ -83,7 +83,7 @@ export default function Features() {
           </span>
           {activeGroup && (
             <button className="btn btn-outline" style={{ padding: '3px 10px', fontSize: 11 }}
-              onClick={() => { setGroup(null); setFeat(null) }}>✕ Clear</button>
+              onClick={() => { setGroup(null); setFeat(null) }}>Clear</button>
           )}
         </div>
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
@@ -142,7 +142,7 @@ export default function Features() {
               <strong>{selectedFeat}</strong> — Importance: <strong>{(importances?.[selectedFeat] || 0).toFixed(4)}</strong>
               {' · '}Group: <strong>{Object.keys(GROUPS).find(g => GROUPS[g](selectedFeat)) || 'Other'}</strong>
             </span>
-            <button className="btn btn-outline" style={{ padding: '3px 10px', fontSize: 11 }} onClick={() => setFeat(null)}>✕</button>
+            <button className="btn btn-outline" style={{ padding: '3px 10px', fontSize: 11 }} onClick={() => setFeat(null)}>Clear</button>
           </div>
         )}
       </SectionCard>
