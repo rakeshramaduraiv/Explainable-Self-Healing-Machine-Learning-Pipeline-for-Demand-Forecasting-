@@ -89,7 +89,7 @@ export default function Datasets() {
 
       <SectionCard title="Monitored Batches">
         {batches.length === 0 ? (
-          <EmptyState icon="📭" title="No batch data" sub="Run python main.py first to generate batch predictions." />
+          <EmptyState title="No batch data" sub="Run python main.py first to generate batch predictions." />
         ) : (
           <div style={{ overflowX: 'auto' }}>
             <table className="tbl">

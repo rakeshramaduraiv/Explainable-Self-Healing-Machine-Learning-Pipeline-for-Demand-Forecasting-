@@ -3,7 +3,7 @@
     "coverage": 1.0,
     "avg_width": 37022.06853025184
   },
-  "timestamp": "2026-03-08T22:10:45.608029",
+  "timestamp": "2026-03-09T10:07:51.546818",
   "final_severity": "severe",
   "recommendation": "Phase 2 required: Retrain model immediately",
   "months_monitored": 6,
@@ -13,11 +13,11 @@
     "none": 0
   },
   "train_metrics": {
-    "RMSE": 4253.53155289512,
-    "MAE": 3407.183597778189,
+    "RMSE": 4253.531552895122,
+    "MAE": 3407.1835977781902,
     "R2": 0.985841749670085,
-    "MAPE": 2.5814515830697995,
-    "WMAPE": 2.5420768049936044,
+    "MAPE": 2.581451583069801,
+    "WMAPE": 2.5420768049936053,
     "model": "RF"
   },
   "feature_names": [

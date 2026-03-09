@@ -20,15 +20,15 @@ const prefetchAll = () => [
 ]
 
 const PAGES = [
-  { id: 'overview',    label: 'Overview',           icon: '📊', group: 'Monitor' },
-  { id: 'drift',       label: 'Drift Analysis',     icon: '🔍', group: 'Monitor' },
-  { id: 'performance', label: 'Model Performance',  icon: '📈', group: 'Monitor' },
-  { id: 'features',    label: 'Feature Importance', icon: '🧩', group: 'Analysis' },
-  { id: 'storestats',  label: 'Store Analytics',    icon: '🏪', group: 'Analysis' },
-  { id: 'predictions', label: 'Predictions',        icon: '🎯', group: 'Analysis' },
-  { id: 'demand',      label: 'Demand Insights',    icon: '💡', group: 'Analysis' },
-  { id: 'datasets',    label: 'Datasets',           icon: '🗄️',  group: 'Data' },
-  { id: 'upload',      label: 'Upload & Monitor',   icon: '⬆️',  group: 'Data' },
+  { id: 'overview',    label: 'Overview',           group: 'Monitor' },
+  { id: 'drift',       label: 'Drift Analysis',     group: 'Monitor' },
+  { id: 'performance', label: 'Model Performance',  group: 'Monitor' },
+  { id: 'features',    label: 'Feature Importance', group: 'Analysis' },
+  { id: 'storestats',  label: 'Store Analytics',    group: 'Analysis' },
+  { id: 'predictions', label: 'Predictions',        group: 'Analysis' },
+  { id: 'demand',      label: 'Demand Insights',    group: 'Analysis' },
+  { id: 'datasets',    label: 'Datasets',           group: 'Data' },
+  { id: 'upload',      label: 'Upload & Monitor',   group: 'Data' },
 ]
 
 const MAP = {
@@ -39,16 +39,9 @@ const MAP = {
 
 const groups = [...new Set(PAGES.map(p => p.group))]
 
-const NavItem = memo(({ p, active, onClick, pending }) => (
-  <div
-    className={`nav-item${active ? ' active' : ''}`}
-    onClick={onClick}
-    title={p.label}
-    style={{ opacity: pending ? 0.6 : 1 }}
-  >
-    <span className="nav-icon">{p.icon}</span>
+const NavItem = memo(({ p, active, onClick }) => (
+  <div className={`nav-item${active ? ' active' : ''}`} onClick={onClick} title={p.label}>
     <span className="nav-label">{p.label}</span>
-    {active && pending && <span style={{ marginLeft: 'auto', fontSize: 10, opacity: 0.5 }}>…</span>}
   </div>
 ))
 
@@ -57,9 +50,7 @@ export default function App() {
   const [apiOk, setApiOk] = useState(null)
   const [isPending, startTransition] = useTransition()
 
-  const navigate = useCallback(id => {
-    startTransition(() => setPage(id))
-  }, [])
+  const navigate = useCallback(id => { startTransition(() => setPage(id)) }, [])
 
   useEffect(() => {
     if ('requestIdleCallback' in window) requestIdleCallback(prefetchAll)
@@ -90,7 +81,7 @@ export default function App() {
     <div className="layout">
       <aside className="sidebar">
         <div className="sidebar-logo">
-          <div className="sidebar-logo-icon">⬡</div>
+          <div className="sidebar-logo-icon" />
           <div className="sidebar-logo-text">
             <div className="sidebar-logo-name">SH-DFS <span>Monitor</span></div>
             <div className="sidebar-logo-sub">Walmart · Phase 1</div>
@@ -101,9 +92,7 @@ export default function App() {
           <div key={g}>
             <div className="sidebar-section">{g}</div>
             {PAGES.filter(p => p.group === g).map(p => (
-              <NavItem key={p.id} p={p} active={page === p.id}
-                pending={isPending && page === p.id}
-                onClick={() => navigate(p.id)} />
+              <NavItem key={p.id} p={p} active={page === p.id} onClick={() => navigate(p.id)} />
             ))}
           </div>
         ))}
@@ -115,41 +104,36 @@ export default function App() {
             {apiOk === false ? 'API offline' : apiOk === null ? 'Connecting…' : 'API connected'}
           </div>
           <div style={{ marginTop: 2 }}>45 stores · 6,435 rows</div>
-          <div style={{ marginTop: 2, fontSize: 10, opacity: 0.6 }}>Alt+1–9 to navigate</div>
         </div>
       </aside>
 
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
         <div className="topbar">
           <span className="topbar-breadcrumb">
-            SH-DFS &rsaquo; <span>{currentPage?.group}</span> &rsaquo;
-            <span> {currentPage?.icon} {currentPage?.label}</span>
+            SH-DFS &rsaquo; <span>{currentPage?.group}</span> &rsaquo; <span>{currentPage?.label}</span>
           </span>
           <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 8 }}>
             <div style={{
-              display: 'flex', alignItems: 'center', gap: 6,
-              fontSize: 11, color: apiOk === false ? 'var(--red)' : 'var(--green)',
-              background: apiOk === false ? 'rgba(239,68,68,0.08)' : 'rgba(16,185,129,0.08)',
-              border: `1px solid ${apiOk === false ? 'rgba(239,68,68,0.2)' : 'rgba(16,185,129,0.2)'}`,
-              padding: '4px 10px', borderRadius: 6,
+              display: 'flex', alignItems: 'center', gap: 6, fontSize: 11,
+              color: apiOk === false ? 'var(--red)' : 'var(--green)',
+              background: apiOk === false ? '#fef2f2' : '#f0fdf4',
+              border: `1px solid ${apiOk === false ? '#fecaca' : '#bbf7d0'}`,
+              padding: '4px 12px', borderRadius: 6, fontWeight: 600,
             }}>
               <span style={{
                 width: 6, height: 6, borderRadius: '50%',
                 background: apiOk === false ? 'var(--red)' : 'var(--green)',
                 display: 'inline-block',
-                boxShadow: apiOk !== false ? '0 0 6px var(--green)' : 'none',
               }} />
-              {apiOk === false ? '🔴 Offline' : '🟢 Live'}
+              {apiOk === false ? 'Offline' : 'Live'}
             </div>
           </div>
         </div>
 
         <main className="main" style={{ opacity: isPending ? 0.7 : 1, transition: 'opacity 0.1s' }}>
           <Suspense fallback={
-            <div style={{ display:'flex', alignItems:'center', justifyContent:'center', height:'60vh' }}>
-              <div style={{ textAlign:'center', color:'var(--text3)', fontSize:13 }}>
-                <div className="spinner" />Loading…
-              </div>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '60vh' }}>
+              <div className="spinner" />
             </div>
           }>
             <div className="page-enter"><Page /></div>

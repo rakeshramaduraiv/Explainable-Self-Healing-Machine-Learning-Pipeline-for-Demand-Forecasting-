@@ -14,14 +14,12 @@ const InsightCard = memo(({ growth, storeData }) => {
     <SectionCard title="Key Insights">
       <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
         <div className={`alert ${isUp ? 'alert-g' : isDown ? 'alert-r' : 'alert-b'}`} style={{ flex: 1, minWidth: 220 }}>
-          <span style={{ fontSize: 16, marginRight: 8 }}>{isUp ? '📈' : isDown ? '📉' : '📊'}</span>
-          <strong>{isUp ? 'Strong growth' : isDown ? 'Declining demand' : 'Stable demand'}</strong>
+          <span style={{ fontSize: 13, fontWeight: 600 }}>{isUp ? 'Strong growth' : isDown ? 'Declining demand' : 'Stable demand'}</span>
           {' — '}{growth >= 0 ? '+' : ''}{growth.toFixed(1)}% MoM
         </div>
         {storeData.length > 0 && (
           <div className="alert alert-g" style={{ flex: 1, minWidth: 220 }}>
-            <span style={{ fontSize: 16, marginRight: 8 }}>🏪</span>
-            Top store: <strong>Store {storeData[0]?.store}</strong> — {fmtM(storeData[0]?.sales ?? 0)} total
+              Top store: <strong>Store {storeData[0]?.store}</strong> — {fmtM(storeData[0]?.sales ?? 0)} total
           </div>
         )}
       </div>

@@ -3,3 +3,58 @@
 2026-03-09 10:03:19 | INFO     | demand_analyzer | Loaded 120 rows for demand analysis
 2026-03-09 10:03:19 | INFO     | demand_analyzer | Loaded 120 rows for demand analysis
 2026-03-09 10:03:19 | INFO     | demand_analyzer | Loaded 120 rows for demand analysis
+2026-03-09 10:07:24 | INFO     | pipeline | ============================================================
+2026-03-09 10:07:24 | INFO     | pipeline | PHASE 1: SELF-HEALING DEMAND FORECASTING SYSTEM
+2026-03-09 10:07:24 | INFO     | pipeline | ============================================================
+2026-03-09 10:07:24 | INFO     | pipeline | [1/7] Loading data
+2026-03-09 10:07:24 | INFO     | data_loader | Loaded 120 rows, 8 columns
+2026-03-09 10:07:24 | INFO     | data_loader | Stores: 5 | Missing: 0
+2026-03-09 10:07:24 | INFO     | pipeline | [1/7] Loading data done in 0s
+2026-03-09 10:07:24 | INFO     | pipeline | [2/7] Splitting data
+2026-03-09 10:07:24 | INFO     | pipeline | Small dataset (120 rows) — auto-adjusted train_months to 10
+2026-03-09 10:07:24 | INFO     | data_loader | Train: 44 | Test: 76 | Cutoff: 2012-11-01
+2026-03-09 10:07:24 | INFO     | pipeline | [2/7] Splitting data done in 0s
+2026-03-09 10:07:24 | INFO     | pipeline | [3/7] Feature engineering
+2026-03-09 10:07:25 | INFO     | pipeline | Features: 67 | Train rows: 44 | Test rows: 76
+2026-03-09 10:07:25 | INFO     | pipeline | [3/7] Feature engineering done in 0s
+2026-03-09 10:07:25 | INFO     | pipeline | [4/7] Training model
+2026-03-09 10:07:40 | INFO     | model_trainer | Best RF params: {'n_estimators': 200, 'min_samples_split': 5, 'min_samples_leaf': 2, 'min_impurity_decrease': 0.0, 'max_features': 0.7, 'max_depth': 30}
+2026-03-09 10:07:42 | INFO     | model_trainer | RF:3,407 GB:18 → RF | Rows:44
+2026-03-09 10:07:42 | INFO     | model_trainer | train → RMSE:4254 MAE:3407 R²:0.9858 MAPE:2.58%
+2026-03-09 10:07:43 | INFO     | model_trainer | Model saved: models/active_model.pkl | Version:v1_20260309_100742 | Type:RF
+2026-03-09 10:07:43 | INFO     | model_trainer | Metrics saved: logs/baseline_metrics.json
+2026-03-09 10:07:43 | INFO     | drift_detector | Dynamic thresholds set for 67 features
+2026-03-09 10:07:44 | INFO     | model_trainer | CI Coverage:100.00% | Avg Width:37,022
+2026-03-09 10:07:44 | INFO     | drift_detector | Baseline set: 67 features
+2026-03-09 10:07:44 | INFO     | pipeline | [4/7] Training model done in 19s
+2026-03-09 10:07:44 | INFO     | pipeline | [5/7] Simulating months
+2026-03-09 10:07:44 | INFO     | pipeline | Simulating 18 months...
+2026-03-09 10:07:44 | WARNING  | pipeline | Skipping 2012-11: only 4 rows
+2026-03-09 10:07:45 | INFO     | pipeline |   2012-12: SEVERE (severe=120, mild=4, error_ratio=1.86x)
+2026-03-09 10:07:45 | WARNING  | pipeline | Skipping 2013-01: only 4 rows
+2026-03-09 10:07:45 | WARNING  | pipeline | Skipping 2013-02: only 4 rows
+2026-03-09 10:07:46 | INFO     | pipeline |   2013-03: SEVERE (severe=117, mild=6, error_ratio=1.63x)
+2026-03-09 10:07:46 | WARNING  | pipeline | Skipping 2013-04: only 4 rows
+2026-03-09 10:07:46 | WARNING  | pipeline | Skipping 2013-05: only 4 rows
+2026-03-09 10:07:48 | INFO     | pipeline |   2013-06: SEVERE (severe=118, mild=6, error_ratio=1.46x)
+2026-03-09 10:07:48 | WARNING  | pipeline | Skipping 2013-07: only 4 rows
+2026-03-09 10:07:48 | WARNING  | pipeline | Skipping 2013-08: only 4 rows
+2026-03-09 10:07:49 | INFO     | pipeline |   2013-09: SEVERE (severe=115, mild=8, error_ratio=1.55x)
+2026-03-09 10:07:49 | WARNING  | pipeline | Skipping 2013-10: only 4 rows
+2026-03-09 10:07:49 | WARNING  | pipeline | Skipping 2013-11: only 4 rows
+2026-03-09 10:07:50 | INFO     | pipeline |   2013-12: SEVERE (severe=122, mild=4, error_ratio=1.92x)
+2026-03-09 10:07:50 | WARNING  | pipeline | Skipping 2014-01: only 4 rows
+2026-03-09 10:07:50 | WARNING  | pipeline | Skipping 2014-02: only 4 rows
+2026-03-09 10:07:51 | INFO     | pipeline |   2014-03: SEVERE (severe=117, mild=6, error_ratio=0.44x)
+2026-03-09 10:07:51 | WARNING  | pipeline | Skipping 2014-04: only 2 rows
+2026-03-09 10:07:51 | INFO     | pipeline | [5/7] Simulating months done in 6s
+2026-03-09 10:07:51 | INFO     | pipeline | [6/7] Generating summary
+2026-03-09 10:07:51 | INFO     | pipeline | Final Severity: SEVERE | Phase 2 required: Retrain model immediately
+2026-03-09 10:07:51 | INFO     | pipeline | [6/7] Generating summary done in 0s
+2026-03-09 10:07:51 | INFO     | pipeline | [7/7] Saving results
+2026-03-09 10:07:51 | INFO     | log_book | All logs saved
+2026-03-09 10:07:51 | INFO     | pipeline | All results saved
+2026-03-09 10:07:51 | INFO     | pipeline | [7/7] Saving results done in 0s
+2026-03-09 10:07:51 | INFO     | pipeline | PHASE 1 COMPLETE in 26s | Severity: SEVERE
+2026-03-09 10:07:51 | INFO     | __main__ | Final Drift Severity: SEVERE
+2026-03-09 10:07:51 | INFO     | __main__ | Recommendation: Phase 2 required: Retrain model immediately

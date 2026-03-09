@@ -93,9 +93,9 @@ export default function Upload() {
       </div>
 
       <div className="tabs">
-        <div className={`tab${tab === 'upload'  ? ' active' : ''}`} onClick={() => setTab('upload')}>⬆ Upload & Run</div>
+        <div className={`tab${tab === 'upload'  ? ' active' : ''}`} onClick={() => setTab('upload')}>Upload & Run</div>
         <div className={`tab${tab === 'results' ? ' active' : ''}`} onClick={() => setTab('results')}>
-          📊 Results {result && <span style={{ marginLeft: 6, background: 'var(--green)', color: '#fff', borderRadius: 10, padding: '1px 7px', fontSize: 10, fontWeight: 700 }}>✓</span>}
+          Results {result && <span style={{ marginLeft: 6, background: 'var(--green)', color: '#fff', borderRadius: 10, padding: '1px 7px', fontSize: 10, fontWeight: 700 }}>Done</span>}
         </div>
       </div>
 
@@ -104,7 +104,7 @@ export default function Upload() {
           <div className={`upload-zone${drag ? ' drag' : ''}`}
             onDragOver={onDragOver} onDragLeave={onDragLeave}
             onDrop={onDrop} onClick={onZoneClick}>
-            <div className="upload-zone-icon">{file ? '📄' : '⬆'}</div>
+            <div className="upload-zone-icon" style={{ fontSize: 32, opacity: 0.3, fontFamily: 'sans-serif' }}>{file ? '[ CSV ]' : '[ + ]'}</div>
             <p style={{ fontWeight: 700, color: 'var(--text)', fontSize: 15 }}>
               {file ? file.name : 'Drop a CSV here or click to browse'}
             </p>

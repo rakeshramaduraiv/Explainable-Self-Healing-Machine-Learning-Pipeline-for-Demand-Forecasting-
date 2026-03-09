@@ -143,10 +143,9 @@ export const CHART_STYLE = {
 }
 
 // ── Empty state ──────────────────────────────────────────────────────────────
-export const EmptyState = memo(({ icon = '📭', title = 'No data', sub }) => (
+export const EmptyState = memo(({ title = 'No data', sub }) => (
   <div style={{ textAlign: 'center', padding: '48px 24px', color: 'var(--text3)' }}>
-    <div style={{ fontSize: 36, marginBottom: 12, opacity: 0.5 }}>{icon}</div>
-    <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--text2)', marginBottom: 6 }}>{title}</div>
+    <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text2)', marginBottom: 6 }}>{title}</div>
     {sub && <div style={{ fontSize: 12 }}>{sub}</div>}
   </div>
 ))
