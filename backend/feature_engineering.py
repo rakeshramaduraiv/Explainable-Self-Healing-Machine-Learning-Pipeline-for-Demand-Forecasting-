@@ -43,17 +43,16 @@ class FeatureEngineer:
         return df
 
     def create_lag_features(self, df):
-        df = df.sort_values(["Store", "Date"])
+        df = df.sort_values(["Store", "Date"]).copy()
         for lag in [1, 2, 3, 4, 8, 12, 26, 52]:
             col = f"Lag_{lag}"
             df[col] = df.groupby("Store")["Weekly_Sales"].shift(lag)
             df[col] = df.groupby("Store")[col].transform(lambda x: x.fillna(x.mean()).fillna(0))
-        # Year-over-year lag
         df["Lag_52_ratio"] = df["Lag_52"] / (df["Lag_1"] + 1)
         return df
 
     def create_rolling_features(self, df):
-        df = df.sort_values(["Store", "Date"])
+        df = df.sort_values(["Store", "Date"]).copy()
         for w in [4, 8, 12, 26]:
             s = df.groupby("Store")["Weekly_Sales"].transform
             df[f"Rolling_Mean_{w}"] = s(lambda x: x.shift(1).rolling(w, min_periods=1).mean())
@@ -73,6 +72,7 @@ class FeatureEngineer:
             Store_Mean="mean", Store_Median="median",
             Store_Std="std",   Store_Max="max", Store_Min="min"
         ).reset_index()
+        store_stats["Store_Std"] = store_stats["Store_Std"].fillna(0)
         df = df.merge(store_stats, on="Store", how="left")
         df["Sales_vs_Store_Mean"]   = df["Weekly_Sales"] / (df["Store_Mean"]   + 1)
         df["Sales_vs_Store_Median"] = df["Weekly_Sales"] / (df["Store_Median"] + 1)

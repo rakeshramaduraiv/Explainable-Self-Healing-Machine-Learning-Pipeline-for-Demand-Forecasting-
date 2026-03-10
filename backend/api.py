@@ -1,4 +1,4 @@
-import json, shutil, subprocess, sys, time
+import json, shutil, subprocess, sys, time, os
 from pathlib import Path
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, UploadFile, File, HTTPException
@@ -7,7 +7,6 @@ from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.responses import JSONResponse
 import pandas as pd
 import joblib
-
 BASE      = Path(__file__).parent.resolve()
 LOGS      = BASE / "logs"
 UPLOAD    = BASE / "uploads"
@@ -119,9 +118,13 @@ async def lifespan(app):
         except Exception: pass
     yield
 
+import os
+
+CORS_ORIGINS = os.environ.get("CORS_ORIGINS", "*").split(",")
+
 app = FastAPI(title="SH-DFS API", version="2.0.0", lifespan=lifespan)
 app.add_middleware(GZipMiddleware, minimum_size=500)
-app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
+app.add_middleware(CORSMiddleware, allow_origins=CORS_ORIGINS, allow_methods=["GET", "POST"], allow_headers=["*"])
 
 # ── Cache-Control header on all GET responses ─────────────────────────────────
 @app.middleware("http")

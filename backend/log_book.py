@@ -16,11 +16,16 @@ class LogBook:
         path = os.path.join(self.log_dir, filename)
         data = []
         if os.path.exists(path):
-            with open(path, "r") as f:
-                data = json.load(f)
+            try:
+                with open(path, "r", encoding="utf-8") as f:
+                    data = json.load(f)
+            except (json.JSONDecodeError, ValueError):
+                data = []
         data.append(entry)
-        with open(path, "w") as f:
+        tmp = path + ".tmp"
+        with open(tmp, "w", encoding="utf-8") as f:
             json.dump(data, f, indent=2)
+        os.replace(tmp, path)
 
     def log_training(self, metrics, params, feature_count):
         self._save_log("training_log.json", {
@@ -31,12 +36,14 @@ class LogBook:
         })
 
     def log_batch_predictions(self, month_label, predictions, actuals, stores=None):
+        if not predictions:
+            return
         self._save_log("prediction_batches.json", {
             "timestamp": datetime.now().isoformat(),
             "month": month_label,
             "count": len(predictions),
-            "mean_pred": round(float(sum(predictions) / len(predictions)), 2),
-            "mean_actual": round(float(sum(actuals) / len(actuals)), 2),
+            "mean_pred":   round(sum(predictions) / len(predictions), 2),
+            "mean_actual": round(sum(actuals)     / len(actuals),     2),
         })
         ts = datetime.now().strftime("%Y%m%d_%H%M%S")
         csv_path = os.path.join(self.log_dir, f"predictions_{ts}.csv")

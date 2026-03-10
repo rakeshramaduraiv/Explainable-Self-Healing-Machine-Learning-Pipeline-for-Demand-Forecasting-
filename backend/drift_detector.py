@@ -86,6 +86,8 @@ class DriftDetector:
     def _compute_psi(self, baseline, current, bins=10):
         lo = min(baseline.min(), current.min())
         hi = max(baseline.max(), current.max())
+        if lo == hi:
+            return 0.0
         breakpoints = np.linspace(lo, hi, bins + 1)
         b_pct = np.histogram(baseline, bins=breakpoints)[0] / len(baseline)
         c_pct = np.histogram(current, bins=breakpoints)[0] / len(current)
@@ -135,8 +137,10 @@ class DriftDetector:
         return results
 
     def track_error_trend(self, current_errors):
+        if len(current_errors) == 0:
+            return {"error_increase": 0.0, "drift": False}
         current_mean = float(np.mean(np.abs(current_errors)))
-        if self.baseline_errors is None:
+        if self.baseline_errors is None or len(self.baseline_errors) == 0:
             return {"error_increase": 0.0, "drift": False}
         baseline_mean = float(np.mean(np.abs(self.baseline_errors)))
         increase = (current_mean - baseline_mean) / (baseline_mean + 1e-9)

@@ -56,7 +56,8 @@ class ModelTrainer:
                 f"Training set too small ({len(X_train)} rows). "
                 "Upload a dataset with more rows or a wider date range."
             )
-        params = self.best_params or {}
+        params = {k: v for k, v in (self.best_params or {}).items()
+                  if k in RandomForestRegressor().get_params()}
         rf = RandomForestRegressor(**params, random_state=42, n_jobs=-1)
         gb = GradientBoostingRegressor(
             n_estimators=300, max_depth=5, learning_rate=0.03,
@@ -112,12 +113,13 @@ class ModelTrainer:
 
     def evaluate(self, X, y, split="train"):
         preds = self.model.predict(X)
-        rmse  = float(np.sqrt(mean_squared_error(y, preds)))
-        mae   = float(mean_absolute_error(y, preds))
-        r2    = float(r2_score(y, preds))
-        mask  = y != 0
-        mape  = float(np.mean(np.abs((y[mask] - preds[mask]) / y[mask])) * 100) if mask.any() else 0.0
-        wmape = float(np.sum(np.abs(y - preds)) / (np.sum(np.abs(y)) + 1e-9) * 100)
+        y_arr = np.asarray(y)
+        rmse  = float(np.sqrt(mean_squared_error(y_arr, preds)))
+        mae   = float(mean_absolute_error(y_arr, preds))
+        r2    = float(r2_score(y_arr, preds))
+        mask  = y_arr != 0
+        mape  = float(np.mean(np.abs((y_arr[mask] - preds[mask]) / y_arr[mask])) * 100) if mask.any() else 0.0
+        wmape = float(np.sum(np.abs(y_arr - preds)) / (np.sum(np.abs(y_arr)) + 1e-9) * 100)
         self.metrics[split] = {"RMSE":rmse,"MAE":mae,"R2":r2,"MAPE":mape,"WMAPE":wmape,
                                "model": getattr(self, "_model_name", "RF")}
         log.info(f"{split} → RMSE:{rmse:.0f} MAE:{mae:.0f} R²:{r2:.4f} MAPE:{mape:.2f}%")

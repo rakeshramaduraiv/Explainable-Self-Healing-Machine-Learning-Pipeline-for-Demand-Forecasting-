@@ -1,4 +1,5 @@
 import os
+import pandas as pd
 import numpy as np
 from datetime import datetime
 from data_loader import DataLoader
@@ -101,12 +102,10 @@ class Phase1Pipeline:
             preds = self.trainer.model.predict(X)
             _, lower, upper = self.trainer.predict_with_confidence(X)
             self.logbook.log_batch_predictions(str(month), preds.tolist(), y.tolist(), stores)
-            # Save rich per-row CSV to processed/
-            import pandas as _pd
             ts = datetime.now().strftime("%Y%m%d_%H%M%S")
-            out = _pd.DataFrame({
+            out = pd.DataFrame({
                 "Store":        stores if stores is not None else range(len(y)),
-                "Date":         month_df["Date"].values,
+                "Date":         month_df["Date"].dt.strftime("%Y-%m-%d").values,
                 "Weekly_Sales": y,
                 "Predicted":    preds.round(2),
                 "CI_Lower":     lower.round(2),

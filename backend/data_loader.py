@@ -21,7 +21,7 @@ class DataLoader:
         missing = REQUIRED_COLS - set(self.df.columns)
         if missing:
             raise ValueError(f"Missing required columns: {missing}")
-        self.df["Date"] = pd.to_datetime(self.df["Date"], dayfirst=True)
+        self.df["Date"] = pd.to_datetime(self.df["Date"], dayfirst=False, infer_datetime_format=True)
         self.df = self.df.sort_values(["Store", "Date"]).reset_index(drop=True)
         log.info(f"Loaded {len(self.df)} rows, {len(self.df.columns)} columns")
         return self.df
