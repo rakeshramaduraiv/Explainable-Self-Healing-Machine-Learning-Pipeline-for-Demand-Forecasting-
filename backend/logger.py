@@ -11,9 +11,11 @@ logging.basicConfig(
         logging.StreamHandler(),
         logging.FileHandler(
             f"logs/system_{datetime.now().strftime('%Y%m%d')}.log",
-            encoding="utf-8"
+            encoding="utf-8",
+            delay=True,
         ),
-    ]
+    ],
+    force=True,
 )
 
 def get_logger(name: str) -> logging.Logger:

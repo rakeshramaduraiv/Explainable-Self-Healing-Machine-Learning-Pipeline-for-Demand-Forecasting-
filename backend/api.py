@@ -79,9 +79,10 @@ def _build_store_stats():
     return agg.round(2).to_dict(orient="records")
 
 def _get_analyzer():
-    from demand_analyzer import DemandAnalyzer   # lazy import — saves 0.66s on startup
+    from demand_analyzer import DemandAnalyzer
+    data_file = str(DATA / "uploaded_data.csv")
     a = DemandAnalyzer()
-    a.load_data(str(DATA / "uploaded_data.csv"))
+    a.load_data(data_file)
     return a
 
 def _build_demand_metrics():

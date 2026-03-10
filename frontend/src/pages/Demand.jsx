@@ -8,18 +8,21 @@ const PALETTE = ['#3b82f6','#6366f1','#8b5cf6','#10b981','#f59e0b','#ef4444','#6
 const fmtM = n => n >= 1e6 ? `$${(n / 1e6).toFixed(1)}M` : n >= 1e3 ? `$${(n / 1e3).toFixed(1)}K` : `$${n?.toFixed(0) ?? 0}`
 
 const InsightCard = memo(({ growth, storeData }) => {
-  const isUp   = growth > 5
-  const isDown = growth < -5
+  const color = growth > 5 ? 'var(--green)' : growth < -5 ? 'var(--red)' : 'var(--blue)'
+  const label = growth > 5 ? 'Strong growth' : growth < -5 ? 'Declining demand' : 'Stable demand'
   return (
     <SectionCard title="Key Insights">
-      <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-        <div className={`alert ${isUp ? 'alert-g' : isDown ? 'alert-r' : 'alert-b'}`} style={{ flex: 1, minWidth: 220 }}>
-          <span style={{ fontSize: 13, fontWeight: 600 }}>{isUp ? 'Strong growth' : isDown ? 'Declining demand' : 'Stable demand'}</span>
-          {' — '}{growth >= 0 ? '+' : ''}{growth.toFixed(1)}% MoM
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+        <div style={{ padding: '14px 18px', borderRadius: 8, border: '1px solid var(--border)', background: 'var(--card2)' }}>
+          <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '1.2px', marginBottom: 6 }}>Demand Trend</div>
+          <div style={{ fontSize: 18, fontWeight: 700, color }}>{growth >= 0 ? '+' : ''}{growth.toFixed(1)}% MoM</div>
+          <div style={{ fontSize: 12, color: 'var(--text2)', marginTop: 4 }}>{label}</div>
         </div>
         {storeData.length > 0 && (
-          <div className="alert alert-g" style={{ flex: 1, minWidth: 220 }}>
-              Top store: <strong>Store {storeData[0]?.store}</strong> — {fmtM(storeData[0]?.sales ?? 0)} total
+          <div style={{ padding: '14px 18px', borderRadius: 8, border: '1px solid var(--border)', background: 'var(--card2)' }}>
+            <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '1.2px', marginBottom: 6 }}>Top Store</div>
+            <div style={{ fontSize: 18, fontWeight: 700, color: 'var(--blue)' }}>Store {storeData[0]?.store}</div>
+            <div style={{ fontSize: 12, color: 'var(--text2)', marginTop: 4 }}>{fmtM(storeData[0]?.sales ?? 0)} total demand</div>
           </div>
         )}
       </div>

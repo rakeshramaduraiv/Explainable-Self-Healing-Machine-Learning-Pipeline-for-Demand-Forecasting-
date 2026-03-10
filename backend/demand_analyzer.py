@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import os
 from logger import get_logger
 
 log = get_logger(__name__)
@@ -11,9 +12,12 @@ class DemandAnalyzer:
         self.metrics = {}
         
     def load_data(self, filepath="data/uploaded_data.csv"):
-        """Load and preprocess data for demand analysis"""
+        if not os.path.exists(filepath):
+            raise FileNotFoundError(f"Data file not found: {filepath}")
         self.df = pd.read_csv(filepath)
-        self.df["Date"] = pd.to_datetime(self.df["Date"], dayfirst=True)
+        if "Weekly_Sales" not in self.df.columns or "Date" not in self.df.columns:
+            raise ValueError("CSV must contain 'Date' and 'Weekly_Sales' columns")
+        self.df["Date"] = pd.to_datetime(self.df["Date"], dayfirst=False, infer_datetime_format=True)
         self.df = self.df.sort_values("Date").reset_index(drop=True)
         self.df["Weekly_Sales"] = pd.to_numeric(self.df["Weekly_Sales"], errors="coerce")
         self.df = self.df.dropna(subset=["Weekly_Sales"])
@@ -37,12 +41,14 @@ class DemandAnalyzer:
         return self.metrics
     
     def _calculate_growth_rate(self, monthly_data):
-        """Calculate month-over-month growth rate"""
         if len(monthly_data) < 2:
             return 0.0
-        recent = monthly_data.iloc[-1]
+        recent   = monthly_data.iloc[-1]
         previous = monthly_data.iloc[-2]
-        return float(((recent - previous) / previous) * 100) if previous != 0 else 0.0
+        if previous == 0 or not np.isfinite(previous):
+            return 0.0
+        rate = float(((recent - previous) / abs(previous)) * 100)
+        return rate if np.isfinite(rate) else 0.0
     
     def get_demand_trend_data(self):
         """Get data for demand trend chart"""

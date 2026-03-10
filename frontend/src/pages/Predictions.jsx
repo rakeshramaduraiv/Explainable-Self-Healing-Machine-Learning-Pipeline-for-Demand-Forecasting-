@@ -90,7 +90,7 @@ export default function Predictions() {
       setSelected(newest); setStore(null)
     }
     prevNewest.current = newest
-  }, [months])
+  }, [months, selected])
 
   const activeMonth = selected || (months?.[months.length - 1] ?? null)
   const { data: preds, loading: lp, error: ep, updatedAt, fresh, reload } = usePredictions(activeMonth)
@@ -157,10 +157,10 @@ export default function Predictions() {
           boxShadow: fresh ? '0 0 8px var(--green)' : 'none',
           transition: 'all 0.4s', flexShrink: 0,
         }} />
-        <span>{fresh ? '✓ Data refreshed' : updatedAt ? `Last updated ${updatedAt.toLocaleTimeString()}` : 'Loading…'}</span>
+        <span>{fresh ? 'Data refreshed' : updatedAt ? `Last updated ${updatedAt.toLocaleTimeString()}` : 'Loading…'}</span>
         <span style={{ marginLeft: 'auto' }}>
           Auto-polls every 12s ·{' '}
-          <button className="btn btn-outline" style={{ padding: '2px 10px', fontSize: 10 }} onClick={reload}>↻ Refresh</button>
+          <button className="btn btn-outline" style={{ padding: '2px 10px', fontSize: 10 }} onClick={reload}>Refresh</button>
         </span>
       </div>
 
