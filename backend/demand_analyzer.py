@@ -17,7 +17,7 @@ class DemandAnalyzer:
         self.df = pd.read_csv(filepath)
         if "Weekly_Sales" not in self.df.columns or "Date" not in self.df.columns:
             raise ValueError("CSV must contain 'Date' and 'Weekly_Sales' columns")
-        self.df["Date"] = pd.to_datetime(self.df["Date"], dayfirst=False, infer_datetime_format=True)
+        self.df["Date"] = pd.to_datetime(self.df["Date"], dayfirst=True)
         self.df = self.df.sort_values("Date").reset_index(drop=True)
         self.df["Weekly_Sales"] = pd.to_numeric(self.df["Weekly_Sales"], errors="coerce")
         self.df = self.df.dropna(subset=["Weekly_Sales"])

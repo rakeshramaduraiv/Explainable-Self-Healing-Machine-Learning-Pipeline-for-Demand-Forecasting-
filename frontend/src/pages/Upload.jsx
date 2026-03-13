@@ -85,8 +85,11 @@ export default function Upload() {
     try {
       const r = await API.uploadPredict(file)
       setProgress(65)
+      if (!r.ok) {
+        const data = await r.json().catch(() => ({}))
+        throw new Error(data.detail || data.message || `Pipeline failed (HTTP ${r.status})`)
+      }
       const data = await r.json()
-      if (!r.ok) throw new Error(data.detail || data.message || 'Pipeline failed')
       setProgress(85)
       const [drift, monthly] = await Promise.all([
         API.drift(),

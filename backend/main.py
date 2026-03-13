@@ -12,8 +12,9 @@ def main():
         return 0
     except Exception as e:
         log.error(f"Phase 1 failed: {e}")
-        import traceback
-        traceback.print_exc()
+        import traceback, sys
+        traceback.print_exc(file=sys.stderr)
+        print(f"Error: {e}", file=sys.stderr)
         return 1
 
 if __name__ == "__main__":

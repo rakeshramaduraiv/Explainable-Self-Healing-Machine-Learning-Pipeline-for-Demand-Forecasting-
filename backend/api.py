@@ -314,10 +314,26 @@ async def upload_predict(file: UploadFile = File(...)):
         capture_output=True, text=True, timeout=300, cwd=str(BASE)
     )
     if result.returncode != 0:
-        stderr = result.stderr[-2000:]
-        for line in reversed(stderr.splitlines()):
-            if "Error" in line or "error" in line:
-                raise HTTPException(422, line.strip())
-        raise HTTPException(500, stderr)
+        combined = (result.stdout + "\n" + result.stderr)[-3000:]
+        print("=== PIPELINE STDOUT ===", flush=True)
+        print(result.stdout[-2000:], flush=True)
+        print("=== PIPELINE STDERR ===", flush=True)
+        print(result.stderr[-2000:], flush=True)
+        print("=== END ===", flush=True)
+        error_line = ""
+        for line in reversed(combined.splitlines()):
+            line = line.strip()
+            if not line:
+                continue
+            if any(x in line for x in ["ValueError", "FileNotFoundError", "KeyError",
+                                        "Missing required", "too small", "Error:", "error:"]):
+                error_line = line
+                break
+        if not error_line:
+            for line in reversed(combined.splitlines()):
+                if line.strip():
+                    error_line = line.strip()
+                    break
+        raise HTTPException(422, error_line or "Pipeline failed — check backend terminal")
     _bust()
     return {"status": "ok", "stdout": result.stdout[-1000:]}
