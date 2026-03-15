@@ -1,139 +1,127 @@
 import json
-from datetime import datetime
 from pathlib import Path
+from datetime import datetime
+from logger import get_logger
+
+log = get_logger(__name__)
+
+BASE = Path(__file__).parent.resolve()
+LOGS = BASE / "logs"
+
 
 class HealingStatusIndicator:
-    """Real-time indicator for fine-tuning and retraining status"""
+    """Track and display healing action status with visual indicators"""
     
-    def __init__(self, status_file="logs/healing_status.json"):
-        self.status_file = Path(status_file)
-        self.status_file.parent.mkdir(exist_ok=True)
+    def __init__(self):
+        self.status_file = LOGS / "healing_status.json"
+        self.current_status = self._load_status()
     
-    def start_fine_tune(self, month, drift_magnitude):
-        """Mark fine-tuning as started"""
-        status = {
-            "status": "FINE_TUNING",
-            "month": str(month),
-            "action": "FINE_TUNE",
-            "drift_magnitude": float(drift_magnitude),
-            "started_at": datetime.now().isoformat(),
-            "progress": "Calculating drift magnitude...",
-        }
-        self._write_status(status)
-        print(f"\n🔧 FINE-TUNING STARTED: {month}")
-        print(f"   Drift Magnitude: {drift_magnitude:.2f}")
-    
-    def fine_tune_progress(self, step, message):
-        """Update fine-tuning progress"""
-        status = self._read_status()
-        status.update({
-            "progress": message,
-            "step": step,
-            "updated_at": datetime.now().isoformat(),
-        })
-        self._write_status(status)
-        print(f"   ⏳ {message}")
-    
-    def fine_tune_complete(self, old_mae, new_mae, improvement, deployed):
-        """Mark fine-tuning as complete"""
-        status = self._read_status()
-        status.update({
-            "status": "FINE_TUNE_COMPLETE",
-            "old_mae": float(old_mae),
-            "new_mae": float(new_mae),
-            "improvement": float(improvement),
-            "deployed": deployed,
-            "completed_at": datetime.now().isoformat(),
-        })
-        self._write_status(status)
-        
-        symbol = "✅" if deployed else "❌"
-        print(f"   {symbol} FINE-TUNE COMPLETE")
-        print(f"      MAE: ${old_mae:,.0f} → ${new_mae:,.0f}")
-        print(f"      Improvement: {improvement*100:.2f}%")
-        print(f"      Status: {'DEPLOYED' if deployed else 'ROLLBACK'}\n")
-    
-    def start_retrain(self, month, drift_magnitude):
-        """Mark retraining as started"""
-        status = {
-            "status": "RETRAINING",
-            "month": str(month),
-            "action": "RETRAIN",
-            "drift_magnitude": float(drift_magnitude),
-            "started_at": datetime.now().isoformat(),
-            "progress": "Initializing retrain...",
-        }
-        self._write_status(status)
-        print(f"\n🔄 RETRAINING STARTED: {month}")
-        print(f"   Drift Magnitude: {drift_magnitude:.2f}")
-    
-    def retrain_progress(self, step, message):
-        """Update retraining progress"""
-        status = self._read_status()
-        status.update({
-            "progress": message,
-            "step": step,
-            "updated_at": datetime.now().isoformat(),
-        })
-        self._write_status(status)
-        print(f"   ⏳ {message}")
-    
-    def retrain_complete(self, old_mae, new_mae, improvement, deployed, train_samples):
-        """Mark retraining as complete"""
-        status = self._read_status()
-        status.update({
-            "status": "RETRAIN_COMPLETE",
-            "old_mae": float(old_mae),
-            "new_mae": float(new_mae),
-            "improvement": float(improvement),
-            "deployed": deployed,
-            "train_samples": int(train_samples),
-            "completed_at": datetime.now().isoformat(),
-        })
-        self._write_status(status)
-        
-        symbol = "✅" if deployed else "❌"
-        print(f"   {symbol} RETRAIN COMPLETE")
-        print(f"      Train Samples: {train_samples:,}")
-        print(f"      MAE: ${old_mae:,.0f} → ${new_mae:,.0f}")
-        print(f"      Improvement: {improvement*100:.2f}%")
-        print(f"      Status: {'DEPLOYED' if deployed else 'ROLLBACK'}\n")
-    
-    def monitor_only(self, month):
-        """Mark as monitoring only"""
-        status = {
-            "status": "MONITORING",
-            "month": str(month),
-            "action": "MONITOR",
-            "started_at": datetime.now().isoformat(),
-        }
-        self._write_status(status)
-        print(f"\n👁️  MONITORING: {month} (No drift action needed)")
-    
-    def rollback(self, month, reason):
-        """Mark as rollback"""
-        status = {
-            "status": "ROLLBACK",
-            "month": str(month),
-            "reason": reason,
-            "timestamp": datetime.now().isoformat(),
-        }
-        self._write_status(status)
-        print(f"\n⚠️  ROLLBACK: {month}")
-        print(f"   Reason: {reason}\n")
-    
-    def _write_status(self, status):
-        """Write status to file"""
-        with open(self.status_file, 'w') as f:
-            json.dump(status, f, indent=2)
-    
-    def _read_status(self):
-        """Read current status"""
+    def _load_status(self):
         if self.status_file.exists():
-            with open(self.status_file, 'r') as f:
-                return json.load(f)
-        return {}
+            try:
+                with open(self.status_file, "r") as f:
+                    return json.load(f)
+            except:
+                pass
+        return {"action": "idle", "progress": 0, "message": "Ready"}
+    
+    def _save_status(self):
+        LOGS.mkdir(exist_ok=True)
+        with open(self.status_file, "w") as f:
+            json.dump(self.current_status, f)
+    
+    def start_fine_tune(self, month):
+        """Mark fine-tuning start"""
+        self.current_status = {
+            "action": "fine_tune",
+            "month": str(month),
+            "progress": 10,
+            "message": f"🔧 Fine-tuning started for {month}",
+            "timestamp": datetime.now().isoformat()
+        }
+        self._save_status()
+        log.info(self.current_status["message"])
+    
+    def fine_tune_progress(self, step, total_steps):
+        """Update fine-tuning progress"""
+        progress = int(10 + (step / total_steps) * 80)
+        self.current_status["progress"] = progress
+        self.current_status["message"] = f"🔧 Fine-tuning in progress... {progress}%"
+        self._save_status()
+    
+    def fine_tune_complete(self, improvement, success=True):
+        """Mark fine-tuning complete"""
+        if success:
+            self.current_status = {
+                "action": "fine_tune_complete",
+                "progress": 100,
+                "message": f"✅ Fine-tuning complete: {improvement*100:.1f}% improvement",
+                "improvement": round(improvement, 4),
+                "timestamp": datetime.now().isoformat()
+            }
+            log.info(self.current_status["message"])
+        else:
+            self.current_status = {
+                "action": "fine_tune_failed",
+                "progress": 0,
+                "message": f"❌ Fine-tuning failed or rolled back",
+                "timestamp": datetime.now().isoformat()
+            }
+            log.warning(self.current_status["message"])
+        self._save_status()
+    
+    def start_retrain(self, month):
+        """Mark retraining start"""
+        self.current_status = {
+            "action": "retrain",
+            "month": str(month),
+            "progress": 10,
+            "message": f"🔄 Retraining started for {month}",
+            "timestamp": datetime.now().isoformat()
+        }
+        self._save_status()
+        log.info(self.current_status["message"])
+    
+    def retrain_progress(self, step, total_steps):
+        """Update retraining progress"""
+        progress = int(10 + (step / total_steps) * 80)
+        self.current_status["progress"] = progress
+        self.current_status["message"] = f"🔄 Retraining in progress... {progress}%"
+        self._save_status()
+    
+    def retrain_complete(self, improvement, success=True):
+        """Mark retraining complete"""
+        if success:
+            self.current_status = {
+                "action": "retrain_complete",
+                "progress": 100,
+                "message": f"✅ Retrain complete: {improvement*100:.1f}% improvement",
+                "improvement": round(improvement, 4),
+                "timestamp": datetime.now().isoformat()
+            }
+            log.info(self.current_status["message"])
+        else:
+            self.current_status = {
+                "action": "retrain_failed",
+                "progress": 0,
+                "message": f"❌ Retrain failed, keeping old model",
+                "timestamp": datetime.now().isoformat()
+            }
+            log.warning(self.current_status["message"])
+        self._save_status()
+    
+    def start_monitoring(self, month):
+        """Mark monitoring start"""
+        self.current_status = {
+            "action": "monitor",
+            "month": str(month),
+            "progress": 100,
+            "message": f"👁️ Monitoring {month} (low drift, no action needed)",
+            "timestamp": datetime.now().isoformat()
+        }
+        self._save_status()
+        log.info(self.current_status["message"])
     
     def get_current_status(self):
         """Get current healing status"""
-        return self._read_status()
+        return self._load_status()

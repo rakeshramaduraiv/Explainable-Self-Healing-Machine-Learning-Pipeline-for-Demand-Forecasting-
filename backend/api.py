@@ -340,3 +340,26 @@ async def upload_predict(file: UploadFile = File(...)):
 
 
 
+@app.get("/api/healing-actions")
+def healing_actions():
+    def _build():
+        summary = rj("phase1_summary.json") or {}
+        healing_stats = summary.get("healing_stats", {})
+        return {
+            "total_actions": healing_stats.get("total_actions", 0),
+            "monitor_only": healing_stats.get("monitor_only", 0),
+            "fine_tuned": healing_stats.get("fine_tuned", 0),
+            "retrained": healing_stats.get("retrained", 0),
+            "rollbacks": healing_stats.get("rollbacks", 0),
+            "avg_improvement": summary.get("avg_improvement", 0.0),
+            "recommendation": summary.get("recommendation", "No data"),
+        }
+    return _cached("healing_actions", 60, _build)
+
+@app.get("/api/healing-status")
+def healing_status():
+    def _build():
+        from healing_status import HealingStatusIndicator
+        indicator = HealingStatusIndicator()
+        return indicator.get_current_status()
+    return _cached("healing_status", 5, _build)

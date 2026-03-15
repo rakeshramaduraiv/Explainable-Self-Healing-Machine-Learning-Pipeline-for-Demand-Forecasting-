@@ -3,9 +3,9 @@
     "coverage": 1.0,
     "avg_width": 37022.06853025184
   },
-  "timestamp": "2026-03-13T21:14:28.749306",
+  "timestamp": "2026-03-15T12:25:59.729588",
   "final_severity": "severe",
-  "recommendation": "Phase 2 required: Retrain model immediately",
+  "recommendation": "Severe drift detected: Healing actions applied",
   "months_monitored": 6,
   "severity_counts": {
     "severe": 6,
@@ -13,11 +13,11 @@
     "none": 0
   },
   "train_metrics": {
-    "RMSE": 4253.531552895122,
-    "MAE": 3407.183597778194,
+    "RMSE": 4253.531552895126,
+    "MAE": 3407.183597778193,
     "R2": 0.985841749670085,
-    "MAPE": 2.5814515830698026,
-    "WMAPE": 2.542076804993608,
+    "MAPE": 2.5814515830698017,
+    "WMAPE": 2.5420768049936076,
     "model": "RF"
   },
   "feature_names": [
