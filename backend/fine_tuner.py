@@ -5,8 +5,10 @@ from datetime import datetime
 from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
 from sklearn.metrics import mean_absolute_error, r2_score
 from logger import get_logger
+from healing_status import HealingStatusIndicator
 
 log = get_logger(__name__)
+indicator = HealingStatusIndicator()
 
 
 class FineTuner:
@@ -29,6 +31,8 @@ class FineTuner:
 
     def monitor_only(self, drift_report):
         """Tier 1: No action, continue monitoring"""
+        month = drift_report.get("month", "unknown")
+        indicator.monitor_only(month)
         log.info("Tier 1 (Monitor): No drift action required")
         return {
             "action": "monitor",
@@ -44,16 +48,22 @@ class FineTuner:
         Add trees proportional to drift magnitude to existing model
         """
         log.info("Tier 2 (Fine-tune): Warm start with additional trees")
+        
+        month = drift_report.get("month", "unknown")
 
         # Calculate drift magnitude (0-1 scale)
         ks_max = max(
             [v.get("statistic", 0) for v in drift_report.get("ks_results", {}).values()],
             default=0.1,
         )
-        drift_magnitude = min(ks_max / 0.2, 1.0)  # Normalize to 0-1
+        drift_magnitude = min(ks_max / 0.2, 1.0)
+        
+        # Start indicator
+        indicator.start_fine_tune(month, drift_magnitude)
 
         # Determine trees to add (10-50 trees based on drift)
         trees_to_add = int(10 + drift_magnitude * 40)
+        indicator.fine_tune_progress(1, f"Adding {trees_to_add} trees to model...")
 
         try:
             # Clone base model and add trees
@@ -69,6 +79,7 @@ class FineTuner:
                     warm_start=True,
                 )
                 # Warm start: fit on combined data
+                indicator.fine_tune_progress(2, "Fitting model on combined data...")
                 X_combined = np.vstack([X_current, X_val])
                 y_combined = np.hstack([y_current, y_val])
                 with warnings.catch_warnings():
@@ -84,6 +95,7 @@ class FineTuner:
                     min_samples_leaf=self.base_model.min_samples_leaf,
                     random_state=42,
                 )
+                indicator.fine_tune_progress(2, "Fitting model on combined data...")
                 X_combined = np.vstack([X_current, X_val])
                 y_combined = np.hstack([y_current, y_val])
                 with warnings.catch_warnings():
@@ -100,6 +112,7 @@ class FineTuner:
                 }
 
             # Validate on holdout
+            indicator.fine_tune_progress(3, "Validating on holdout set...")
             old_mae = mean_absolute_error(y_val, self.base_model.predict(X_val))
             new_mae = mean_absolute_error(y_val, new_model.predict(X_val))
             improved, improvement = self._validate_improvement(old_mae, new_mae)
@@ -110,6 +123,7 @@ class FineTuner:
                     f"({improvement*100:.1f}% improvement)"
                 )
                 self.base_model = new_model
+                indicator.fine_tune_complete(old_mae, new_mae, improvement, True)
                 return {
                     "action": "fine_tune",
                     "severity": drift_report["severity"],
@@ -124,6 +138,8 @@ class FineTuner:
                     f"Fine-tune did not improve: MAE {old_mae:.0f} → {new_mae:.0f} "
                     f"({improvement*100:.1f}% change). Rollback."
                 )
+                indicator.fine_tune_complete(old_mae, new_mae, improvement, False)
+                indicator.rollback(month, f"Improvement {improvement*100:.1f}% < 5% threshold")
                 return {
                     "action": "rollback",
                     "severity": drift_report["severity"],
@@ -134,6 +150,7 @@ class FineTuner:
 
         except Exception as e:
             log.error(f"Fine-tune failed: {e}")
+            indicator.rollback(month, f"Fine-tune error: {str(e)}")
             return {
                 "action": "rollback",
                 "severity": drift_report["severity"],
@@ -148,9 +165,20 @@ class FineTuner:
         Complete retraining with hyperparameter tuning
         """
         log.info("Tier 3 (Retrain): Full model retraining on rolling window")
+        
+        month = drift_report.get("month", "unknown")
+        ks_max = max(
+            [v.get("statistic", 0) for v in drift_report.get("ks_results", {}).values()],
+            default=0.2,
+        )
+        drift_magnitude = min(ks_max / 0.2, 1.0)
+        
+        # Start indicator
+        indicator.start_retrain(month, drift_magnitude)
 
         try:
             if isinstance(self.base_model, RandomForestRegressor):
+                indicator.retrain_progress(1, "Creating new Random Forest model (500 trees)...")
                 new_model = RandomForestRegressor(
                     n_estimators=500,
                     max_depth=30,
@@ -161,6 +189,7 @@ class FineTuner:
                     n_jobs=-1,
                 )
             elif isinstance(self.base_model, GradientBoostingRegressor):
+                indicator.retrain_progress(1, "Creating new Gradient Boosting model (300 trees)...")
                 new_model = GradientBoostingRegressor(
                     n_estimators=300,
                     learning_rate=0.03,
@@ -180,14 +209,17 @@ class FineTuner:
                 }
 
             # Retrain on combined data
+            indicator.retrain_progress(2, "Preparing training data (12-month rolling window)...")
             X_combined = np.vstack([X_train, X_val])
             y_combined = np.hstack([y_train, y_val])
-
+            
+            indicator.retrain_progress(3, f"Fitting model on {len(X_combined):,} samples...")
             with warnings.catch_warnings():
                 warnings.simplefilter("ignore")
                 new_model.fit(X_combined, y_combined)
 
             # Validate on holdout (use validation set as test)
+            indicator.retrain_progress(4, "Validating on holdout set...")
             old_mae = mean_absolute_error(y_val, self.base_model.predict(X_val))
             new_mae = mean_absolute_error(y_val, new_model.predict(X_val))
             improved, improvement = self._validate_improvement(old_mae, new_mae)
@@ -198,6 +230,7 @@ class FineTuner:
                     f"({improvement*100:.1f}% improvement)"
                 )
                 self.base_model = new_model
+                indicator.retrain_complete(old_mae, new_mae, improvement, True, len(X_combined))
                 return {
                     "action": "retrain",
                     "severity": drift_report["severity"],
@@ -212,6 +245,8 @@ class FineTuner:
                     f"Retrain did not improve: MAE {old_mae:.0f} → {new_mae:.0f} "
                     f"({improvement*100:.1f}% change). Rollback."
                 )
+                indicator.retrain_complete(old_mae, new_mae, improvement, False, len(X_combined))
+                indicator.rollback(month, f"Improvement {improvement*100:.1f}% < 5% threshold")
                 return {
                     "action": "rollback",
                     "severity": drift_report["severity"],
@@ -222,6 +257,7 @@ class FineTuner:
 
         except Exception as e:
             log.error(f"Retrain failed: {e}")
+            indicator.rollback(month, f"Retrain error: {str(e)}")
             return {
                 "action": "rollback",
                 "severity": drift_report["severity"],

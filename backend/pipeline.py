@@ -6,7 +6,7 @@ from data_loader import DataLoader
 from feature_engineering import FeatureEngineer
 from model_trainer import ModelTrainer
 from drift_detector import DriftDetector
-from fine_tuner import FineTuner
+
 from log_book import LogBook
 from database import DriftDatabase
 from logger import get_logger
@@ -28,13 +28,13 @@ class Phase1Pipeline:
         self.engineer = FeatureEngineer()
         self.trainer = ModelTrainer()
         self.detector = DriftDetector()
-        self.fine_tuner = None
+
         self.logbook = LogBook()
         self.db = DriftDatabase()
         self.train_df = self.test_df = None
         self.feature_names = []
         self.drift_reports = []
-        self.healing_actions = []
+
         self.summary = {}
 
     def _step(self, n, label, fn):
@@ -95,10 +95,7 @@ class Phase1Pipeline:
         log.info(f"Simulating {len(months)} months...")
         os.makedirs("processed", exist_ok=True)
         
-        # Initialize fine-tuner after model training
-        if self.fine_tuner is None:
-            self.fine_tuner = FineTuner(self.trainer.model, self.feature_names)
-        
+
         for month in months:
             month_df = self.test_df[self.test_df["YearMonth"] == month]
             if len(month_df) < self.config.min_month_rows:
@@ -128,26 +125,9 @@ class Phase1Pipeline:
             self.logbook.log_drift_detection(str(month), report)
             self.db.save_drift_log(str(month), report)
             
-            # Apply healing action if drift detected
-            if report["severity"] in ["mild", "severe"]:
-                log.info(f"  {month}: {report['severity'].upper()} drift detected → Applying healing action")
-                # Split current month into train/val for fine-tuning
-                split_idx = max(1, len(X) // 2)
-                X_train_ft, X_val_ft = X.iloc[:split_idx], X.iloc[split_idx:]
-                y_train_ft, y_val_ft = y[:split_idx], y[split_idx:]
-                
-                action = self.fine_tuner.decide_healing_action(
-                    report, X_train_ft, y_train_ft, X_val_ft, y_val_ft,
-                    X_train=self.train_df[self.feature_names].values,
-                    y_train=self.train_df["Weekly_Sales"].values
-                )
-                self.healing_actions.append(action)
-                log.info(f"  Healing action: {action['action'].upper()} | "
-                         f"Improvement: {action.get('improvement', 0)*100:.1f}%")
-            else:
-                log.info(f"  {month}: {report['severity'].upper()} "
-                         f"(severe={report['severe_features']}, mild={report['mild_features']}, "
-                         f"error_ratio={report['error_trend'].get('error_increase',0):.2f}x)")
+            log.info(f"  {month}: {report['severity'].upper()} "
+                     f"(severe={report['severe_features']}, mild={report['mild_features']}, "
+                     f"error_ratio={report['error_trend'].get('error_increase',0):.2f}x)")
 
     def step6_generate_summary(self):
         severities = [r["severity"] for r in self.drift_reports]
@@ -158,37 +138,20 @@ class Phase1Pipeline:
         else:
             final_severity, recommendation = "none", "No action needed: Model is stable"
         
-        # Healing statistics
-        healing_stats = {
-            "total_actions": len(self.healing_actions),
-            "monitor_only": sum(1 for a in self.healing_actions if a["action"] == "monitor"),
-            "fine_tuned": sum(1 for a in self.healing_actions if a["action"] == "fine_tune"),
-            "retrained": sum(1 for a in self.healing_actions if a["action"] == "retrain"),
-            "rollbacks": sum(1 for a in self.healing_actions if a["action"] == "rollback"),
-        }
-        avg_improvement = np.mean([a.get("improvement", 0) for a in self.healing_actions]) if self.healing_actions else 0.0
-        
         self.summary.update({
             "timestamp": datetime.now().isoformat(),
             "final_severity": final_severity,
             "recommendation": recommendation,
             "months_monitored": len(self.drift_reports),
             "severity_counts": {s: severities.count(s) for s in ["severe", "mild", "none"]},
-            "healing_stats": healing_stats,
-            "avg_improvement": round(avg_improvement, 4),
             "train_metrics": self.trainer.metrics.get("train", {}),
             "feature_names": self.feature_names,
         })
         log.info(f"Final Severity: {final_severity.upper()} | {recommendation}")
-        log.info(f"Healing Summary: {healing_stats}")
         return self.summary
 
     def step7_save_results(self):
         self.logbook.log_phase1_completion(self.summary)
-        # Save healed model if any healing actions were taken
-        if self.healing_actions and any(a["model_updated"] for a in self.healing_actions):
-            self.fine_tuner.save_healed_model()
-            log.info(f"Healed model saved after {len(self.healing_actions)} healing actions")
         log.info("All results saved")
 
     def run_phase1(self):
@@ -212,5 +175,5 @@ class Phase1Pipeline:
                 log.error(f"Step {n} ({label}) failed: {e}")
                 raise
         elapsed = (datetime.now() - start).seconds
-        log.info(f"PHASE 1 COMPLETE in {elapsed}s | Severity: {self.summary['final_severity'].upper()}")
+        log.info(f"PHASE 1 COMPLETE in {elapsed}s")
         return self.summary
