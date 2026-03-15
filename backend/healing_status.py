@@ -70,46 +70,7 @@ class HealingStatusIndicator:
             log.warning(self.current_status["message"])
         self._save_status()
     
-    def start_retrain(self, month):
-        """Mark retraining start"""
-        self.current_status = {
-            "action": "retrain",
-            "month": str(month),
-            "progress": 10,
-            "message": f"🔄 Retraining started for {month}",
-            "timestamp": datetime.now().isoformat()
-        }
-        self._save_status()
-        log.info(self.current_status["message"])
-    
-    def retrain_progress(self, step, total_steps):
-        """Update retraining progress"""
-        progress = int(10 + (step / total_steps) * 80)
-        self.current_status["progress"] = progress
-        self.current_status["message"] = f"🔄 Retraining in progress... {progress}%"
-        self._save_status()
-    
-    def retrain_complete(self, improvement, success=True):
-        """Mark retraining complete"""
-        if success:
-            self.current_status = {
-                "action": "retrain_complete",
-                "progress": 100,
-                "message": f"✅ Retrain complete: {improvement*100:.1f}% improvement",
-                "improvement": round(improvement, 4),
-                "timestamp": datetime.now().isoformat()
-            }
-            log.info(self.current_status["message"])
-        else:
-            self.current_status = {
-                "action": "retrain_failed",
-                "progress": 0,
-                "message": f"❌ Retrain failed, keeping old model",
-                "timestamp": datetime.now().isoformat()
-            }
-            log.warning(self.current_status["message"])
-        self._save_status()
-    
+
     def start_monitoring(self, month):
         """Mark monitoring start"""
         self.current_status = {

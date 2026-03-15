@@ -135,7 +135,7 @@ class Phase1Pipeline:
             if severity == "none":
                 self.status_indicator.start_monitoring(month)
                 log.info(f"  {month}: MONITOR (low drift)")
-            elif severity == "mild":
+            elif severity in ["mild", "severe"]:
                 self.status_indicator.start_fine_tune(month)
                 split_idx = max(1, len(X) // 2)
                 X_train_ft, X_val_ft = X.iloc[:split_idx], X.iloc[split_idx:]
@@ -148,24 +148,11 @@ class Phase1Pipeline:
                 self.healing_actions.append(action)
                 self.status_indicator.fine_tune_complete(action.get("improvement", 0), action["model_updated"])
                 log.info(f"  {month}: FINE-TUNE | Improvement: {action.get('improvement', 0)*100:.1f}%")
-            elif severity == "severe":
-                self.status_indicator.start_retrain(month)
-                split_idx = max(1, len(X) // 2)
-                X_train_ft, X_val_ft = X.iloc[:split_idx], X.iloc[split_idx:]
-                y_train_ft, y_val_ft = y[:split_idx], y[split_idx:]
-                action = self.fine_tuner.decide_healing_action(
-                    report, X_train_ft, y_train_ft, X_val_ft, y_val_ft,
-                    X_train_full=self.train_df[self.feature_names].values,
-                    y_train_full=self.train_df["Weekly_Sales"].values
-                )
-                self.healing_actions.append(action)
-                self.status_indicator.retrain_complete(action.get("improvement", 0), action["model_updated"])
-                log.info(f"  {month}: RETRAIN | Improvement: {action.get('improvement', 0)*100:.1f}%")
 
     def step6_generate_summary(self):
         severities = [r["severity"] for r in self.drift_reports]
         if "severe" in severities:
-            final_severity, recommendation = "severe", "Severe drift detected: Retraining applied"
+            final_severity, recommendation = "severe", "Severe drift detected: Fine-tuning applied"
         elif "mild" in severities:
             final_severity, recommendation = "mild", "Mild drift detected: Fine-tuning applied"
         else:
@@ -176,7 +163,6 @@ class Phase1Pipeline:
             "total_actions": len(self.healing_actions),
             "monitor_only": sum(1 for a in self.healing_actions if a["action"] == "monitor"),
             "fine_tuned": sum(1 for a in self.healing_actions if a["action"] == "fine_tune"),
-            "retrained": sum(1 for a in self.healing_actions if a["action"] == "retrain"),
             "rollbacks": sum(1 for a in self.healing_actions if a["action"] == "rollback"),
         }
         avg_improvement = np.mean([a.get("improvement", 0) for a in self.healing_actions]) if self.healing_actions else 0.0
