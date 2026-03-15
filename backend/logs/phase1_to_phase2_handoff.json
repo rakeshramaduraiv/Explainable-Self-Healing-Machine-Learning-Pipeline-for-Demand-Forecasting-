@@ -1,10 +1,10 @@
 {
-  "timestamp": "2026-03-15T12:25:59.730558",
+  "timestamp": "2026-03-15T12:40:40.849013",
   "model_path": "models/active_model.pkl",
   "metrics_path": "logs/baseline_metrics.json",
   "drift_history_path": "logs/drift_history.json",
   "final_severity": "severe",
-  "recommendation": "Severe drift detected: Healing actions applied",
+  "recommendation": "Severe drift detected: Fine-tuning applied",
   "feature_names": [
     "Holiday_Flag",
     "Temperature",

@@ -3,21 +3,28 @@
     "coverage": 1.0,
     "avg_width": 37022.06853025184
   },
-  "timestamp": "2026-03-15T12:25:59.729588",
+  "timestamp": "2026-03-15T12:40:40.846842",
   "final_severity": "severe",
-  "recommendation": "Severe drift detected: Healing actions applied",
+  "recommendation": "Severe drift detected: Fine-tuning applied",
   "months_monitored": 6,
   "severity_counts": {
     "severe": 6,
     "mild": 0,
     "none": 0
   },
+  "healing_stats": {
+    "total_actions": 6,
+    "monitor_only": 6,
+    "fine_tuned": 0,
+    "rollbacks": 0
+  },
+  "avg_improvement": 0.0,
   "train_metrics": {
-    "RMSE": 4253.531552895126,
-    "MAE": 3407.183597778193,
+    "RMSE": 4253.5315528951205,
+    "MAE": 3407.183597778189,
     "R2": 0.985841749670085,
-    "MAPE": 2.5814515830698017,
-    "WMAPE": 2.5420768049936076,
+    "MAPE": 2.581451583069799,
+    "WMAPE": 2.5420768049936044,
     "model": "RF"
   },
   "feature_names": [

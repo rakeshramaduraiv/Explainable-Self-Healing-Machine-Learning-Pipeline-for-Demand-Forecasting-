@@ -6,6 +6,7 @@ import {
 } from 'recharts'
 import { API, useFetch } from '../api.js'
 import { KPI, SectionCard, SevBadge, fmtD, toast } from '../ui.jsx'
+import { HealingStatusDisplay } from './HealingStatus.jsx'
 
 const MAX_MB = 50
 
@@ -194,6 +195,8 @@ export default function Upload() {
               </div>
             </div>
           )}
+
+          {running && <HealingStatusDisplay running={running} />}
 
           {file && (
             <div style={{ marginTop: 16, display: 'flex', gap: 10 }}>

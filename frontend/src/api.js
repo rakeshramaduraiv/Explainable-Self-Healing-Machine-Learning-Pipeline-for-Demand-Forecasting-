@@ -118,9 +118,11 @@ export function usePredictions(month) {
 }
 
 export const API = {
-  drift:         () => fetch(BASE + '/api/drift').then(r => r.json()),
-  health:        () => fetch(BASE + '/api/health').then(r => r.json()),
-  uploadPredict: file => {
+  drift:           () => fetch(BASE + '/api/drift').then(r => r.json()),
+  health:          () => fetch(BASE + '/api/health').then(r => r.json()),
+  healingStatus:   () => fetch(BASE + '/api/healing-status').then(r => r.json()),
+  healingActions:  () => fetch(BASE + '/api/healing-actions').then(r => r.json()),
+  uploadPredict:   file => {
     const fd = new FormData(); fd.append('file', file)
     return fetch(BASE + '/api/upload-predict', { method: 'POST', body: fd })
   },
