@@ -1168,3 +1168,153 @@
 2026-03-17 09:58:31 | INFO     | demand_analyzer | Loaded 1575 rows for demand analysis
 2026-03-17 10:01:15 | INFO     | sequential_predictor | Loaded model with 54 features
 2026-03-17 10:01:15 | INFO     | sequential_predictor | Loaded feature engineer state
+2026-03-17 11:41:25 | INFO     | sequential_predictor | Loaded model with 54 features
+2026-03-17 11:41:25 | INFO     | sequential_predictor | Loaded feature engineer state
+2026-03-17 11:42:08 | INFO     | sequential_predictor | Loaded model with 54 features
+2026-03-17 11:42:08 | INFO     | sequential_predictor | Loaded feature engineer state
+2026-03-17 11:42:20 | INFO     | sequential_predictor | Loaded model with 54 features
+2026-03-17 11:42:20 | INFO     | sequential_predictor | Loaded feature engineer state
+2026-03-17 11:43:22 | INFO     | sequential_predictor | Loaded model with 54 features
+2026-03-17 11:43:22 | INFO     | sequential_predictor | Loaded feature engineer state
+2026-03-17 11:43:45 | INFO     | sequential_predictor | Loaded model with 54 features
+2026-03-17 11:43:45 | INFO     | sequential_predictor | Loaded feature engineer state
+2026-03-17 11:45:21 | INFO     | sequential_predictor | Loaded model with 54 features
+2026-03-17 11:45:21 | INFO     | sequential_predictor | Loaded feature engineer state
+2026-03-17 11:45:37 | INFO     | sequential_predictor | Loaded model with 54 features
+2026-03-17 11:45:37 | INFO     | sequential_predictor | Loaded feature engineer state
+2026-03-17 11:46:23 | INFO     | demand_analyzer | Loaded 1575 rows for demand analysis
+2026-03-17 11:46:23 | INFO     | demand_analyzer | Demand metrics calculated: avg=394
+2026-03-17 11:46:23 | INFO     | demand_analyzer | Loaded 1575 rows for demand analysis
+2026-03-17 11:46:23 | INFO     | demand_analyzer | Loaded 1575 rows for demand analysis
+2026-03-17 11:46:23 | INFO     | demand_analyzer | Loaded 1575 rows for demand analysis
+2026-03-17 11:47:40 | INFO     | demand_analyzer | Loaded 1575 rows for demand analysis
+2026-03-17 11:47:40 | INFO     | demand_analyzer | Demand metrics calculated: avg=394
+2026-03-17 11:47:40 | INFO     | demand_analyzer | Loaded 1575 rows for demand analysis
+2026-03-17 11:47:40 | INFO     | demand_analyzer | Loaded 1575 rows for demand analysis
+2026-03-17 11:47:40 | INFO     | demand_analyzer | Loaded 1575 rows for demand analysis
+2026-03-17 12:00:03 | INFO     | demand_analyzer | Loaded 1575 rows for demand analysis
+2026-03-17 12:00:03 | INFO     | demand_analyzer | Demand metrics calculated: avg=394
+2026-03-17 12:00:15 | INFO     | demand_analyzer | Loaded 1575 rows for demand analysis
+2026-03-17 12:00:57 | INFO     | demand_analyzer | Loaded 1575 rows for demand analysis
+2026-03-17 12:03:41 | INFO     | demand_analyzer | Loaded 1575 rows for demand analysis
+2026-03-17 12:03:41 | INFO     | demand_analyzer | Demand metrics calculated: avg=394
+2026-03-17 12:03:41 | INFO     | demand_analyzer | Loaded 1575 rows for demand analysis
+2026-03-17 12:03:41 | INFO     | demand_analyzer | Loaded 1575 rows for demand analysis
+2026-03-17 12:03:41 | INFO     | demand_analyzer | Loaded 1575 rows for demand analysis
+2026-03-17 13:38:27 | INFO     | demand_analyzer | Loaded 1575 rows for demand analysis
+2026-03-17 13:38:27 | INFO     | demand_analyzer | Demand metrics calculated: avg=394
+2026-03-17 13:38:27 | INFO     | demand_analyzer | Loaded 1575 rows for demand analysis
+2026-03-17 13:38:28 | INFO     | demand_analyzer | Loaded 1575 rows for demand analysis
+2026-03-17 13:38:28 | INFO     | demand_analyzer | Loaded 1575 rows for demand analysis
+2026-03-17 14:02:39 | INFO     | pipeline | ============================================================
+2026-03-17 14:02:39 | INFO     | pipeline | PHASE 1: SELF-HEALING DEMAND FORECASTING SYSTEM
+2026-03-17 14:02:39 | INFO     | pipeline | ============================================================
+2026-03-17 14:02:39 | INFO     | pipeline | [1/7] Loading data
+2026-03-17 14:02:39 | INFO     | data_loader | Numeric features: []
+2026-03-17 14:02:39 | INFO     | data_loader | Categorical features: []
+2026-03-17 14:02:39 | INFO     | data_loader | Loaded 52500 rows, 4 columns
+2026-03-17 14:02:39 | INFO     | data_loader | Detected roles: {'target': 'Demand', 'date': 'Date', 'has_store': True, 'has_product': True, 'has_holiday': False, 'numeric_features': [], 'categorical_features': []}
+2026-03-17 14:02:39 | INFO     | data_loader | Stores: 10 | Products: 50 | Missing: 0
+2026-03-17 14:02:39 | INFO     | pipeline | [1/7] Loading data done in 0s
+2026-03-17 14:02:39 | INFO     | pipeline | [2/7] Splitting data
+2026-03-17 14:02:39 | INFO     | data_loader | Train: 2016 (26500 rows, 12 months)
+2026-03-17 14:02:39 | INFO     | data_loader | Test:  2017 (26000 rows, 12 months)
+2026-03-17 14:02:39 | INFO     | pipeline | Train year: 2016 | Test year: 2017
+2026-03-17 14:02:39 | INFO     | pipeline | [2/7] Splitting data done in 0s
+2026-03-17 14:02:39 | INFO     | pipeline | [3/7] Feature engineering
+2026-03-17 14:02:39 | INFO     | feature_engineering | Group cols: ['Store', 'Product']
+2026-03-17 14:02:39 | INFO     | feature_engineering | Numeric user cols: []
+2026-03-17 14:02:39 | INFO     | feature_engineering | Categorical user cols: []
+2026-03-17 14:02:44 | INFO     | feature_engineering | Feature pipeline: 63 features from 26500 rows
+2026-03-17 14:02:48 | INFO     | feature_engineering | Feature pipeline: 63 features from 26000 rows
+2026-03-17 14:02:48 | INFO     | pipeline | Features: 63 | Train rows: 26500 | Test rows: 26000
+2026-03-17 14:02:48 | INFO     | pipeline | [3/7] Feature engineering done in 8s
+2026-03-17 14:02:48 | INFO     | pipeline | [4/7] Training model
+2026-03-17 14:17:45 | INFO     | demand_analyzer | Loaded 52500 rows for demand analysis
+2026-03-17 14:17:47 | INFO     | demand_analyzer | Demand metrics calculated: avg=403
+2026-03-17 14:17:52 | INFO     | demand_analyzer | Loaded 52500 rows for demand analysis
+2026-03-17 14:17:59 | INFO     | demand_analyzer | Loaded 52500 rows for demand analysis
+2026-03-17 14:18:05 | INFO     | demand_analyzer | Loaded 52500 rows for demand analysis
+2026-03-17 14:45:33 | INFO     | __main__ | Preparing real Kaggle data from train.csv + test.csv + sample_submission.csv
+2026-03-17 14:47:07 | INFO     | __main__ | Saved 52,500 rows to C:\Users\balan\OneDrive\Desktop\caps\backend\data\uploaded_data.csv | years: [np.int32(2016), np.int32(2017)]
+2026-03-17 14:47:11 | INFO     | __main__ | Saved 7,000 rows to C:\Users\balan\OneDrive\Desktop\caps\backend\data\test_data.csv (2018 Q1 — for future prediction)
+2026-03-17 14:47:11 | INFO     | pipeline | ============================================================
+2026-03-17 14:47:11 | INFO     | pipeline | PHASE 1: SELF-HEALING DEMAND FORECASTING SYSTEM
+2026-03-17 14:47:11 | INFO     | pipeline | ============================================================
+2026-03-17 14:47:11 | INFO     | pipeline | [1/7] Loading data
+2026-03-17 14:47:11 | INFO     | data_loader | Numeric features: []
+2026-03-17 14:47:11 | INFO     | data_loader | Categorical features: []
+2026-03-17 14:47:11 | INFO     | data_loader | Loaded 52500 rows, 4 columns
+2026-03-17 14:47:11 | INFO     | data_loader | Detected roles: {'target': 'Demand', 'date': 'Date', 'has_store': True, 'has_product': True, 'has_holiday': False, 'numeric_features': [], 'categorical_features': []}
+2026-03-17 14:47:11 | INFO     | data_loader | Stores: 10 | Products: 50 | Missing: 0
+2026-03-17 14:47:11 | INFO     | pipeline | [1/7] Loading data done in 0s
+2026-03-17 14:47:11 | INFO     | pipeline | [2/7] Splitting data
+2026-03-17 14:47:11 | INFO     | data_loader | Train: 2016 (26500 rows, 12 months)
+2026-03-17 14:47:11 | INFO     | data_loader | Test:  2017 (26000 rows, 12 months)
+2026-03-17 14:47:11 | INFO     | pipeline | Train year: 2016 | Test year: 2017
+2026-03-17 14:47:11 | INFO     | pipeline | [2/7] Splitting data done in 0s
+2026-03-17 14:47:11 | INFO     | pipeline | [3/7] Feature engineering
+2026-03-17 14:47:11 | INFO     | feature_engineering | Group cols: ['Store', 'Product']
+2026-03-17 14:47:11 | INFO     | feature_engineering | Numeric user cols: []
+2026-03-17 14:47:11 | INFO     | feature_engineering | Categorical user cols: []
+2026-03-17 14:47:14 | INFO     | feature_engineering | Feature pipeline: 63 features from 26500 rows
+2026-03-17 14:47:17 | INFO     | feature_engineering | Feature pipeline: 63 features from 26000 rows
+2026-03-17 14:47:17 | INFO     | pipeline | Features: 63 | Train rows: 26500 | Test rows: 26000
+2026-03-17 14:47:17 | INFO     | pipeline | [3/7] Feature engineering done in 5s
+2026-03-17 14:47:17 | INFO     | pipeline | [4/7] Training model
+2026-03-17 14:52:38 | INFO     | __main__ | Preparing real Kaggle data from train.csv + test.csv + sample_submission.csv
+2026-03-17 14:56:57 | INFO     | __main__ | Preparing real Kaggle data from train.csv + test.csv + sample_submission.csv
+2026-03-17 17:37:35 | INFO     | __main__ | Preparing real Kaggle data from train.csv + test.csv + sample_submission.csv
+2026-03-17 17:38:46 | INFO     | __main__ | Saved 52,500 rows to C:\Users\balan\OneDrive\Desktop\caps\backend\data\uploaded_data.csv | years: [np.int32(2016), np.int32(2017)]
+2026-03-17 17:38:51 | INFO     | __main__ | Saved 7,000 rows to C:\Users\balan\OneDrive\Desktop\caps\backend\data\test_data.csv (2018 Q1 — for future prediction)
+2026-03-17 17:38:51 | INFO     | pipeline | ============================================================
+2026-03-17 17:38:51 | INFO     | pipeline | PHASE 1: SELF-HEALING DEMAND FORECASTING SYSTEM
+2026-03-17 17:38:51 | INFO     | pipeline | ============================================================
+2026-03-17 17:38:51 | INFO     | pipeline | [1/7] Loading data
+2026-03-17 17:38:51 | INFO     | data_loader | Numeric features: []
+2026-03-17 17:38:51 | INFO     | data_loader | Categorical features: []
+2026-03-17 17:38:51 | INFO     | data_loader | Loaded 52500 rows, 4 columns
+2026-03-17 17:38:51 | INFO     | data_loader | Detected roles: {'target': 'Demand', 'date': 'Date', 'has_store': True, 'has_product': True, 'has_holiday': False, 'numeric_features': [], 'categorical_features': []}
+2026-03-17 17:38:51 | INFO     | data_loader | Stores: 10 | Products: 50 | Missing: 0
+2026-03-17 17:38:51 | INFO     | pipeline | [1/7] Loading data done in 0s
+2026-03-17 17:38:51 | INFO     | pipeline | [2/7] Splitting data
+2026-03-17 17:38:51 | INFO     | data_loader | Train: 2016 (26500 rows, 12 months)
+2026-03-17 17:38:51 | INFO     | data_loader | Test:  2017 (26000 rows, 12 months)
+2026-03-17 17:38:51 | INFO     | pipeline | Train year: 2016 | Test year: 2017
+2026-03-17 17:38:51 | INFO     | pipeline | [2/7] Splitting data done in 0s
+2026-03-17 17:38:51 | INFO     | pipeline | [3/7] Feature engineering
+2026-03-17 17:38:51 | INFO     | feature_engineering | Group cols: ['Store', 'Product']
+2026-03-17 17:38:51 | INFO     | feature_engineering | Numeric user cols: []
+2026-03-17 17:38:51 | INFO     | feature_engineering | Categorical user cols: []
+2026-03-17 17:38:55 | INFO     | feature_engineering | Feature pipeline: 63 features from 26500 rows
+2026-03-17 17:38:58 | INFO     | feature_engineering | Feature pipeline: 63 features from 26000 rows
+2026-03-17 17:38:58 | INFO     | pipeline | Features: 63 | Train rows: 26500 | Test rows: 26000
+2026-03-17 17:38:58 | INFO     | pipeline | [3/7] Feature engineering done in 6s
+2026-03-17 17:38:58 | INFO     | pipeline | [4/7] Training model
+2026-03-17 17:47:10 | INFO     | __main__ | Preparing real Kaggle data from train.csv + test.csv + sample_submission.csv
+2026-03-17 17:48:25 | INFO     | __main__ | Saved 52,500 rows to C:\Users\balan\OneDrive\Desktop\caps\backend\data\uploaded_data.csv | years: [np.int32(2016), np.int32(2017)]
+2026-03-17 17:48:29 | INFO     | __main__ | Saved 7,000 rows to C:\Users\balan\OneDrive\Desktop\caps\backend\data\test_data.csv (2018 Q1 — for future prediction)
+2026-03-17 17:48:29 | INFO     | pipeline | ============================================================
+2026-03-17 17:48:29 | INFO     | pipeline | PHASE 1: SELF-HEALING DEMAND FORECASTING SYSTEM
+2026-03-17 17:48:29 | INFO     | pipeline | ============================================================
+2026-03-17 17:48:29 | INFO     | pipeline | [1/7] Loading data
+2026-03-17 17:48:29 | INFO     | data_loader | Numeric features: []
+2026-03-17 17:48:29 | INFO     | data_loader | Categorical features: []
+2026-03-17 17:48:29 | INFO     | data_loader | Loaded 52500 rows, 4 columns
+2026-03-17 17:48:29 | INFO     | data_loader | Detected roles: {'target': 'Demand', 'date': 'Date', 'has_store': True, 'has_product': True, 'has_holiday': False, 'numeric_features': [], 'categorical_features': []}
+2026-03-17 17:48:29 | INFO     | data_loader | Stores: 10 | Products: 50 | Missing: 0
+2026-03-17 17:48:29 | INFO     | pipeline | [1/7] Loading data done in 0s
+2026-03-17 17:48:29 | INFO     | pipeline | [2/7] Splitting data
+2026-03-17 17:48:29 | INFO     | data_loader | Train: 2016 (26500 rows, 12 months)
+2026-03-17 17:48:29 | INFO     | data_loader | Test:  2017 (26000 rows, 12 months)
+2026-03-17 17:48:29 | INFO     | pipeline | Train year: 2016 | Test year: 2017
+2026-03-17 17:48:29 | INFO     | pipeline | [2/7] Splitting data done in 0s
+2026-03-17 17:48:29 | INFO     | pipeline | [3/7] Feature engineering
+2026-03-17 17:48:29 | INFO     | feature_engineering | Group cols: ['Store', 'Product']
+2026-03-17 17:48:29 | INFO     | feature_engineering | Numeric user cols: []
+2026-03-17 17:48:29 | INFO     | feature_engineering | Categorical user cols: []
+2026-03-17 17:48:31 | INFO     | feature_engineering | Feature pipeline: 63 features from 26500 rows
+2026-03-17 17:48:33 | INFO     | feature_engineering | Feature pipeline: 63 features from 26000 rows
+2026-03-17 17:48:33 | INFO     | pipeline | Features: 63 | Train rows: 26500 | Test rows: 26000
+2026-03-17 17:48:33 | INFO     | pipeline | [3/7] Feature engineering done in 4s
+2026-03-17 17:48:33 | INFO     | pipeline | [4/7] Training model

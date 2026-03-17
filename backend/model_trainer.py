@@ -2,8 +2,7 @@ import warnings, json, os
 import numpy as np
 import joblib
 from datetime import datetime
-from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor, StackingRegressor
-from sklearn.linear_model import Ridge
+from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
 from sklearn.model_selection import RandomizedSearchCV, TimeSeriesSplit
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 from logger import get_logger
@@ -27,20 +26,23 @@ class ModelTrainer:
         self.version_history = []
 
     def tune_hyperparameters(self, X_train, y_train):
+        # For large datasets (>5000 rows) skip slow RF grid search — XGBoost used directly in train()
+        if len(X_train) > 5000:
+            log.info(f"Large dataset ({len(X_train)} rows) — skipping RF tuning, using XGBoost directly")
+            self.best_params = {}
+            return self.best_params
         param_dist = {
-            "n_estimators":          [200, 300, 500],
-            "max_depth":             [10, 15, 20],
-            "min_samples_split":     [5, 10],
+            "n_estimators":          [100, 200],
+            "max_depth":             [6, 10],
             "min_samples_leaf":      [3, 5],
-            "max_features":          ["sqrt", 0.5, 0.7],
-            "min_impurity_decrease": [1e-4, 1e-3],
+            "max_features":          ["sqrt", 0.5],
         }
-        n_splits = min(5, max(2, len(X_train) // 50))
+        n_splits = min(3, max(2, len(X_train) // 50))
         tscv = TimeSeriesSplit(n_splits=n_splits)
         X_arr = X_train.values if hasattr(X_train, 'values') else X_train
         search = RandomizedSearchCV(
             RandomForestRegressor(random_state=42, n_jobs=-1),
-            param_dist, n_iter=min(20, len(X_train) // 20 + 5),
+            param_dist, n_iter=5,
             cv=tscv, scoring="neg_mean_absolute_error",
             random_state=42, n_jobs=-1
         )
@@ -57,31 +59,15 @@ class ModelTrainer:
                 f"Training set too small ({len(X_train)} rows). "
                 "Upload a dataset with more rows or a wider date range."
             )
-        # Store feature names, convert to arrays to avoid sklearn warnings
         self._feature_names_in = list(X_train.columns) if hasattr(X_train, 'columns') else None
         X_arr = X_train.values if hasattr(X_train, 'values') else X_train
         y_arr = np.asarray(y_train)
 
-        params = {k: v for k, v in (self.best_params or {}).items()
-                  if k in RandomForestRegressor().get_params()}
-        rf = RandomForestRegressor(**params, random_state=42, n_jobs=-1)
-        gb = GradientBoostingRegressor(
-            n_estimators=300, max_depth=5, learning_rate=0.03,
-            subsample=0.8, min_samples_leaf=4,
-            max_features=0.7, random_state=42
-        )
-
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore")
-            rf.fit(X_arr, y_arr)
-            gb.fit(X_arr, y_arr)
-
-        rf_mae = mean_absolute_error(y_arr, rf.predict(X_arr))
-        gb_mae = mean_absolute_error(y_arr, gb.predict(X_arr))
-
-        if _HAS_XGB and len(X_arr) >= 100:
+        # Large dataset (>5000 rows): XGBoost only — fast and accurate
+        if _HAS_XGB and len(X_arr) > 5000:
+            log.info(f"Large dataset ({len(X_arr)} rows) — training XGBoost directly")
             xgb = XGBRegressor(
-                n_estimators=300, max_depth=6, learning_rate=0.03,
+                n_estimators=500, max_depth=6, learning_rate=0.05,
                 subsample=0.8, colsample_bytree=0.7,
                 min_child_weight=5, reg_alpha=0.5, reg_lambda=2.0,
                 random_state=42, n_jobs=-1, verbosity=0
@@ -89,33 +75,53 @@ class ModelTrainer:
             with warnings.catch_warnings():
                 warnings.simplefilter("ignore")
                 xgb.fit(X_arr, y_arr)
+            # Keep a small RF for confidence intervals only
+            rf = RandomForestRegressor(n_estimators=50, max_depth=10, random_state=42, n_jobs=-1)
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore")
+                rf.fit(X_arr, y_arr)
+            self.model = xgb
+            self._rf = rf
+            self._model_name = "XGB"
             xgb_mae = mean_absolute_error(y_arr, xgb.predict(X_arr))
-
-            n_splits_stack = max(2, min(5, len(X_arr) // 100))
-            stack = StackingRegressor(
-                estimators=[("rf", rf), ("gb", gb), ("xgb", xgb)],
-                final_estimator=Ridge(alpha=1.0),
-                cv=n_splits_stack,
-                n_jobs=-1
+            log.info(f"XGB MAE:{xgb_mae:,.1f}")
+        else:
+            # Small dataset: compare RF + GB + XGB
+            params = {k: v for k, v in (self.best_params or {}).items()
+                      if k in RandomForestRegressor().get_params()}
+            rf = RandomForestRegressor(**params, random_state=42, n_jobs=-1)
+            gb = GradientBoostingRegressor(
+                n_estimators=200, max_depth=5, learning_rate=0.05,
+                subsample=0.8, min_samples_leaf=4, random_state=42
             )
             with warnings.catch_warnings():
                 warnings.simplefilter("ignore")
-                stack.fit(X_arr, y_arr)
-            stack_mae = mean_absolute_error(y_arr, stack.predict(X_arr))
+                rf.fit(X_arr, y_arr)
+                gb.fit(X_arr, y_arr)
+            rf_mae = mean_absolute_error(y_arr, rf.predict(X_arr))
+            gb_mae = mean_absolute_error(y_arr, gb.predict(X_arr))
+            if _HAS_XGB:
+                xgb = XGBRegressor(
+                    n_estimators=200, max_depth=6, learning_rate=0.05,
+                    subsample=0.8, colsample_bytree=0.7,
+                    min_child_weight=5, reg_alpha=0.5, reg_lambda=2.0,
+                    random_state=42, n_jobs=-1, verbosity=0
+                )
+                with warnings.catch_warnings():
+                    warnings.simplefilter("ignore")
+                    xgb.fit(X_arr, y_arr)
+                xgb_mae = mean_absolute_error(y_arr, xgb.predict(X_arr))
+                best_mae   = min(rf_mae, gb_mae, xgb_mae)
+                model_name = {rf_mae:"RF", gb_mae:"GB", xgb_mae:"XGB"}[best_mae]
+                self.model = {"RF":rf, "GB":gb, "XGB":xgb}[model_name]
+                log.info(f"RF:{rf_mae:,.0f} GB:{gb_mae:,.0f} XGB:{xgb_mae:,.0f} → {model_name}")
+            else:
+                self.model = gb if gb_mae < rf_mae else rf
+                model_name = "GB" if gb_mae < rf_mae else "RF"
+                log.info(f"RF:{rf_mae:,.0f} GB:{gb_mae:,.0f} → {model_name}")
+            self._rf = rf
+            self._model_name = model_name
 
-            best_mae   = min(rf_mae, gb_mae, xgb_mae, stack_mae)
-            model_name = {rf_mae:"RF", gb_mae:"GB", xgb_mae:"XGB", stack_mae:"Stack"}[best_mae]
-            self.model = {"RF":rf,"GB":gb,"XGB":xgb,"Stack":stack}[model_name]
-            log.info(f"RF:{rf_mae:,.0f} GB:{gb_mae:,.0f} XGB:{xgb_mae:,.0f} Stack:{stack_mae:,.0f} → {model_name}")
-        else:
-            use_gb = gb_mae < rf_mae and len(X_arr) > 500
-            self.model = gb if use_gb else rf
-            model_name = "GB" if use_gb else "RF"
-            log.info(f"RF:{rf_mae:,.0f} GB:{gb_mae:,.0f} → {model_name} | Rows:{len(X_arr)}")
-
-        self._rf = rf
-        self._model_name = model_name
-        # Store feature names on the model for API access
         if self._feature_names_in:
             self.model._feature_names_in = self._feature_names_in
         return self.model

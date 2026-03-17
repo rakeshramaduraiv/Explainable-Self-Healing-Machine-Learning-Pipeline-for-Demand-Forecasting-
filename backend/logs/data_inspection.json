@@ -1,26 +1,27 @@
 {
-  "rows": 1575,
+  "rows": 52500,
   "columns": [
-    "Product",
     "Date",
+    "Store",
+    "Product",
     "Demand"
   ],
   "date_range": [
     "2016-01-01 00:00:00",
     "2017-12-29 00:00:00"
   ],
-  "stores": 0,
-  "products": 15,
+  "stores": 10,
+  "products": 50,
   "missing_values": 0,
   "demand_stats": {
-    "mean": 394.43555555555554,
-    "min": 77.0,
-    "max": 844.0
+    "mean": 402.9820190476191,
+    "min": 46.0,
+    "max": 1191.0
   },
   "detected_columns": {
     "target": "Demand",
     "date": "Date",
-    "has_store": false,
+    "has_store": true,
     "has_product": true,
     "has_holiday": false,
     "numeric_features": [],

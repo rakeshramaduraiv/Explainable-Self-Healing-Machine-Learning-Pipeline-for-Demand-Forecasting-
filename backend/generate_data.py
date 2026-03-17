@@ -1,89 +1,102 @@
 """
-Generate Dataset for Self-Healing Product Demand Forecasting
---------------------------------------------------------------
-Uses ONLY the real Kaggle Store Item Demand Forecasting dataset.
-  https://www.kaggle.com/datasets/dhrubangtalukdar/store-item-demand-forecasting-dataset
-  File: train.csv (columns: date, store, item, sales)
+Prepare real Kaggle data for the SH-DFS pipeline.
 
-Usage:
-  python generate_data.py                  # auto-detect train.csv
-  python generate_data.py train.csv        # explicit path
-  python generate_data.py train.csv 15     # use first 15 items
+Files used:
+  train.csv          — 913,000 rows | date, store, item, sales | 2013-2017
+  test.csv           — 45,000 rows  | id, date, store, item    | 2018 (no sales)
+  sample_submission  — 45,000 rows  | id, sales                | filled after prediction
+
+Pipeline data (data/uploaded_data.csv):
+  Uses train.csv years 2016+2017 aggregated to weekly demand.
+  2016 → Year 1 (train model)
+  2017 → Year 2 (test simulation + drift detection)
+
+Submission data (data/submission_input.csv):
+  Uses test.csv (2018) — fed to model after training for final predictions.
+  Results written to data/sample_submission_filled.csv.
 """
 
 import pandas as pd
 import os
 import sys
 
+TRAIN_CSV      = "train.csv"
+TEST_CSV       = "test.csv"
+SUBMISSION_CSV = "sample_submission.csv"
+OUT_PIPELINE   = "data/uploaded_data.csv"
+OUT_SUBMISSION = "data/submission_input.csv"
 
-def prepare_kaggle(csv_path, num_products=15, output_path="data/uploaded_data.csv"):
-    """Convert Kaggle Store Item Demand Forecasting → pipeline format."""
-    df = pd.read_csv(csv_path)
+
+def _weekly(df):
+    """Aggregate daily rows to weekly (week-ending Friday)."""
+    df["week"] = df["date"].dt.to_period("W-FRI").apply(lambda p: p.end_time.normalize())
+    weekly = df.groupby(["week", "store", "item"])["sales"].sum().reset_index()
+    return weekly
+
+
+def prepare_pipeline():
+    """Process train.csv → data/uploaded_data.csv (2016 + 2017, weekly)."""
+    print(f"Reading {TRAIN_CSV}...")
+    df = pd.read_csv(TRAIN_CSV)
     df.columns = df.columns.str.strip().str.lower()
     df["date"] = pd.to_datetime(df["date"])
-    df = df.sort_values("date")
 
-    print(f"Loaded: {len(df)} rows | {df['store'].nunique()} stores | {df['item'].nunique()} items")
-    print(f"Range:  {df['date'].min().date()} -> {df['date'].max().date()}")
+    print(f"  Rows: {len(df):,} | Stores: {df['store'].nunique()} | Items: {df['item'].nunique()}")
+    print(f"  Range: {df['date'].min().date()} → {df['date'].max().date()}")
 
-    # Store 1, first N items
-    df = df[df["store"] == 1].copy()
-    items = sorted(df["item"].unique())[:num_products]
-    df = df[df["item"].isin(items)].copy()
-    item_map = {old: i + 1 for i, old in enumerate(items)}
-    df["item"] = df["item"].map(item_map)
-
-    # Daily -> Weekly (Friday end)
-    df["week"] = df["date"].dt.to_period("W-FRI").apply(lambda p: p.end_time.date())
-    df["week"] = pd.to_datetime(df["week"])
-    weekly = df.groupby(["week", "item"])["sales"].sum().reset_index()
-
-    # Last 2 full years (avoid partial last year)
+    weekly = _weekly(df)
     weekly["year"] = weekly["week"].dt.year
-    years = sorted(weekly["year"].unique())
-    use = years[-3:-1] if len(years) >= 3 else years[-2:]
-    weekly = weekly[weekly["year"].isin(use)].copy()
 
-    print(f"Using:  {use[0]} (train) -> {use[1]} (test)")
+    # Use last 2 full years: 2016 (train) + 2017 (test simulation)
+    years = sorted(weekly["year"].unique())
+    use = years[-2:]
+    weekly = weekly[weekly["year"].isin(use)].copy()
+    print(f"  Using years: {use[0]} (baseline training) + {use[1]} (test simulation)")
 
     out = pd.DataFrame({
+        "Date":    weekly["week"].dt.strftime("%d-%m-%Y"),
+        "Store":   weekly["store"].astype(int),
         "Product": weekly["item"].astype(int),
-        "Date": weekly["week"].dt.strftime("%d-%m-%Y"),
-        "Demand": weekly["sales"].astype(int),
-    })
-    out = out.sort_values(["Date", "Product"]).reset_index(drop=True)
+        "Demand":  weekly["sales"].astype(int),
+    }).sort_values(["Date", "Store", "Product"]).reset_index(drop=True)
 
-    os.makedirs(os.path.dirname(output_path), exist_ok=True)
-    out.to_csv(output_path, index=False)
+    os.makedirs("data", exist_ok=True)
+    out.to_csv(OUT_PIPELINE, index=False)
+    print(f"  Saved {len(out):,} rows → {OUT_PIPELINE}")
+    for y in use:
+        ydf = out[pd.to_datetime(out["Date"], dayfirst=True).dt.year == y]
+        print(f"    {y}: {len(ydf):,} rows")
+    return out
 
-    out["_d"] = pd.to_datetime(out["Date"], dayfirst=True)
-    print(f"\n{'='*55}")
-    print(f"KAGGLE STORE ITEM DEMAND FORECASTING DATASET")
-    print(f"{'='*55}")
-    print(f"Source:   https://www.kaggle.com/datasets/dhrubangtalukdar/store-item-demand-forecasting-dataset")
-    print(f"Output:   {output_path}")
-    print(f"Rows:     {len(out)}")
-    print(f"Products: {out['Product'].nunique()}")
-    print(f"Range:    {out['_d'].min().date()} -> {out['_d'].max().date()}")
-    for y in sorted(out["_d"].dt.year.unique()):
-        ydf = out[out["_d"].dt.year == y]
-        print(f"  {y}: {len(ydf)} rows, {ydf['_d'].dt.month.nunique()} months")
-    print(f"Demand:   {out['Demand'].min()} - {out['Demand'].max()} units")
-    print(f"Mean:     {out['Demand'].mean():.0f} units/week/product")
-    print(f"{'='*55}")
+
+def prepare_submission():
+    """Process test.csv + sample_submission.csv → data/submission_input.csv."""
+    print(f"\nReading {TEST_CSV} + {SUBMISSION_CSV}...")
+    te = pd.read_csv(TEST_CSV)
+    te.columns = te.columns.str.strip().str.lower()
+    te["date"] = pd.to_datetime(te["date"])
+
+    out = pd.DataFrame({
+        "id":      te["id"].astype(int),
+        "Date":    te["date"].dt.strftime("%d-%m-%Y"),
+        "Store":   te["store"].astype(int),
+        "Product": te["item"].astype(int),
+    }).sort_values(["Date", "Store", "Product"]).reset_index(drop=True)
+
+    os.makedirs("data", exist_ok=True)
+    out.to_csv(OUT_SUBMISSION, index=False)
+    print(f"  Saved {len(out):,} rows → {OUT_SUBMISSION}")
+    print(f"  Range: {te['date'].min().date()} → {te['date'].max().date()}")
     return out
 
 
 if __name__ == "__main__":
-    if len(sys.argv) > 1 and os.path.exists(sys.argv[1]):
-        n = int(sys.argv[2]) if len(sys.argv) > 2 else 15
-        prepare_kaggle(sys.argv[1], n)
-    elif os.path.exists("train.csv"):
-        print("Found train.csv — using Kaggle dataset")
-        prepare_kaggle("train.csv")
-    else:
-        print("ERROR: train.csv not found.")
-        print("Download the Kaggle dataset from:")
-        print("  https://www.kaggle.com/datasets/dhrubangtalukdar/store-item-demand-forecasting-dataset")
-        print("Place train.csv in the backend/ folder and re-run.")
+    missing = [f for f in [TRAIN_CSV, TEST_CSV, SUBMISSION_CSV] if not os.path.exists(f)]
+    if missing:
+        print(f"ERROR: Missing files: {missing}")
+        print("Download from: https://www.kaggle.com/datasets/dhrubangtalukdar/store-item-demand-forecasting-dataset")
         sys.exit(1)
+
+    prepare_pipeline()
+    prepare_submission()
+    print("\nDone. Run: python main.py")
