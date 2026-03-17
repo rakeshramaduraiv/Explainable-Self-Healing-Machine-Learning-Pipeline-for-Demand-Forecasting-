@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-03-17T09:42:47.866792",
+  "timestamp": "2026-03-17T17:59:10.965927",
   "model_path": "models/active_model.pkl",
   "metrics_path": "logs/baseline_metrics.json",
   "drift_history_path": "logs/drift_history.json",
@@ -52,6 +52,14 @@
     "Momentum_12",
     "Volatility_4",
     "Volatility_12",
+    "Store_Mean",
+    "Store_Median",
+    "Store_Std",
+    "Store_Max",
+    "Store_Min",
+    "Demand_vs_Store_Mean",
+    "Demand_vs_Store_Median",
+    "Store_CV",
     "Product_Mean",
     "Product_Median",
     "Product_Std",
@@ -59,6 +67,7 @@
     "Product_Min",
     "Demand_vs_Product_Mean",
     "Demand_vs_Product_Median",
-    "Product_CV"
+    "Product_CV",
+    "Store_Product"
   ]
 }

@@ -334,5 +334,173 @@
       "error_increase": 28.3142,
       "drift": true
     }
+  },
+  {
+    "timestamp": "2026-03-17T17:58:16.171422",
+    "month": "2017-01",
+    "severity": "severe",
+    "severe_features": 87,
+    "mild_features": 6,
+    "total_features": 63,
+    "error_trend": {
+      "baseline_error": 2.46,
+      "current_error": 10.85,
+      "error_increase": 3.4139,
+      "drift": true
+    }
+  },
+  {
+    "timestamp": "2026-03-17T17:58:17.583470",
+    "month": "2017-02",
+    "severity": "severe",
+    "severe_features": 88,
+    "mild_features": 8,
+    "total_features": 63,
+    "error_trend": {
+      "baseline_error": 2.46,
+      "current_error": 41.13,
+      "error_increase": 15.7394,
+      "drift": true
+    }
+  },
+  {
+    "timestamp": "2026-03-17T17:58:19.414472",
+    "month": "2017-03",
+    "severity": "severe",
+    "severe_features": 81,
+    "mild_features": 12,
+    "total_features": 63,
+    "error_trend": {
+      "baseline_error": 2.46,
+      "current_error": 46.09,
+      "error_increase": 17.7585,
+      "drift": true
+    }
+  },
+  {
+    "timestamp": "2026-03-17T17:58:21.717138",
+    "month": "2017-04",
+    "severity": "severe",
+    "severe_features": 67,
+    "mild_features": 16,
+    "total_features": 63,
+    "error_trend": {
+      "baseline_error": 2.46,
+      "current_error": 16.26,
+      "error_increase": 5.6184,
+      "drift": true
+    }
+  },
+  {
+    "timestamp": "2026-03-17T17:58:24.157647",
+    "month": "2017-05",
+    "severity": "severe",
+    "severe_features": 71,
+    "mild_features": 16,
+    "total_features": 63,
+    "error_trend": {
+      "baseline_error": 2.46,
+      "current_error": 9.74,
+      "error_increase": 2.9631,
+      "drift": true
+    }
+  },
+  {
+    "timestamp": "2026-03-17T17:58:28.061297",
+    "month": "2017-06",
+    "severity": "severe",
+    "severe_features": 72,
+    "mild_features": 16,
+    "total_features": 63,
+    "error_trend": {
+      "baseline_error": 2.46,
+      "current_error": 11.46,
+      "error_increase": 3.6624,
+      "drift": true
+    }
+  },
+  {
+    "timestamp": "2026-03-17T17:58:32.369059",
+    "month": "2017-07",
+    "severity": "severe",
+    "severe_features": 82,
+    "mild_features": 11,
+    "total_features": 63,
+    "error_trend": {
+      "baseline_error": 2.46,
+      "current_error": 54.46,
+      "error_increase": 21.1656,
+      "drift": true
+    }
+  },
+  {
+    "timestamp": "2026-03-17T17:58:37.626627",
+    "month": "2017-08",
+    "severity": "severe",
+    "severe_features": 86,
+    "mild_features": 8,
+    "total_features": 63,
+    "error_trend": {
+      "baseline_error": 2.46,
+      "current_error": 40.19,
+      "error_increase": 15.3565,
+      "drift": true
+    }
+  },
+  {
+    "timestamp": "2026-03-17T17:58:43.089866",
+    "month": "2017-09",
+    "severity": "severe",
+    "severe_features": 79,
+    "mild_features": 10,
+    "total_features": 63,
+    "error_trend": {
+      "baseline_error": 2.46,
+      "current_error": 10.01,
+      "error_increase": 3.0741,
+      "drift": true
+    }
+  },
+  {
+    "timestamp": "2026-03-17T17:58:49.384014",
+    "month": "2017-10",
+    "severity": "severe",
+    "severe_features": 63,
+    "mild_features": 21,
+    "total_features": 63,
+    "error_trend": {
+      "baseline_error": 2.46,
+      "current_error": 10.11,
+      "error_increase": 3.1162,
+      "drift": true
+    }
+  },
+  {
+    "timestamp": "2026-03-17T17:58:55.643216",
+    "month": "2017-11",
+    "severity": "severe",
+    "severe_features": 60,
+    "mild_features": 20,
+    "total_features": 63,
+    "error_trend": {
+      "baseline_error": 2.46,
+      "current_error": 17.38,
+      "error_increase": 6.0748,
+      "drift": true
+    }
+  },
+  {
+    "timestamp": "2026-03-17T17:59:02.975111",
+    "month": "2017-12",
+    "severity": "severe",
+    "severe_features": 66,
+    "mild_features": 13,
+    "total_features": 63,
+    "error_trend": {
+      "baseline_error": 2.46,
+      "current_error": 48.05,
+      "error_increase": 18.5542,
+      "drift": true
+    }
   }
 ]

@@ -166,5 +166,89 @@
     "count": 75,
     "mean_pred": 371.5,
     "mean_actual": 325.13
+  },
+  {
+    "timestamp": "2026-03-17T17:58:15.932863",
+    "month": "2017-01",
+    "count": 2000,
+    "mean_pred": 271.92,
+    "mean_actual": 280.38
+  },
+  {
+    "timestamp": "2026-03-17T17:58:17.335106",
+    "month": "2017-02",
+    "count": 2000,
+    "mean_pred": 265.25,
+    "mean_actual": 306.07
+  },
+  {
+    "timestamp": "2026-03-17T17:58:19.121702",
+    "month": "2017-03",
+    "count": 2500,
+    "mean_pred": 319.16,
+    "mean_actual": 364.89
+  },
+  {
+    "timestamp": "2026-03-17T17:58:21.461181",
+    "month": "2017-04",
+    "count": 2000,
+    "mean_pred": 424.45,
+    "mean_actual": 433.71
+  },
+  {
+    "timestamp": "2026-03-17T17:58:23.778569",
+    "month": "2017-05",
+    "count": 2000,
+    "mean_pred": 460.6,
+    "mean_actual": 464.02
+  },
+  {
+    "timestamp": "2026-03-17T17:58:27.735554",
+    "month": "2017-06",
+    "count": 2500,
+    "mean_pred": 494.91,
+    "mean_actual": 491.49
+  },
+  {
+    "timestamp": "2026-03-17T17:58:32.017342",
+    "month": "2017-07",
+    "count": 2000,
+    "mean_pred": 473.11,
+    "mean_actual": 527.14
+  },
+  {
+    "timestamp": "2026-03-17T17:58:37.317327",
+    "month": "2017-08",
+    "count": 2000,
+    "mean_pred": 512.61,
+    "mean_actual": 472.57
+  },
+  {
+    "timestamp": "2026-03-17T17:58:42.743980",
+    "month": "2017-09",
+    "count": 2500,
+    "mean_pred": 440.17,
+    "mean_actual": 439.61
+  },
+  {
+    "timestamp": "2026-03-17T17:58:49.077039",
+    "month": "2017-10",
+    "count": 2000,
+    "mean_pred": 403.75,
+    "mean_actual": 404.92
+  },
+  {
+    "timestamp": "2026-03-17T17:58:55.379381",
+    "month": "2017-11",
+    "count": 2000,
+    "mean_pred": 414.24,
+    "mean_actual": 430.06
+  },
+  {
+    "timestamp": "2026-03-17T17:59:02.605091",
+    "month": "2017-12",
+    "count": 2500,
+    "mean_pred": 378.55,
+    "mean_actual": 331.37
   }
 ]
