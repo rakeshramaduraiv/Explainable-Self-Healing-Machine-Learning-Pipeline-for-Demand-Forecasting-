@@ -100,7 +100,7 @@ export default function Demand() {
     <>
       <div className="page-header">
         <div className="page-title">Demand Insights</div>
-        <div className="page-sub">Store 1 · {inspection?.products ?? 15} products · demand patterns, distribution and seasonality</div>
+        <div className="page-sub">{inspection?.products ?? 15} products · demand patterns, distribution and seasonality</div>
       </div>
 
       <div className="kpi-grid">
@@ -110,7 +110,7 @@ export default function Demand() {
         <KPI label="Peak Month" value={metrics?.peak_demand_month ?? '—'} color="var(--green)" />
         <KPI label="Top Product" value={topProduct?.name?.replace('Product ', '') ?? '—'} color="var(--blue)"
           delta={topProduct ? fmtD(topProduct.demand) + ' total units' : ''} />
-        <KPI label="Products" value={inspection?.products ?? 15} delta="Store 1" />
+        <KPI label="Products" value={inspection?.products ?? 15} />
         <KPI label="Total Demand" value={Math.round(metrics?.total_demand ?? 0).toLocaleString() + ' units'} />
       </div>
 

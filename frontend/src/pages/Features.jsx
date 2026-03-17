@@ -143,7 +143,7 @@ export default function Features() {
     <>
       <div className="page-header">
         <div className="page-title">Feature Importance</div>
-        <div className="page-sub">Store 1 · {features.length} engineered features driving product demand predictions</div>
+        <div className="page-sub">{features.length} engineered features driving product demand predictions</div>
       </div>
 
       <div className="kpi-grid" style={{ gridTemplateColumns: 'repeat(5,1fr)' }}>

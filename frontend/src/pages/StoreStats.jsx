@@ -89,7 +89,7 @@ export default function StoreStats() {
     <>
       <div className="page-header">
         <div className="page-title">Product Demand Forecasting</div>
-        <div className="page-sub">Store 1 · {sorted.length} products · forecast accuracy by product</div>
+        <div className="page-sub">{sorted.length} products · forecast accuracy by product</div>
       </div>
 
       <div className="kpi-grid">
@@ -99,7 +99,7 @@ export default function StoreStats() {
             <KPI label="Forecast Accuracy" value={live ? live.accuracy + '%' : '—'} color="var(--green)" delta="Live · test set" />
             <KPI label="MAE" value={live ? live.mae + ' units' : '—'} delta="Live · test set" />
             <KPI label="MAPE" value={live ? live.mape + '%' : '—'} delta="Live · test set" />
-            <KPI label="Products" value={sorted.length || '—'} delta="Store 1" />
+            <KPI label="Products" value={sorted.length || '—'} />
             <KPI label="Test Months" value={live?.months ?? drift?.length ?? '—'} delta={`${severeCount} severe drift`} color={severeCount ? 'var(--red)' : undefined} />
             <KPI label="Best Product" value={sorted.length ? sorted.reduce((a, b) => a.accuracy > b.accuracy ? a : b).name : '—'} color="var(--green)" delta="Highest accuracy" />
           </>
@@ -216,7 +216,7 @@ export default function StoreStats() {
       </div>
 
       {/* Product detail table */}
-      <SectionCard title="Product Forecast Performance — Store 1">
+      <SectionCard title="Product Forecast Performance">
         {l1 ? <Skel h={200} /> :
         <div style={{ overflowX: 'auto' }}>
           <table className="tbl">

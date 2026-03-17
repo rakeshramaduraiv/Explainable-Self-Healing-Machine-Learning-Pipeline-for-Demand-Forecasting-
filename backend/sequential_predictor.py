@@ -464,6 +464,8 @@ class SequentialPredictor:
             "last_prediction_month": last_pred,
             "last_upload_month": last_upload,
             "last_data_month": last_data_month,
+            "train_end": self.state.get("train_end"),
+            "test_end": self.state.get("test_end"),
             "data_range": f"{first_date.strftime('%Y-%m-%d') if first_date else '?'} to {last_date.strftime('%Y-%m-%d') if last_date else '?'}",
             "total_rows": total_rows,
             "stores": stores,

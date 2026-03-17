@@ -267,7 +267,7 @@ export default function Predict() {
       {/* Status KPIs */}
       <div className="kpi-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))' }}>
         <KPI label="Data Range" value={status?.data_range || '—'} delta={`${status?.total_rows || 0} rows`} />
-        <KPI label="Products" value={status?.products || 0} delta="Store 1" />
+        <KPI label="Products" value={status?.products || 0} />
         <KPI label="Last Data" value={status?.last_data_month || '—'} color="var(--blue)" />
         <KPI label="Last Prediction" value={status?.last_prediction_month || '—'} color="var(--green)" />
         <KPI label="Status" value={<StatusBadge status={status?.waiting_for_upload ? 'waiting' : 'ready'} />} />
@@ -283,8 +283,8 @@ export default function Predict() {
             opacity: 0.3, zIndex: 0,
           }} />
           
-          <TimelineStep icon="📊" title="Train Model" subtitle="2024 data" color="var(--green)" completed={true} />
-          <TimelineStep icon="🧪" title="Test Model" subtitle="2025 data" color="var(--green)" completed={true} />
+          <TimelineStep icon="📊" title="Train Model" subtitle={status?.train_end ? status.train_end.slice(0,4) + ' data' : 'Year 1'} color="var(--green)" completed={true} />
+          <TimelineStep icon="🧪" title="Test Model" subtitle={status?.test_end ? status.test_end.slice(0,4) + ' data' : 'Year 2'} color="var(--green)" completed={true} />
           <TimelineStep icon="🔮" title="Predict" subtitle={status?.last_prediction_month || 'Next month'} color="var(--blue)" active={workflowStep === 1} completed={workflowStep > 1} />
           <TimelineStep icon="📤" title="Upload Actuals" subtitle={status?.waiting_for_upload || '—'} color="var(--orange)" active={workflowStep === 2} completed={workflowStep > 2} />
           <TimelineStep icon="📈" title="Compare" subtitle="Pred vs Actual" color="var(--purple)" active={workflowStep === 3} />

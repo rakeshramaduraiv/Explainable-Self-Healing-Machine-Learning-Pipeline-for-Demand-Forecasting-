@@ -174,7 +174,7 @@ export default function Predictions() {
     <>
       <div className="page-header">
         <div className="page-title">Predictions Explorer</div>
-        <div className="page-sub">Store 1 · test set vs predicted · confidence intervals · cross-filter by product</div>
+        <div className="page-sub">Test set vs predicted · confidence intervals · cross-filter by product</div>
       </div>
 
       {/* Live status */}

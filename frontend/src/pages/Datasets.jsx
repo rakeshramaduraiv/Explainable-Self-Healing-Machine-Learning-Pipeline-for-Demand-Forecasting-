@@ -42,7 +42,7 @@ export default function Datasets() {
         <KPI label="Train Rows"    value={(split.train_rows || 0).toLocaleString()} />
         <KPI label="Test Rows"     value={(split.test_rows  || 0).toLocaleString()} />
         <KPI label="Cutoff Date"   value={split.cutoff_date || '—'} />
-        <KPI label="Stores"        value={insp.stores || 45} />
+        <KPI label="Stores"        value={insp.stores || 0} />
         <KPI label="Batches"       value={batches.length} delta={`${sevCounts.severe || 0} severe`} color={sevCounts.severe ? 'var(--red)' : undefined} />
       </div>
 
@@ -52,7 +52,7 @@ export default function Datasets() {
             <tbody>
               {[
                 ['Source',          'Product Demand Dataset'],
-                ['Total Records',   (insp.rows || 6435).toLocaleString() + ' rows'],
+                ['Total Records',   (insp.rows || 0).toLocaleString() + ' rows'],
                 ['Date Range',      `${dr[0]?.slice(0, 10)} → ${dr[1]?.slice(0, 10)}`],
                 ['Train Rows',      (split.train_rows || 0).toLocaleString()],
                 ['Test Rows',       (split.test_rows  || 0).toLocaleString()],
