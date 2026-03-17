@@ -1,21 +1,17 @@
 """
 Generate Dataset for Self-Healing Product Demand Forecasting
 --------------------------------------------------------------
-Primary: Use real Kaggle Store Item Demand Forecasting dataset
+Uses ONLY the real Kaggle Store Item Demand Forecasting dataset.
   https://www.kaggle.com/datasets/dhrubangtalukdar/store-item-demand-forecasting-dataset
   File: train.csv (columns: date, store, item, sales)
 
-Fallback: Generate synthetic data if no Kaggle CSV found.
-
 Usage:
-  python generate_data.py                  # auto-detect train.csv or generate synthetic
-  python generate_data.py train.csv        # use Kaggle dataset
-  python generate_data.py month 2026-01    # generate monthly actuals for prediction cycle
+  python generate_data.py                  # auto-detect train.csv
+  python generate_data.py train.csv        # explicit path
+  python generate_data.py train.csv 15     # use first 15 items
 """
 
 import pandas as pd
-import numpy as np
-from datetime import datetime, timedelta
 import os
 import sys
 
@@ -78,76 +74,16 @@ def prepare_kaggle(csv_path, num_products=15, output_path="data/uploaded_data.cs
     return out
 
 
-def generate_synthetic(start_year=2024, num_years=2, num_products=5, output_path="data/uploaded_data.csv"):
-    """Fallback: generate synthetic demand data."""
-    np.random.seed(42)
-    rows = []
-    bases = {1: 140, 2: 85, 3: 200, 4: 50, 5: 120}
-
-    for year in range(start_year, start_year + num_years):
-        start_date = datetime(year, 1, 1)
-        first_friday = start_date + timedelta(days=(4 - start_date.weekday()) % 7)
-        current_date = first_friday
-        while current_date.year == year:
-            month = current_date.month
-            for pid in range(1, num_products + 1):
-                demand = bases[pid]
-                demand *= 1 + (year - start_year) * 0.05
-                demand *= np.random.uniform(0.82, 1.18)
-                rows.append({
-                    "Product": pid,
-                    "Date": current_date.strftime("%d-%m-%Y"),
-                    "Demand": max(1, round(demand)),
-                })
-            current_date += timedelta(days=7)
-
-    df = pd.DataFrame(rows)
-    os.makedirs(os.path.dirname(output_path), exist_ok=True)
-    df.to_csv(output_path, index=False)
-    print(f"Generated synthetic: {len(df)} rows -> {output_path}")
-    return df
-
-
-def generate_monthly_actuals(month_str, num_products=15, output_path=None):
-    """Generate monthly actuals for the prediction cycle."""
-    np.random.seed(int(month_str.replace("-", "")))
-    year, month = map(int, month_str.split("-"))
-    if output_path is None:
-        os.makedirs("uploads", exist_ok=True)
-        output_path = f"uploads/{month_str}_actual.csv"
-
-    rows = []
-    start_date = datetime(year, month, 1)
-    current_date = start_date + timedelta(days=(4 - start_date.weekday()) % 7)
-    while current_date.month == month:
-        for pid in range(1, num_products + 1):
-            demand = (50 + pid * 20) * np.random.uniform(0.82, 1.18)
-            rows.append({
-                "Product": pid,
-                "Date": current_date.strftime("%d-%m-%Y"),
-                "Demand": max(1, round(demand)),
-            })
-        current_date += timedelta(days=7)
-
-    df = pd.DataFrame(rows)
-    df.to_csv(output_path, index=False)
-    print(f"Generated {month_str} actuals: {len(df)} rows -> {output_path}")
-    return df
-
-
 if __name__ == "__main__":
-    if len(sys.argv) > 1 and sys.argv[1] == "month":
-        month = sys.argv[2] if len(sys.argv) > 2 else "2026-01"
-        generate_monthly_actuals(month)
-    elif len(sys.argv) > 1 and os.path.exists(sys.argv[1]):
+    if len(sys.argv) > 1 and os.path.exists(sys.argv[1]):
         n = int(sys.argv[2]) if len(sys.argv) > 2 else 15
         prepare_kaggle(sys.argv[1], n)
     elif os.path.exists("train.csv"):
         print("Found train.csv — using Kaggle dataset")
         prepare_kaggle("train.csv")
     else:
-        print("No train.csv found — generating synthetic data")
-        print("For real data, download from:")
+        print("ERROR: train.csv not found.")
+        print("Download the Kaggle dataset from:")
         print("  https://www.kaggle.com/datasets/dhrubangtalukdar/store-item-demand-forecasting-dataset")
-        print("  Place train.csv in backend/ and re-run")
-        generate_synthetic()
+        print("Place train.csv in the backend/ folder and re-run.")
+        sys.exit(1)
