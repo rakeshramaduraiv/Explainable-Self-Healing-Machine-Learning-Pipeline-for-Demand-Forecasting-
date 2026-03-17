@@ -115,6 +115,9 @@ class ModelTrainer:
 
         self._rf = rf
         self._model_name = model_name
+        # Store feature names on the model for API access
+        if self._feature_names_in:
+            self.model._feature_names_in = self._feature_names_in
         return self.model
 
     def evaluate(self, X, y, split="train"):

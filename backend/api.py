@@ -224,7 +224,7 @@ def feature_importances():
         if fi is None:
             raise HTTPException(404, "Model has no feature_importances_")
         fi = [float(v) for v in fi]
-        raw_fn = getattr(model, "feature_names_in_", None)
+        raw_fn = getattr(model, "feature_names_in_", None) or getattr(model, "_feature_names_in", None)
         fn = list(raw_fn) if raw_fn is not None else summary_fn[:len(fi)]
         result = {str(n): round(v, 6) for n, v in zip(fn, fi)}
         return {"importances": result, "feature_names": [str(n) for n in fn]}

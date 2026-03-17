@@ -72,7 +72,7 @@ export default function Performance() {
 
       <div className="kpi-grid">
         {loading ? Array.from({length:5}).map((_,i)=><div key={i} className="kpi"><div className="skel" style={{height:60}}/></div>) : <>
-        <KPI label="R²"    value={(live?.r2 ?? (m.R2 != null ? Math.round(m.R2 * 100) : null)) != null ? (live?.r2 ?? Math.round(m.R2 * 100)) + '%' : '—'} delta={live ? 'Live · test set' : 'Baseline'} />
+        <KPI label="R²"    value={(live?.r2 ?? (m.R2 != null ? Math.round(m.R2) : null)) != null ? (live?.r2 ?? Math.round(m.R2)) + '%' : '—'} delta={live ? 'Live · test set' : 'Baseline'} />
         <KPI label="MAE"   value={(live?.mae ?? (m.MAE != null ? Math.round(m.MAE) : null)) != null ? (live?.mae ?? Math.round(m.MAE)).toLocaleString() + ' units' : '—'} delta={live ? 'Live · test set' : 'Baseline'} />
         <KPI label="RMSE"  value={(live?.rmse ?? (m.RMSE != null ? Math.round(m.RMSE) : null)) != null ? (live?.rmse ?? Math.round(m.RMSE)).toLocaleString() + ' units' : '—'} delta={live ? 'Live · test set' : 'Baseline'} />
         <KPI label="MAPE"  value={(live?.mape ?? (m.MAPE != null ? Math.round(m.MAPE) : null)) != null ? (live?.mape ?? Math.round(m.MAPE)) + '%' : '—'} delta={live ? 'Live · test set' : 'Baseline'} />

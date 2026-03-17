@@ -47,10 +47,10 @@ const SystemTable = memo(({ m, summary, datasets }) => {
     <SectionCard title="System Summary">
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px 32px' }}>
         {[
-          ['Dataset',        `Product Demand — ${(insp.rows || 0).toLocaleString()} rows, ${insp.stores || '—'} stores, ${insp.products || '—'} products`],
+          ['Dataset',        `Product Demand — ${(insp.rows || 0).toLocaleString()} rows${insp.stores ? `, ${insp.stores} stores` : ''}, ${insp.products || '—'} products`],
           ['Date Range',     `${dr[0]?.slice(0, 10) || '—'} → ${dr[1]?.slice(0, 10) || '—'}`],
           ['Train / Test',   `${(split.train_rows || 0).toLocaleString()} (baseline) / ${(split.test_rows || 0).toLocaleString()} (test set) rows`],
-          ['Cutoff Date',    split.cutoff_date || '—'],
+          ['Train / Test Year', split.train_year && split.test_year ? `${split.train_year} / ${split.test_year}` : '—'],
           ['Features',       `${summary?.feature_names?.length || '60'}+ engineered`],
           ['Best Model',     m.model || 'Ensemble'],
           ['Final Severity', summary?.final_severity?.toUpperCase() || '—'],
@@ -141,7 +141,7 @@ export default function Overview() {
       <div className="page-header">
         <div className="page-title">Training Overview</div>
         <div className="page-sub">
-          Phase 1 — Product Demand Forecasting · {datasets?.inspection?.stores ?? '—'} stores · {datasets?.inspection?.products ?? '—'} products · {datasets?.inspection?.date_range?.[0]?.slice(0,10) ?? ''} – {datasets?.inspection?.date_range?.[1]?.slice(0,10) ?? ''}
+          Phase 1 — Product Demand Forecasting{datasets?.inspection?.stores ? ` · ${datasets.inspection.stores} stores` : ''} · {datasets?.inspection?.products ?? '—'} products · {datasets?.inspection?.date_range?.[0]?.slice(0,10) ?? ''} – {datasets?.inspection?.date_range?.[1]?.slice(0,10) ?? ''}
         </div>
       </div>
 
@@ -150,11 +150,11 @@ export default function Overview() {
         {loading
           ? Array.from({ length: 6 }).map((_, i) => <div key={i} className="kpi">{skel(60)}</div>)
           : <>
-            <KPI label="R²"               value={(live?.r2 ?? (m.R2 != null ? Math.round(m.R2 * 100) : null)) != null ? (live?.r2 ?? Math.round(m.R2 * 100)) + '%' : '—'} delta={live ? 'Live · test set' : 'Baseline'} />
+            <KPI label="R²"               value={(live?.r2 ?? (m.R2 != null ? Math.round(m.R2) : null)) != null ? (live?.r2 ?? Math.round(m.R2)) + '%' : '—'} delta={live ? 'Live · test set' : 'Baseline'} />
             <KPI label="MAE"              value={(live?.mae ?? (m.MAE != null ? Math.round(m.MAE) : null)) != null ? (live?.mae ?? Math.round(m.MAE)).toLocaleString() + ' units' : '—'} delta={live ? 'Live · test set' : 'Baseline'} />
             <KPI label="RMSE"             value={(live?.rmse ?? (m.RMSE != null ? Math.round(m.RMSE) : null)) != null ? (live?.rmse ?? Math.round(m.RMSE)).toLocaleString() + ' units' : '—'} delta={live ? 'Live · test set' : 'Baseline'} />
             <KPI label="MAPE"             value={(live?.mape ?? (m.MAPE != null ? Math.round(m.MAPE) : null)) != null ? (live?.mape ?? Math.round(m.MAPE)) + '%' : '—'} delta={live ? 'Live · test set' : 'Baseline'} />
-            <KPI label="Accuracy"         value={(live?.accuracy ?? (m.MAPE != null ? Math.round(100 - m.MAPE) : null)) != null ? (live?.accuracy ?? Math.round(100 - m.MAPE)) + '%' : '—'} color="var(--green)" delta={live ? 'Live · test set' : 'Baseline'} />
+            <KPI label="Accuracy"         value={(live?.accuracy ?? (m.Accuracy != null ? m.Accuracy : m.MAPE != null ? Math.round(100 - m.MAPE) : null)) != null ? (live?.accuracy ?? (m.Accuracy || Math.round(100 - m.MAPE))) + '%' : '—'} color="var(--green)" delta={live ? 'Live · test set' : 'Baseline'} />
             <KPI label="Severe Drift"     value={`${severe}/${months}`} color="var(--red)" delta="Test months triggered" />
           </>
         }
@@ -246,7 +246,7 @@ export default function Overview() {
             {[
               { label: 'Total Actions', value: healing.total_actions, color: 'var(--blue)' },
               { label: 'Fine-Tuned', value: healing.fine_tuned, color: 'var(--purple)' },
-              { label: 'Monitor Only', value: healing.monitor_only, color: 'var(--green)' },
+              { label: 'Rollbacks', value: healing.rollbacks || 0, color: 'var(--orange)' },
               { label: 'Avg Improvement', value: (healing.avg_improvement * 100).toFixed(1) + '%', color: 'var(--cyan)' },
             ].map(({ label, value, color }) => (
               <div key={label} style={{ textAlign: 'center', padding: '14px 8px', background: 'var(--card2)', borderRadius: 10, border: '1px solid var(--border)' }}>

@@ -316,7 +316,7 @@ export default function Demand() {
           <div style={{ padding: '14px 18px', borderRadius: 8, border: '1px solid var(--border)', background: 'var(--card2)' }}>
             <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '1.2px', marginBottom: 6 }}>Dataset</div>
             <div style={{ fontSize: 18, fontWeight: 700, color: 'var(--text)' }}>{inspection?.rows?.toLocaleString() ?? '—'} rows</div>
-            <div style={{ fontSize: 12, color: 'var(--text2)', marginTop: 4 }}>{inspection?.products ?? 15} products · Store 1</div>
+            <div style={{ fontSize: 12, color: 'var(--text2)', marginTop: 4 }}>{inspection?.products ?? 15} products</div>
           </div>
         </div>
       </SectionCard>

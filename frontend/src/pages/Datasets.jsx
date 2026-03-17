@@ -41,8 +41,8 @@ export default function Datasets() {
       <div className="kpi-grid" style={{ gridTemplateColumns: 'repeat(5,1fr)' }}>
         <KPI label="Train Rows"    value={(split.train_rows || 0).toLocaleString()} />
         <KPI label="Test Rows"     value={(split.test_rows  || 0).toLocaleString()} />
-        <KPI label="Cutoff Date"   value={split.cutoff_date || '—'} />
-        <KPI label="Stores"        value={insp.stores || 0} />
+        <KPI label="Train / Test"  value={split.train_year && split.test_year ? `${split.train_year} / ${split.test_year}` : '—'} />
+        <KPI label="Products"      value={insp.products || 0} />
         <KPI label="Batches"       value={batches.length} delta={`${sevCounts.severe || 0} severe`} color={sevCounts.severe ? 'var(--red)' : undefined} />
       </div>
 
@@ -56,7 +56,7 @@ export default function Datasets() {
                 ['Date Range',      `${dr[0]?.slice(0, 10)} → ${dr[1]?.slice(0, 10)}`],
                 ['Train Rows',      (split.train_rows || 0).toLocaleString()],
                 ['Test Rows',       (split.test_rows  || 0).toLocaleString()],
-                ['Cutoff',          split.cutoff_date || '—'],
+                ['Train / Test Year', split.train_year && split.test_year ? `${split.train_year} / ${split.test_year}` : '—'],
                 ['Missing Values',  insp.missing_values ?? 0],
               ].map(([k, v]) => (
                 <tr key={k}>
