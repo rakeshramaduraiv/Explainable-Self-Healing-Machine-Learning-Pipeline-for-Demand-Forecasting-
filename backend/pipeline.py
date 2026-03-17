@@ -8,8 +8,6 @@ from model_trainer import ModelTrainer
 from drift_detector import DriftDetector
 from fine_tuner import FineTuner
 from healing_status import HealingStatusIndicator
-from log_book import LogBook
-from database import DriftDatabase
 from logger import get_logger
 
 log = get_logger(__name__)
@@ -31,8 +29,6 @@ class Phase1Pipeline:
         self.detector = DriftDetector()
         self.fine_tuner = None
         self.status_indicator = HealingStatusIndicator()
-        self.logbook = LogBook()
-        self.db = DriftDatabase()
         self.train_df = self.test_df = None
         self.feature_names = []
         self.drift_reports = []
@@ -80,12 +76,7 @@ class Phase1Pipeline:
         self.summary["confidence_intervals"] = {"coverage": ci["coverage"], "avg_width": ci["avg_interval_width"]}
         train_preds = self.trainer.model.predict(X_train)
         self.detector.set_baseline(X_train, errors=(y_train.values - train_preds))
-        self.logbook.log_training(self.trainer.metrics, self.trainer.best_params or {}, len(self.feature_names))
-        self.db.save_model_version(self.trainer.version or "v1", self.trainer.metrics,
-                                   self.feature_names, "models/active_model.pkl")
-        if hasattr(rf, "feature_importances_"):
-            self.db.save_feature_importance(self.trainer.version or "v1",
-                dict(zip(self.feature_names, rf.feature_importances_)))
+        self._log_training(self.trainer.metrics, self.trainer.best_params or {}, len(self.feature_names))
 
     def step5_simulate_months(self):
         self.test_df["YearMonth"] = self.test_df["Date"].dt.to_period("M")
@@ -108,7 +99,7 @@ class Phase1Pipeline:
             products = month_df["Product"].values if "Product" in month_df.columns else None
             preds = self.trainer.model.predict(X.values)
             _, lower, upper = self.trainer.predict_with_confidence(X)
-            self.logbook.log_batch_predictions(str(month), preds.tolist(), y.tolist(), stores, products)
+            self._log_batch(str(month), preds, y)
             ts = datetime.now().strftime("%Y%m%d_%H%M%S")
             out = pd.DataFrame({
                 "Store":        stores if stores is not None else range(len(y)),
@@ -125,8 +116,7 @@ class Phase1Pipeline:
             report = self.detector.comprehensive_detection(X, y - preds)
             report["month"] = str(month)
             self.drift_reports.append(report)
-            self.logbook.log_drift_detection(str(month), report)
-            self.db.save_drift_log(str(month), report)
+            self._log_drift(str(month), report)
             
             # Apply healing action based on drift severity
             severity = report.get("severity", "none")
@@ -147,7 +137,50 @@ class Phase1Pipeline:
                 self.status_indicator.fine_tune_complete(action.get("improvement", 0), action["model_updated"])
                 log.info(f"  {month}: FINE-TUNE | Improvement: {action.get('improvement', 0)*100:.1f}%")
             self.healing_actions.append(action)
-            self.logbook.log_healing_action(str(month), action)
+            self._log_healing(str(month), action)
+
+    # ── Inline log helpers (replaces deleted log_book / database) ──────────
+    def _log_training(self, metrics, params, feat_count):
+        import json
+        os.makedirs("logs", exist_ok=True)
+        entry = {"timestamp": datetime.now().isoformat(), "feature_count": feat_count,
+                 "params": params, "metrics": metrics}
+        path = "logs/training_log.json"
+        existing = json.load(open(path)) if os.path.exists(path) else []
+        existing.append(entry)
+        json.dump(existing, open(path, "w"), indent=2)
+
+    def _log_batch(self, month, preds, y):
+        import json
+        os.makedirs("logs", exist_ok=True)
+        entry = {"timestamp": datetime.now().isoformat(), "month": month,
+                 "count": len(y), "mean_pred": round(float(preds.mean()), 2),
+                 "mean_actual": round(float(y.mean()), 2)}
+        path = "logs/prediction_batches.json"
+        existing = json.load(open(path)) if os.path.exists(path) else []
+        existing.append(entry)
+        json.dump(existing, open(path, "w"), indent=2)
+
+    def _log_drift(self, month, report):
+        import json
+        os.makedirs("logs", exist_ok=True)
+        entry = {"timestamp": datetime.now().isoformat(), "month": month, **report}
+        path = "logs/drift_history.json"
+        existing = json.load(open(path)) if os.path.exists(path) else []
+        existing.append(entry)
+        json.dump(existing, open(path, "w"), indent=2)
+
+    def _log_healing(self, month, action):
+        import json
+        os.makedirs("logs", exist_ok=True)
+        entry = {"timestamp": datetime.now().isoformat(), "month": month,
+                 "action": action.get("action", "unknown"),
+                 "improvement": action.get("improvement", 0),
+                 "model_updated": action.get("model_updated", False)}
+        path = "logs/healing_history.json"
+        existing = json.load(open(path)) if os.path.exists(path) else []
+        existing.append(entry)
+        json.dump(existing, open(path, "w"), indent=2)
 
     def step6_generate_summary(self):
         severities = [r["severity"] for r in self.drift_reports]
@@ -183,7 +216,13 @@ class Phase1Pipeline:
         return self.summary
 
     def step7_save_results(self):
-        self.logbook.log_phase1_completion(self.summary)
+        self._save_phase1_summary(self.summary)
+
+    def _save_phase1_summary(self, summary):
+        import json
+        os.makedirs("logs", exist_ok=True)
+        json.dump(summary, open("logs/phase1_summary.json", "w"), indent=2)
+        json.dump(summary, open("logs/phase1_complete.json", "w"), indent=2)
         # Save healed model if any healing actions were taken
         if self.healing_actions and any(a["model_updated"] for a in self.healing_actions):
             self.fine_tuner.save_healed_model()
