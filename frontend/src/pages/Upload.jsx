@@ -2,7 +2,7 @@ import { useState, useRef, useCallback, memo } from 'react'
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid,
   LineChart, Line, Legend, ReferenceLine, ComposedChart, Area, AreaChart,
-  Cell,
+  Cell, Scatter, ScatterChart, ZAxis,
 } from 'recharts'
 import { API, useFetch } from '../api.js'
 import { KPI, SectionCard, SevBadge, fmtD, toast } from '../ui.jsx'
@@ -11,14 +11,10 @@ import { HealingStatusDisplay } from './HealingStatus.jsx'
 const MAX_MB = 50
 
 const CSV_COLS = [
-  ['Store',        'integer', '1'],
-  ['Date',         'date',    '2011-02-04'],
-  ['Weekly_Sales', 'float',   '1643690.90'],
-  ['Holiday_Flag', '0 or 1',  '0'],
-  ['Temperature',  'float',   '42.31'],
-  ['Fuel_Price',   'float',   '2.572'],
-  ['CPI',          'float',   '211.096'],
-  ['Unemployment', 'float',   '8.106'],
+  ['Date',    'date (DD-MM-YYYY)', '05-01-2024', true],
+  ['Product', 'integer (category)','1',          true],
+  ['Demand',  'integer (units)',   '152',        true],
+  ['Store',   'integer (optional)','1',          false],
 ]
 
 // ── Tooltip ───────────────────────────────────────────────────────────────────
@@ -92,12 +88,14 @@ export default function Upload() {
       }
       const data = await r.json()
       setProgress(85)
-      const [drift, monthly] = await Promise.all([
+      const base = import.meta.env.VITE_API_URL || ''
+      const [drift, monthly, healing] = await Promise.all([
         API.drift(),
-        fetch((import.meta.env.VITE_API_URL || '') + '/api/monthly-sales').then(r => r.json()),
+        fetch(base + '/api/monthly-sales').then(r => r.json()),
+        fetch(base + '/api/healing-history').then(r => r.json()).catch(() => []),
       ])
       setProgress(100)
-      setResult({ stdout: data.stdout, drift, monthly })
+      setResult({ stdout: data.stdout, drift, monthly, healing })
       setTab('results')
       toast.success('Pipeline complete — drift analysis ready')
     } catch (e) {
@@ -112,6 +110,8 @@ export default function Upload() {
   // ── Derived data ─────────────────────────────────────────────────────────────
   const drift   = result?.drift   || []
   const monthly = result?.monthly || []
+  const healing = result?.healing || []
+  const healMap = Object.fromEntries(healing.map(h => [h.month, h]))
   const latest  = drift[drift.length - 1]
 
   const avgCurrentMAE  = drift.length ? drift.reduce((s, d) => s + (d.error_trend?.current_error  || 0), 0) / drift.length : 0
@@ -122,8 +122,8 @@ export default function Upload() {
   // Chart data
   const maeTrendData = drift.map(d => ({
     month:    d.month,
-    'New Data MAE': +(d.error_trend?.current_error  || 0).toFixed(0),
-    'Train Baseline': +(d.error_trend?.baseline_error || 0).toFixed(0),
+    'Test Set MAE': +(d.error_trend?.current_error  || 0).toFixed(0),
+    'Baseline': +(d.error_trend?.baseline_error || 0).toFixed(0),
   }))
 
   const featureData = drift.map(d => ({
@@ -141,7 +141,7 @@ export default function Upload() {
 
   const salesData = monthly.map(d => ({
     month:     d.month,
-    Actual:    d.actual,
+    'Test Set':  d.actual,
     Predicted: d.predicted,
     MAE:       d.mae,
   }))
@@ -150,7 +150,7 @@ export default function Upload() {
     <>
       <div className="page-header">
         <div className="page-title">Upload & Monitor</div>
-        <div className="page-sub">Upload new CSV data — pipeline runs automatically and shows drift vs trained baseline</div>
+        <div className="page-sub">Upload new CSV data — pipeline runs automatically and evaluates baseline vs test set</div>
       </div>
 
       <div className="tabs">
@@ -208,16 +208,26 @@ export default function Upload() {
           )}
 
           <SectionCard title="Expected CSV Format" style={{ marginTop: 20 }}>
+            <div className="alert alert-b" style={{ marginBottom: 12, fontSize: 12 }}>
+              <strong>Date, Product, and Demand are required.</strong> Add any extra columns (Store, Temperature, CPI, etc.) and the system auto-detects them as features.
+            </div>
             <table className="tbl">
-              <thead><tr><th>Column</th><th>Type</th><th>Example</th></tr></thead>
+              <thead><tr><th>Column</th><th>Type</th><th>Example</th><th>Required</th></tr></thead>
               <tbody>
-                {CSV_COLS.map(([col, type, ex]) => (
+                {CSV_COLS.map(([col, type, ex, req]) => (
                   <tr key={col}>
-                    <td className="mono" style={{ color: 'var(--blue)', fontWeight: 600 }}>{col}</td>
+                    <td className="mono" style={{ color: req ? 'var(--blue)' : 'var(--text3)', fontWeight: 600 }}>{col}</td>
                     <td style={{ color: 'var(--text3)' }}>{type}</td>
                     <td className="mono">{ex}</td>
+                    <td>{req ? <span className="badge b-blue">Required</span> : <span className="badge b-green">Optional</span>}</td>
                   </tr>
                 ))}
+                <tr>
+                  <td className="mono" style={{ color: 'var(--text3)' }}>+ any columns</td>
+                  <td style={{ color: 'var(--text3)' }}>numeric / text</td>
+                  <td className="mono">—</td>
+                  <td><span className="badge b-green">Auto-detected</span></td>
+                </tr>
               </tbody>
             </table>
           </SectionCard>
@@ -233,29 +243,29 @@ export default function Upload() {
             <>
               {/* ── KPI Summary ── */}
               <div className="kpi-grid" style={{ gridTemplateColumns: 'repeat(5,1fr)' }}>
-                <KPI label="Months Analysed"  value={drift.length} delta="New data" />
+                <KPI label="Months Analysed"  value={drift.length} delta="Test set" />
                 <KPI label="Severe Months"    value={severeMonths} color="var(--red)"    delta={`${((severeMonths/drift.length)*100).toFixed(0)}% of months`} />
                 <KPI label="Mild Months"      value={mildMonths}   color="var(--orange)" delta={`${((mildMonths/drift.length)*100).toFixed(0)}% of months`} />
-                <KPI label="Avg New MAE"      value={'$' + Number(avgCurrentMAE.toFixed(0)).toLocaleString()}  color="var(--red)"   delta="New data" />
-                <KPI label="Train Baseline MAE" value={'$' + Number(avgBaselineMAE.toFixed(0)).toLocaleString()} color="var(--green)" delta="Trained model" />
+                <KPI label="Avg Test MAE"       value={Number(avgCurrentMAE.toFixed(0)).toLocaleString() + ' units'}  color="var(--red)"   delta="Test set" />
+                <KPI label="Baseline MAE"        value={Number(avgBaselineMAE.toFixed(0)).toLocaleString() + ' units'} color="var(--green)" delta="Trained model" />
               </div>
 
               {/* ── Metric Comparison Table ── */}
-              <SectionCard title="New Data vs Trained Baseline — exact numbers">
+              <SectionCard title="Baseline vs Test Set — Metrics Comparison">
                 <table className="tbl">
                   <thead>
                     <tr>
                       <th>Metric</th>
-                      <th style={{ color: 'var(--green)' }}>Train Baseline</th>
-                      <th style={{ color: 'var(--red)' }}>New Data (Avg)</th>
+                      <th style={{ color: 'var(--green)' }}>Baseline</th>
+                      <th style={{ color: 'var(--red)' }}>Test Set (Avg)</th>
                       <th>Change</th>
                     </tr>
                   </thead>
                   <tbody>
-                    <StatRow label="MAE"            train={trainMetrics.MAE}   test={avgCurrentMAE}  unit="$" />
-                    <StatRow label="Baseline MAE"   train={avgBaselineMAE}     test={avgCurrentMAE}  unit="$" />
+                    <StatRow label="MAE"            train={trainMetrics.MAE}   test={avgCurrentMAE}  />
+                    <StatRow label="Baseline MAE"   train={avgBaselineMAE}     test={avgCurrentMAE}  />
                     <StatRow label="RMSE"           train={trainMetrics.RMSE}  test={null} />
-                    <StatRow label="MAPE"           train={trainMetrics.MAPE}  test={null} unit="%" />
+                    <StatRow label="MAPE"           train={trainMetrics.MAPE}  test={null} unit="" />
                     <StatRow label="R²"             train={trainMetrics.R2}    test={null} />
                     <tr>
                       <td style={{ color: 'var(--text3)', fontWeight: 500, fontSize: 12 }}>Severe Drift Months</td>
@@ -279,23 +289,23 @@ export default function Upload() {
 
               {/* ── Row 1: MAE Trend + Error Increase % ── */}
               <div className="grid-2">
-                <SectionCard title="MAE — New Data vs Train Baseline per Month">
+                <SectionCard title="MAE — Baseline vs Test Set per Month">
                   <ResponsiveContainer width="100%" height={230}>
                     <LineChart data={maeTrendData} margin={{ top: 8, right: 12, bottom: 0, left: 0 }}>
                       <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
                       <XAxis dataKey="month" tick={{ fontSize: 10 }} />
-                      <YAxis tick={{ fontSize: 10 }} tickFormatter={v => '$' + (v / 1000).toFixed(0) + 'K'} />
-                      <Tooltip content={<Tip dollar />} />
+                      <YAxis tick={{ fontSize: 10 }} tickFormatter={v => (v / 1000).toFixed(0) + 'K'} />
+                      <Tooltip content={<Tip />} />
                       <Legend wrapperStyle={{ fontSize: 12 }} />
                       <ReferenceLine y={trainMetrics.MAE} stroke="#94a3b8" strokeDasharray="4 2"
                         label={{ value: 'Train MAE', fontSize: 10, fill: '#94a3b8', position: 'insideTopRight' }} />
-                      <Line type="monotone" dataKey="Train Baseline" stroke="#10b981" strokeWidth={2} dot={false} strokeDasharray="5 3" />
-                      <Line type="monotone" dataKey="New Data MAE"   stroke="#dc2626" strokeWidth={2.5} dot={{ r: 3, fill: '#dc2626' }} />
+                      <Line type="monotone" dataKey="Baseline" stroke="#10b981" strokeWidth={2} dot={false} strokeDasharray="5 3" />
+                      <Line type="monotone" dataKey="Test Set MAE"   stroke="#dc2626" strokeWidth={2.5} dot={{ r: 3, fill: '#dc2626' }} />
                     </LineChart>
                   </ResponsiveContainer>
                 </SectionCard>
 
-                <SectionCard title="Error Increase % vs Baseline — by month">
+                <SectionCard title="Error Increase vs Baseline (%) — by month">
                   <ResponsiveContainer width="100%" height={230}>
                     <BarChart data={errorIncreaseData} margin={{ top: 8, right: 12, bottom: 0, left: 0 }}>
                       <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
@@ -314,9 +324,77 @@ export default function Upload() {
                 </SectionCard>
               </div>
 
-              {/* ── Row 2: Drifted Features + Actual vs Predicted ── */}
+              {/* ── Drift Severity + Healing Action Chart ── */}
+              <SectionCard title="Drift Detection — Severity Level & Self-Healing Actions">
+                {(() => {
+                  const sevMap = { none: 0, mild: 1, severe: 2 }
+                  const chartData = drift.map(d => {
+                    const h = healMap[d.month]
+                    return {
+                      month: d.month,
+                      'Drift Level': sevMap[d.severity] ?? 0,
+                      severity: d.severity,
+                      action: h?.action || 'monitor',
+                      updated: h?.model_updated || false,
+                      improvement: h ? +(h.improvement * 100).toFixed(1) : 0,
+                    }
+                  })
+                  const DriftDot = (props) => {
+                    const { cx, cy, payload } = props
+                    if (!cx || !cy) return null
+                    const c = sevColor(payload.severity)
+                    const isHeal = payload.action === 'fine_tune'
+                    const isRoll = payload.action === 'rollback'
+                    return (
+                      <g>
+                        <circle cx={cx} cy={cy} r={6} fill={c} stroke="#fff" strokeWidth={2} />
+                        {isHeal && <text x={cx} y={cy - 12} textAnchor="middle" fontSize={11} fill="#7c3aed" fontWeight={700}>✓</text>}
+                        {isRoll && <text x={cx} y={cy - 12} textAnchor="middle" fontSize={11} fill="#94a3b8" fontWeight={700}>↩</text>}
+                      </g>
+                    )
+                  }
+                  const DriftTip = ({ active, payload, label }) => {
+                    if (!active || !payload?.length) return null
+                    const d = payload[0]?.payload
+                    if (!d) return null
+                    const actionLabel = d.action === 'fine_tune' ? '✓ Fine-tuned' : d.action === 'rollback' ? '↩ Rolled back' : '— Monitor'
+                    return (
+                      <div style={{ background: '#fff', border: '1px solid var(--border2)', borderRadius: 8, padding: '10px 14px', fontSize: 12, boxShadow: '0 4px 20px rgba(37,99,235,0.12)' }}>
+                        <div style={{ fontWeight: 700, marginBottom: 4 }}>{d.month}</div>
+                        <div>Drift: <strong style={{ color: sevColor(d.severity) }}>{d.severity.toUpperCase()}</strong></div>
+                        <div>Action: <strong>{actionLabel}</strong></div>
+                        {d.improvement > 0 && <div>Improvement: <strong style={{ color: '#7c3aed' }}>{d.improvement}%</strong></div>}
+                      </div>
+                    )
+                  }
+                  return (
+                    <>
+                      <ResponsiveContainer width="100%" height={220}>
+                        <LineChart data={chartData} margin={{ top: 16, right: 12, bottom: 0, left: 0 }}>
+                          <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
+                          <XAxis dataKey="month" tick={{ fontSize: 10 }} />
+                          <YAxis domain={[0, 2]} ticks={[0, 1, 2]} tick={{ fontSize: 10 }} tickFormatter={v => ['None', 'Mild', 'Severe'][v] || ''} />
+                          <Tooltip content={<DriftTip />} />
+                          <ReferenceLine y={1} stroke="#d97706" strokeDasharray="4 2" />
+                          <ReferenceLine y={2} stroke="#dc2626" strokeDasharray="4 2" />
+                          <Line type="stepAfter" dataKey="Drift Level" stroke="#6366f1" strokeWidth={2.5} dot={<DriftDot />} />
+                        </LineChart>
+                      </ResponsiveContainer>
+                      <div style={{ display: 'flex', gap: 16, justifyContent: 'center', marginTop: 8, fontSize: 11, color: 'var(--text3)' }}>
+                        <span><span style={{ display: 'inline-block', width: 10, height: 10, borderRadius: '50%', background: '#059669', marginRight: 4 }} />None</span>
+                        <span><span style={{ display: 'inline-block', width: 10, height: 10, borderRadius: '50%', background: '#d97706', marginRight: 4 }} />Mild</span>
+                        <span><span style={{ display: 'inline-block', width: 10, height: 10, borderRadius: '50%', background: '#dc2626', marginRight: 4 }} />Severe</span>
+                        <span style={{ color: '#7c3aed', fontWeight: 700 }}>✓ Fine-tuned</span>
+                        <span style={{ color: '#94a3b8', fontWeight: 700 }}>↩ Rolled back</span>
+                      </div>
+                    </>
+                  )
+                })()}
+              </SectionCard>
+
+              {/* ── Row 2: Drifted Features + Test Set vs Predicted ── */}
               <div className="grid-2">
-                <SectionCard title="Drifted Features per Month — Severe vs Mild">
+                <SectionCard title="Drifted Features per Test Month — Severe vs Mild">
                   <ResponsiveContainer width="100%" height={230}>
                     <ComposedChart data={featureData} margin={{ top: 8, right: 12, bottom: 0, left: 0 }}>
                       <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
@@ -331,7 +409,7 @@ export default function Upload() {
                   </ResponsiveContainer>
                 </SectionCard>
 
-                <SectionCard title="Actual vs Predicted Sales — new data">
+                <SectionCard title="Test Set vs Predicted Demand">
                   {salesData.length > 0 ? (
                     <ResponsiveContainer width="100%" height={230}>
                       <AreaChart data={salesData} margin={{ top: 8, right: 12, bottom: 0, left: 0 }}>
@@ -347,37 +425,40 @@ export default function Upload() {
                         </defs>
                         <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
                         <XAxis dataKey="month" tick={{ fontSize: 10 }} />
-                        <YAxis tick={{ fontSize: 10 }} tickFormatter={v => '$' + (v / 1000).toFixed(0) + 'K'} />
-                        <Tooltip content={<Tip dollar />} />
+                        <YAxis tick={{ fontSize: 10 }} tickFormatter={v => (v / 1000).toFixed(0) + 'K'} />
+                        <Tooltip content={<Tip />} />
                         <Legend wrapperStyle={{ fontSize: 12 }} />
-                        <Area type="monotone" dataKey="Actual"    stroke="#2563eb" fill="url(#gAct)" strokeWidth={2} dot={false} />
+                        <Area type="monotone" dataKey="Test Set"    stroke="#2563eb" fill="url(#gAct)" strokeWidth={2} dot={false} />
                         <Area type="monotone" dataKey="Predicted" stroke="#10b981" fill="url(#gPrd)" strokeWidth={2} dot={false} strokeDasharray="4 2" />
                       </AreaChart>
                     </ResponsiveContainer>
                   ) : (
-                    <div style={{ textAlign: 'center', padding: '48px 0', color: 'var(--text3)', fontSize: 13 }}>No monthly sales data available</div>
+                    <div style={{ textAlign: 'center', padding: '48px 0', color: 'var(--text3)', fontSize: 13 }}>No monthly demand data available</div>
                   )}
                 </SectionCard>
               </div>
 
               {/* ── Full Drift Table ── */}
-              <SectionCard title="Full Drift Report — all months">
+              <SectionCard title="Full Drift Report — Baseline vs Test Set">
                 <div style={{ overflowX: 'auto' }}>
                   <table className="tbl">
                     <thead>
                       <tr>
-                        <th>Month</th>
+                        <th>Test Month</th>
                         <th>Severity</th>
                         <th>Severe Features</th>
                         <th>Mild Features</th>
-                        <th>Train Baseline MAE</th>
-                        <th>New Data MAE</th>
+                        <th>Baseline MAE</th>
+                        <th>Test Set MAE</th>
                         <th>Error Increase</th>
+                        <th>Healing Action</th>
                       </tr>
                     </thead>
                     <tbody>
                       {drift.map(d => {
                         const inc = (d.error_trend?.error_increase || 0) * 100
+                        const h = healMap[d.month]
+                        const act = h?.action || 'monitor'
                         return (
                           <tr key={d.month}>
                             <td className="mono" style={{ fontWeight: 600 }}>{d.month}</td>
@@ -388,6 +469,9 @@ export default function Upload() {
                             <td className="mono" style={{ color: 'var(--red)', fontWeight: 600 }}>{fmtD(d.error_trend?.current_error)}</td>
                             <td className="mono" style={{ color: inc > 50 ? 'var(--red)' : 'var(--orange)', fontWeight: 700 }}>
                               +{inc.toFixed(1)}%
+                            </td>
+                            <td style={{ fontWeight: 600, color: act === 'fine_tune' ? '#7c3aed' : act === 'rollback' ? '#94a3b8' : 'var(--text3)' }}>
+                              {act === 'fine_tune' ? '✓ Fine-tuned' : act === 'rollback' ? '↩ Rollback' : '— Monitor'}
                             </td>
                           </tr>
                         )

@@ -5,7 +5,7 @@ const BASE = import.meta.env.VITE_API_URL || ''
 // ── Cache + dedup ─────────────────────────────────────────────────────────────
 const inflight = new Map()
 export const memCache = new Map()   // exported so useFetch can read synchronously
-const MEM_TTL = 60_000
+const MEM_TTL = 10_000
 
 function dedupFetch(url, signal) {
   const hit   = memCache.get(url)
@@ -126,4 +126,13 @@ export const API = {
     const fd = new FormData(); fd.append('file', file)
     return fetch(BASE + '/api/upload-predict', { method: 'POST', body: fd })
   },
+  // Sequential prediction cycle
+  seqStatus:       () => fetch(BASE + '/api/seq/status').then(r => r.json()),
+  seqPredictNext:  () => fetch(BASE + '/api/seq/predict-next', { method: 'POST' }).then(r => r.json()),
+  seqUploadActuals: file => {
+    const fd = new FormData(); fd.append('file', file)
+    return fetch(BASE + '/api/seq/upload-actuals', { method: 'POST', body: fd })
+  },
+  seqPrediction:   month => fetch(BASE + `/api/seq/prediction/${month}`).then(r => r.json()),
+  seqComparison:   month => fetch(BASE + `/api/seq/comparison/${month}`).then(r => r.json()),
 }

@@ -2,34 +2,42 @@ import { useState, useMemo, memo } from 'react'
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
   CartesianGrid, Cell, RadialBarChart, RadialBar, Legend,
-  Treemap,
+  Treemap, ComposedChart, Line, Area,
 } from 'recharts'
 import { useFetch } from '../api.js'
-import { Spinner, ErrorBox, KPI, SectionCard } from '../ui.jsx'
+import { Spinner, ErrorBox, KPI, SectionCard, CHART_STYLE } from '../ui.jsx'
 
 const PALETTE = ['#2563eb','#7c3aed','#0891b2','#059669','#d97706','#dc2626','#6366f1','#10b981','#f59e0b','#ef4444']
 
 const GROUP_COLOR = {
-  'Lag':         '#2563eb',
-  'Rolling':     '#7c3aed',
-  'Temporal':    '#0891b2',
-  'Store Stats': '#059669',
-  'Interaction': '#d97706',
-  'Raw Inputs':  '#dc2626',
+  'Lag':           '#2563eb',
+  'Rolling':       '#7c3aed',
+  'Temporal':      '#0891b2',
+  'Product Stats': '#059669',
+  'Interaction':   '#d97706',
+  'Raw Inputs':    '#dc2626',
 }
 
 const GROUPS = {
-  'Lag':         f => f.startsWith('Lag_'),
-  'Rolling':     f => f.startsWith('Rolling_') || f.startsWith('Momentum_') || f.startsWith('Volatility_'),
-  'Temporal':    f => ['Year','Month','Week','Quarter','DayOfYear','Season','Is_Year_End','Is_Year_Start','Is_Q4','Near_Holiday','Week_Sin','Week_Cos','Month_Sin','Month_Cos'].includes(f) || f.startsWith('Weeks_To_'),
-  'Store Stats': f => f.startsWith('Store_') || f.startsWith('Sales_vs_'),
-  'Interaction': f => ['Temp_Fuel','Price_Index','Fuel_Unemployment','CPI_Fuel','Temp_Holiday','Store_Holiday','Holiday_Q4','Unemployment_CPI'].includes(f),
-  'Raw Inputs':  f => ['Holiday_Flag','Temperature','Fuel_Price','CPI','Unemployment'].includes(f),
+  'Lag':           f => f.startsWith('Lag_'),
+  'Rolling':       f => f.startsWith('Rolling_') || f.startsWith('Momentum_') || f.startsWith('Volatility_'),
+  'Temporal':      f => ['Year','Month','Week','Quarter','DayOfYear','Season','Is_Year_End','Is_Year_Start','Is_Q4','Near_Holiday','Week_Sin','Week_Cos','Month_Sin','Month_Cos'].includes(f) || f.startsWith('Weeks_To_'),
+  'Product Stats': f => f.startsWith('Store_') || f.startsWith('Product_') || f.startsWith('Demand_vs_'),
+  'Interaction':   f => f.includes('_x_') || ['Temp_Fuel','Price_Index','Fuel_Unemployment','CPI_Fuel','Temp_Holiday','Store_Holiday','Holiday_Q4','Unemployment_CPI','Store_Product','Product_Holiday'].includes(f),
+  'Raw Inputs':    f => !f.startsWith('Lag_') && !f.startsWith('Rolling_') && !f.startsWith('Momentum_') && !f.startsWith('Volatility_') && !f.startsWith('Store_') && !f.startsWith('Product_') && !f.startsWith('Demand_vs_') && !f.startsWith('Weeks_To_') && !['Year','Month','Week','Quarter','DayOfYear','Season','Is_Year_End','Is_Year_Start','Is_Q4','Near_Holiday','Week_Sin','Week_Cos','Month_Sin','Month_Cos'].includes(f) && !f.includes('_x_') && !['Temp_Fuel','Price_Index','Fuel_Unemployment','CPI_Fuel','Temp_Holiday','Store_Holiday','Holiday_Q4','Unemployment_CPI','Store_Product','Product_Holiday','Lag_52_ratio'].includes(f),
+}
+
+const GROUP_DESC = {
+  'Lag':           'Past demand values (1-26 weeks back) — captures product-specific demand memory',
+  'Rolling':       'Moving averages, min/max, momentum, volatility — smooths weekly noise per product',
+  'Temporal':      'Time features (month, week, season, holiday proximity) — captures seasonal demand patterns',
+  'Product Stats': 'Per-product aggregates (mean, median, max, CV) — encodes product demand level',
+  'Interaction':   'Cross-feature combinations — captures non-linear relationships between your input features',
+  'Raw Inputs':    'Your original uploaded columns — the raw features from your dataset',
 }
 
 const getGroup = name => Object.keys(GROUPS).find(g => GROUPS[g](name)) || 'Other'
 
-// ── Custom Tooltip ────────────────────────────────────────────────────────────
 const Tip = ({ active, payload, label }) => {
   if (!active || !payload?.length) return null
   return (
@@ -44,7 +52,6 @@ const Tip = ({ active, payload, label }) => {
   )
 }
 
-// ── Treemap custom content ────────────────────────────────────────────────────
 const TreeContent = ({ x, y, width, height, name, value, color }) => {
   if (width < 30 || height < 20) return <rect x={x} y={y} width={width} height={height} fill={color} rx={3} />
   return (
@@ -52,15 +59,11 @@ const TreeContent = ({ x, y, width, height, name, value, color }) => {
       <rect x={x} y={y} width={width} height={height} fill={color} rx={3} stroke="#fff" strokeWidth={2} />
       {width > 60 && height > 28 && (
         <text x={x + width / 2} y={y + height / 2} textAnchor="middle" dominantBaseline="middle"
-          fill="#fff" fontSize={Math.min(12, width / 6)} fontWeight={600}>
-          {name}
-        </text>
+          fill="#fff" fontSize={Math.min(12, width / 6)} fontWeight={600}>{name}</text>
       )}
       {width > 60 && height > 44 && (
         <text x={x + width / 2} y={y + height / 2 + 14} textAnchor="middle" dominantBaseline="middle"
-          fill="rgba(255,255,255,0.75)" fontSize={10}>
-          {(value * 100).toFixed(1)}%
-        </text>
+          fill="rgba(255,255,255,0.75)" fontSize={10}>{(value * 100).toFixed(1)}%</text>
       )}
     </g>
   )
@@ -69,6 +72,8 @@ const TreeContent = ({ x, y, width, height, name, value, color }) => {
 export default function Features() {
   const { data: summary, loading: ls, error: es } = useFetch('/api/summary')
   const { data: fiData,   loading: lf, error: ef } = useFetch('/api/feature-importances')
+  const { data: prodForecast }                      = useFetch('/api/product-forecast')
+  const { data: monthly }                           = useFetch('/api/monthly-sales')
   const [activeGroup, setGroup] = useState(null)
   const [selectedFeat, setFeat] = useState(null)
 
@@ -82,12 +87,11 @@ export default function Features() {
     .slice(0, 20),
   [features, importances])
 
-  // Filtered by group
   const chartData = useMemo(() =>
     activeGroup ? top20.filter(d => d.group === activeGroup) : top20,
   [top20, activeGroup])
 
-  // Group totals for treemap + group bar
+  // Group totals
   const groupTotals = useMemo(() => {
     const totals = {}
     features.forEach(name => {
@@ -100,32 +104,54 @@ export default function Features() {
       .sort((a, b) => b.value - a.value)
   }, [features, importances])
 
-  // Top 10 for radial
+  // Top 10 radial
   const radialData = useMemo(() => top20.slice(0, 10).map((d, i) => ({
     name: d.name.length > 18 ? d.name.slice(0, 16) + '…' : d.name,
-    fullName: d.name,
-    value: +(d.value * 100).toFixed(2),
+    fullName: d.name, value: +(d.value * 100).toFixed(2),
     fill: PALETTE[i % PALETTE.length],
   })), [top20])
+
+  // Product accuracy vs top feature importance correlation
+  const prodFeatureData = useMemo(() => {
+    if (!prodForecast?.length) return []
+    return prodForecast.slice().sort((a, b) => b.accuracy - a.accuracy).map((d, i) => ({
+      name: d.name.length > 14 ? d.name.slice(0, 12) + '…' : d.name,
+      fullName: d.name,
+      Accuracy: Math.round(d.accuracy),
+      MAE: Math.round(d.mae),
+      'Avg Demand': Math.round(d.avg_demand),
+      fill: PALETTE[i % PALETTE.length],
+    }))
+  }, [prodForecast])
+
+  // Live model accuracy
+  const liveAccuracy = useMemo(() => {
+    if (!monthly?.length) return null
+    const valid = monthly.filter(d => d.actual != null && d.predicted != null)
+    if (!valid.length) return null
+    const mape = valid.reduce((s, d) => s + (d.actual ? Math.abs(d.actual - d.predicted) / Math.abs(d.actual) * 100 : 0), 0) / valid.length
+    return Math.round(100 - mape)
+  }, [monthly])
 
   if (es || ef) return <ErrorBox msg={es || ef} />
   if (ls || lf) return <Spinner />
 
   const totalImp = top20.reduce((s, d) => s + d.value, 0)
+  const topFeat = top20[0]
 
   return (
     <>
       <div className="page-header">
         <div className="page-title">Feature Importance</div>
-        <div className="page-sub">{features.length || 60}+ engineered features across 6 groups — click any chart element to inspect</div>
+        <div className="page-sub">Store 1 · {features.length} engineered features driving product demand predictions</div>
       </div>
 
-      {/* KPIs */}
-      <div className="kpi-grid" style={{ gridTemplateColumns: 'repeat(4,1fr)' }}>
-        <KPI label="Total Features"   value={features.length || 60} delta="Engineered" />
-        <KPI label="Feature Groups"   value={6} delta="Categories" />
-        <KPI label="Top Feature"      value={top20[0]?.name || '—'} delta={top20[0] ? (top20[0].value * 100).toFixed(1) + '% importance' : ''} />
-        <KPI label="Top 20 Coverage"  value={(totalImp * 100).toFixed(1) + '%'} delta="of total importance" />
+      <div className="kpi-grid" style={{ gridTemplateColumns: 'repeat(5,1fr)' }}>
+        <KPI label="Total Features" value={features.length} delta="Engineered" />
+        <KPI label="Feature Groups" value={groupTotals.length} delta="Categories" />
+        <KPI label="Top Feature" value={topFeat?.name || '—'} delta={topFeat ? (topFeat.value * 100).toFixed(1) + '% importance' : ''} />
+        <KPI label="Top 20 Coverage" value={(totalImp * 100).toFixed(1) + '%'} delta="of total importance" />
+        <KPI label="Model Accuracy" value={liveAccuracy != null ? liveAccuracy + '%' : '—'} color="var(--green)" delta="Live · test set" />
       </div>
 
       {/* Group filter pills */}
@@ -149,11 +175,16 @@ export default function Features() {
               onClick={() => { setGroup(null); setFeat(null) }}>Clear</button>
           )}
         </div>
+        {activeGroup && GROUP_DESC[activeGroup] && (
+          <div style={{ marginTop: 10, fontSize: 12, color: 'var(--text2)', padding: '8px 12px', background: 'var(--bg2)', borderRadius: 6, border: '1px solid var(--border)' }}>
+            {GROUP_DESC[activeGroup]}
+          </div>
+        )}
       </div>
 
-      {/* Row 1 — Horizontal Bar (Top 20) + Treemap (Group Share) */}
+      {/* Row 1 — Top features + Treemap */}
       <div className="grid-2" style={{ alignItems: 'start' }}>
-        <SectionCard title={`Top ${chartData.length} Feature Importance — click bar to inspect`}>
+        <SectionCard title={`Top ${chartData.length} Features — click to inspect`}>
           <ResponsiveContainer width="100%" height={Math.max(300, chartData.length * 26)}>
             <BarChart data={chartData} layout="vertical" margin={{ top: 4, right: 40, bottom: 0, left: 140 }}>
               <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="var(--border)" />
@@ -167,8 +198,7 @@ export default function Features() {
                     fill={GROUP_COLOR[d.group] || PALETTE[i % PALETTE.length]}
                     opacity={selectedFeat && selectedFeat !== d.name ? 0.18 : 1}
                     stroke={selectedFeat === d.name ? '#1e3a8a' : 'none'}
-                    strokeWidth={1.5}
-                    style={{ cursor: 'pointer' }}
+                    strokeWidth={1.5} style={{ cursor: 'pointer' }}
                   />
                 ))}
               </Bar>
@@ -187,15 +217,9 @@ export default function Features() {
           )}
         </SectionCard>
 
-        <SectionCard title="Feature Group Share — area proportional to total importance">
+        <SectionCard title="Feature Group Share">
           <ResponsiveContainer width="100%" height={300}>
-            <Treemap
-              data={groupTotals}
-              dataKey="value"
-              nameKey="name"
-              aspectRatio={4 / 3}
-              content={<TreeContent />}
-            >
+            <Treemap data={groupTotals} dataKey="value" nameKey="name" aspectRatio={4 / 3} content={<TreeContent />}>
               <Tooltip content={({ active, payload }) => {
                 if (!active || !payload?.length) return null
                 const d = payload[0]?.payload
@@ -212,30 +236,41 @@ export default function Features() {
         </SectionCard>
       </div>
 
-      {/* Row 2 — Radial Bar (Top 10) + Group Avg Bar */}
+      {/* Row 2 — Product accuracy context + Group bar */}
       <div className="grid-2">
-        <SectionCard title="Top 10 Features — radial importance scale">
-          <ResponsiveContainer width="100%" height={320}>
-            <RadialBarChart cx="50%" cy="50%" innerRadius={20} outerRadius={140}
-              data={radialData} startAngle={180} endAngle={-180}>
-              <RadialBar minAngle={4} dataKey="value" cornerRadius={4} label={false} />
-              <Tooltip content={({ active, payload }) => {
-                if (!active || !payload?.length) return null
-                const d = payload[0]?.payload
-                return (
-                  <div style={{ background: '#fff', border: '1px solid var(--border2)', borderRadius: 8, padding: '10px 14px', fontSize: 12, boxShadow: '0 4px 20px rgba(37,99,235,0.12)' }}>
-                    <div style={{ fontWeight: 700, color: 'var(--text)', marginBottom: 4 }}>{d?.fullName}</div>
-                    <div style={{ color: 'var(--text2)' }}>Importance: <strong>{d?.value}%</strong></div>
-                  </div>
-                )
-              }} />
-              <Legend iconSize={8} wrapperStyle={{ fontSize: 10, paddingTop: 8 }}
-                formatter={(value, entry) => entry.payload.name} />
-            </RadialBarChart>
-          </ResponsiveContainer>
+        <SectionCard title="Product Forecast Accuracy — feature impact on predictions">
+          {prodFeatureData.length ? (
+            <ResponsiveContainer width="100%" height={320}>
+              <ComposedChart data={prodFeatureData} margin={{ top: 8, right: 16, bottom: 40, left: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" tick={{ fontSize: 9, fill: 'var(--text2)' }} angle={-30} textAnchor="end" interval={0} />
+                <YAxis yAxisId="acc" tick={{ fontSize: 10 }} domain={[0, 100]} tickFormatter={v => v + '%'} />
+                <YAxis yAxisId="mae" orientation="right" tick={{ fontSize: 10 }} />
+                <Tooltip content={({ active, payload }) => {
+                  if (!active || !payload?.length) return null
+                  const d = payload[0]?.payload
+                  return (
+                    <div style={{ background: '#fff', border: '1px solid var(--border2)', borderRadius: 8, padding: '10px 14px', fontSize: 12, boxShadow: '0 4px 20px rgba(37,99,235,0.12)' }}>
+                      <div style={{ fontWeight: 700, marginBottom: 4 }}>{d?.fullName}</div>
+                      <div>Accuracy: <strong style={{ color: 'var(--green)' }}>{d?.Accuracy}%</strong></div>
+                      <div>MAE: <strong style={{ color: 'var(--orange)' }}>{d?.MAE} units</strong></div>
+                      <div>Avg Demand: <strong>{d?.['Avg Demand']} units</strong></div>
+                    </div>
+                  )
+                }} />
+                <Legend wrapperStyle={{ fontSize: 11 }} />
+                <Bar yAxisId="acc" dataKey="Accuracy" name="Accuracy %" radius={[4, 4, 0, 0]}>
+                  {prodFeatureData.map((d, i) => (
+                    <Cell key={i} fill={d.Accuracy >= 95 ? 'var(--green)' : d.Accuracy >= 90 ? 'var(--blue)' : d.Accuracy >= 80 ? 'var(--orange)' : 'var(--red)'} />
+                  ))}
+                </Bar>
+                <Line yAxisId="mae" type="monotone" dataKey="MAE" stroke="var(--orange)" strokeWidth={2} dot={{ r: 3 }} name="MAE (units)" />
+              </ComposedChart>
+            </ResponsiveContainer>
+          ) : <div style={{ textAlign: 'center', padding: 40, color: 'var(--text3)' }}>Loading product data...</div>}
         </SectionCard>
 
-        <SectionCard title="Avg Importance by Group — click bar to filter">
+        <SectionCard title="Group Importance — click to filter">
           <ResponsiveContainer width="100%" height={320}>
             <BarChart data={groupTotals} margin={{ top: 8, right: 16, bottom: 40, left: 0 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
@@ -255,12 +290,10 @@ export default function Features() {
               <Bar dataKey="value" name="Group Share" radius={[4, 4, 0, 0]}
                 onClick={d => setGroup(p => p === d.name ? null : d.name)}>
                 {groupTotals.map((d, i) => (
-                  <Cell key={i}
-                    fill={d.color}
+                  <Cell key={i} fill={d.color}
                     opacity={activeGroup && activeGroup !== d.name ? 0.2 : 1}
                     stroke={activeGroup === d.name ? '#1e3a8a' : 'none'}
-                    strokeWidth={1.5}
-                    style={{ cursor: 'pointer' }}
+                    strokeWidth={1.5} style={{ cursor: 'pointer' }}
                   />
                 ))}
               </Bar>
@@ -268,6 +301,28 @@ export default function Features() {
           </ResponsiveContainer>
         </SectionCard>
       </div>
+
+      {/* Radial */}
+      <SectionCard title="Top 10 Features — radial importance scale">
+        <ResponsiveContainer width="100%" height={300}>
+          <RadialBarChart cx="50%" cy="50%" innerRadius={20} outerRadius={130}
+            data={radialData} startAngle={180} endAngle={-180}>
+            <RadialBar minAngle={4} dataKey="value" cornerRadius={4} label={false} />
+            <Tooltip content={({ active, payload }) => {
+              if (!active || !payload?.length) return null
+              const d = payload[0]?.payload
+              return (
+                <div style={{ background: '#fff', border: '1px solid var(--border2)', borderRadius: 8, padding: '10px 14px', fontSize: 12, boxShadow: '0 4px 20px rgba(37,99,235,0.12)' }}>
+                  <div style={{ fontWeight: 700, marginBottom: 4 }}>{d?.fullName}</div>
+                  <div style={{ color: 'var(--text2)' }}>Importance: <strong>{d?.value}%</strong></div>
+                </div>
+              )
+            }} />
+            <Legend iconSize={8} wrapperStyle={{ fontSize: 10, paddingTop: 8 }}
+              formatter={(value, entry) => entry.payload.name} />
+          </RadialBarChart>
+        </ResponsiveContainer>
+      </SectionCard>
 
       {/* Feature group detail cards */}
       <div className="grid-2">
@@ -280,6 +335,9 @@ export default function Features() {
             <SectionCard key={group}
               title={`${group} — ${feats.length} features`}
               style={{ opacity: !activeGroup || activeGroup === group ? 1 : 0.35, transition: 'opacity 0.15s' }}>
+              {GROUP_DESC[group] && (
+                <div style={{ fontSize: 11, color: 'var(--text3)', marginBottom: 8 }}>{GROUP_DESC[group]}</div>
+              )}
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5 }}>
                 {feats.length
                   ? feats.map(({ name, val }) => (

@@ -18,8 +18,8 @@ log = get_logger(__name__)
 class Phase1Config:
     train_months = 12
     data_path = "data/uploaded_data.csv"
-    min_month_rows = 5
-    min_train_rows = 100
+    min_month_rows = 2
+    min_train_rows = 20
 
 
 class Phase1Pipeline:
@@ -50,26 +50,22 @@ class Phase1Pipeline:
         self.loader.inspect_data()
 
     def step2_split_data(self):
-        # Auto-reduce train_months for small datasets so train split stays viable
-        total_rows = len(self.loader.df)
-        train_months = self.config.train_months
-        if total_rows < 500:
-            # Use ~40% of the date range for training instead of fixed 12 months
-            date_range_months = (
-                (self.loader.df["Date"].max() - self.loader.df["Date"].min()).days // 30
-            )
-            train_months = max(1, int(date_range_months * 0.4))
-            log.info(f"Small dataset ({total_rows} rows) — auto-adjusted train_months to {train_months}")
-        self.train_df, self.test_df = self.loader.split_train_test(train_months)
+        """Split: Year 1 = Training, Year 2 = Testing."""
+        self.train_df, self.test_df = self.loader.split_by_year()
+        train_year = self.train_df["Date"].dt.year.iloc[0]
+        test_year = self.test_df["Date"].dt.year.iloc[0]
+        log.info(f"Train year: {train_year} | Test year: {test_year}")
 
     def step3_feature_engineering(self):
         self.train_df, self.feature_names = self.engineer.run_feature_pipeline(self.train_df, fit=True)
         self.test_df, _ = self.engineer.run_feature_pipeline(self.test_df, fit=False)
+        # Save engineer state for sequential predictor
+        self.engineer.save_state("models/feature_engineer.pkl")
         log.info(f"Features: {len(self.feature_names)} | Train rows: {len(self.train_df)} | Test rows: {len(self.test_df)}")
 
     def step4_train_model(self):
         X_train = self.train_df[self.feature_names]
-        y_train = self.train_df["Weekly_Sales"]
+        y_train = self.train_df["Demand"]
         if len(X_train) < 20:
             raise ValueError(f"Training set too small: {len(X_train)} rows. Check feature engineering dropna.")
         self.trainer.tune_hyperparameters(X_train, y_train)
@@ -107,16 +103,18 @@ class Phase1Pipeline:
                 log.warning(f"Skipping {month}: only {len(month_df)} rows")
                 continue
             X = month_df[self.feature_names]
-            y = month_df["Weekly_Sales"].values
+            y = month_df["Demand"].values
             stores = month_df["Store"].values if "Store" in month_df.columns else None
+            products = month_df["Product"].values if "Product" in month_df.columns else None
             preds = self.trainer.model.predict(X)
             _, lower, upper = self.trainer.predict_with_confidence(X)
-            self.logbook.log_batch_predictions(str(month), preds.tolist(), y.tolist(), stores)
+            self.logbook.log_batch_predictions(str(month), preds.tolist(), y.tolist(), stores, products)
             ts = datetime.now().strftime("%Y%m%d_%H%M%S")
             out = pd.DataFrame({
                 "Store":        stores if stores is not None else range(len(y)),
+                "Product":      products if products is not None else range(len(y)),
                 "Date":         month_df["Date"].dt.strftime("%Y-%m-%d").values,
-                "Weekly_Sales": y,
+                "Demand":       y,
                 "Predicted":    preds.round(2),
                 "CI_Lower":     lower.round(2),
                 "CI_Upper":     upper.round(2),
@@ -134,6 +132,7 @@ class Phase1Pipeline:
             severity = report.get("severity", "none")
             if severity == "none":
                 self.status_indicator.start_monitoring(month)
+                action = {"action": "monitor", "improvement": 0, "model_updated": False}
                 log.info(f"  {month}: MONITOR (low drift)")
             elif severity in ["mild", "severe"]:
                 self.status_indicator.start_fine_tune(month)
@@ -143,11 +142,12 @@ class Phase1Pipeline:
                 action = self.fine_tuner.decide_healing_action(
                     report, X_train_ft, y_train_ft, X_val_ft, y_val_ft,
                     X_train_full=self.train_df[self.feature_names].values,
-                    y_train_full=self.train_df["Weekly_Sales"].values
+                    y_train_full=self.train_df["Demand"].values
                 )
-                self.healing_actions.append(action)
                 self.status_indicator.fine_tune_complete(action.get("improvement", 0), action["model_updated"])
                 log.info(f"  {month}: FINE-TUNE | Improvement: {action.get('improvement', 0)*100:.1f}%")
+            self.healing_actions.append(action)
+            self.logbook.log_healing_action(str(month), action)
 
     def step6_generate_summary(self):
         severities = [r["severity"] for r in self.drift_reports]
@@ -190,6 +190,23 @@ class Phase1Pipeline:
             log.info(f"Healed model saved after {len(self.healing_actions)} healing actions")
         log.info("All results saved")
 
+    def step8_first_prediction(self):
+        """After train+test, predict the first future month."""
+        try:
+            from sequential_predictor import SequentialPredictor
+            sp = SequentialPredictor()
+            # Data goes through the last test month
+            last_date = self.test_df["Date"].max()
+            last_month = last_date.to_period("M").strftime("%Y-%m")
+            result = sp.predict_next_month(data_through_month=last_month)
+            # Save train/test boundaries in state
+            sp.state["train_end"] = self.train_df["Date"].max().strftime("%Y-%m")
+            sp.state["test_end"] = last_month
+            sp._save_state()
+            log.info(f"First prediction: {result['prediction_month']} ({result['count']} rows)")
+        except Exception as e:
+            log.warning(f"First prediction skipped: {e}")
+
     def run_phase1(self):
         log.info("=" * 60)
         log.info("PHASE 1: SELF-HEALING DEMAND FORECASTING SYSTEM")
@@ -203,6 +220,7 @@ class Phase1Pipeline:
             (5, "Simulating months",      self.step5_simulate_months),
             (6, "Generating summary",     self.step6_generate_summary),
             (7, "Saving results",         self.step7_save_results),
+            (8, "First future prediction", self.step8_first_prediction),
         ]
         for n, label, fn in steps:
             try:

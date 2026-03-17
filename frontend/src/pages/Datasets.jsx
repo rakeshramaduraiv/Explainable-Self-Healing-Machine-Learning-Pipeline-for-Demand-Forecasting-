@@ -51,7 +51,7 @@ export default function Datasets() {
           <table className="tbl">
             <tbody>
               {[
-                ['Source',          'Walmart Weekly Sales'],
+                ['Source',          'Product Demand Dataset'],
                 ['Total Records',   (insp.rows || 6435).toLocaleString() + ' rows'],
                 ['Date Range',      `${dr[0]?.slice(0, 10)} → ${dr[1]?.slice(0, 10)}`],
                 ['Train Rows',      (split.train_rows || 0).toLocaleString()],
@@ -94,7 +94,7 @@ export default function Datasets() {
           <div style={{ overflowX: 'auto' }}>
             <table className="tbl">
               <thead>
-                <tr><th>Month</th><th>Records</th><th>Actual</th><th>Predicted</th><th>MAE</th><th>Error Ratio</th><th>Drift</th></tr>
+                <tr><th>Month</th><th>Records</th><th>Test Set</th><th>Predicted</th><th>MAE</th><th>Error Ratio</th><th>Drift</th></tr>
               </thead>
               <tbody>
                 {batches.map(b => <BatchRow key={b.month} b={b} />)}

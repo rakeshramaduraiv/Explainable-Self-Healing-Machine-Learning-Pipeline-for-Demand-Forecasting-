@@ -86,10 +86,12 @@ class ModelTrainer:
             xgb_mae = mean_absolute_error(y_train, xgb.predict(X_train))
 
             # Stacking: RF + GB + XGB → Ridge meta-learner
+            # Need at least 2 splits, and each fold needs enough samples
+            n_splits_stack = max(2, min(5, len(X_train) // 100))
             stack = StackingRegressor(
                 estimators=[("rf", rf), ("gb", gb), ("xgb", xgb)],
                 final_estimator=Ridge(alpha=1.0),
-                cv=TimeSeriesSplit(n_splits=min(3, len(X_train) // 50)),
+                cv=n_splits_stack,  # Use integer for simple KFold
                 n_jobs=-1
             )
             with warnings.catch_warnings():
@@ -114,15 +116,23 @@ class ModelTrainer:
     def evaluate(self, X, y, split="train"):
         preds = self.model.predict(X)
         y_arr = np.asarray(y)
-        rmse  = float(np.sqrt(mean_squared_error(y_arr, preds)))
-        mae   = float(mean_absolute_error(y_arr, preds))
-        r2    = float(r2_score(y_arr, preds))
+        rmse  = round(float(np.sqrt(mean_squared_error(y_arr, preds))))
+        mae   = round(float(mean_absolute_error(y_arr, preds)))
+        r2    = round(float(r2_score(y_arr, preds)) * 100)  # as percentage integer
         mask  = y_arr != 0
-        mape  = float(np.mean(np.abs((y_arr[mask] - preds[mask]) / y_arr[mask])) * 100) if mask.any() else 0.0
-        wmape = float(np.sum(np.abs(y_arr - preds)) / (np.sum(np.abs(y_arr)) + 1e-9) * 100)
-        self.metrics[split] = {"RMSE":rmse,"MAE":mae,"R2":r2,"MAPE":mape,"WMAPE":wmape,
-                               "model": getattr(self, "_model_name", "RF")}
-        log.info(f"{split} → RMSE:{rmse:.0f} MAE:{mae:.0f} R²:{r2:.4f} MAPE:{mape:.2f}%")
+        mape  = round(float(np.mean(np.abs((y_arr[mask] - preds[mask]) / y_arr[mask])) * 100)) if mask.any() else 0
+        wmape = round(float(np.sum(np.abs(y_arr - preds)) / (np.sum(np.abs(y_arr)) + 1e-9) * 100))
+        accuracy = 100 - mape  # prediction accuracy percentage
+        self.metrics[split] = {
+            "RMSE": rmse,
+            "MAE": mae,
+            "R2": r2,
+            "MAPE": mape,
+            "WMAPE": wmape,
+            "Accuracy": accuracy,
+            "model": getattr(self, "_model_name", "RF")
+        }
+        log.info(f"{split} → RMSE:{rmse} MAE:{mae} R²:{r2}% MAPE:{mape}% Accuracy:{accuracy}%")
         return self.metrics[split]
 
     def predict_with_confidence(self, X, confidence=0.95):

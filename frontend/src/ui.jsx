@@ -111,8 +111,8 @@ export const ToastContainer = memo(() => {
 
 // ── Formatters ───────────────────────────────────────────────────────────────
 export const fmt    = n => n == null ? '—' : Number(n).toLocaleString('en-US', { maximumFractionDigits: 2 })
-export const fmtK   = n => n == null ? '—' : '$' + (n / 1000).toFixed(1) + 'K'
-export const fmtD   = n => n == null ? '—' : '$' + Number(n).toLocaleString('en-US', { maximumFractionDigits: 0 })
+export const fmtK   = n => n == null ? '—' : (n / 1000).toFixed(1) + 'K'
+export const fmtD   = n => n == null ? '—' : Number(n).toLocaleString('en-US', { maximumFractionDigits: 0 })
 export const fmtPct = n => n == null ? '—' : Number(n).toFixed(2) + '%'
 
 export const CHART_STYLE = {
@@ -121,11 +121,11 @@ export const CHART_STYLE = {
     border: '1px solid var(--border2)',
     color: 'var(--text)',
     fontSize: 12,
-    borderRadius: 8,
-    boxShadow: '0 4px 20px rgba(37,99,235,0.12)',
-    padding: '10px 14px',
+    borderRadius: 10,
+    boxShadow: '0 8px 32px rgba(37,99,235,0.12)',
+    padding: '12px 16px',
   },
-  labelStyle: { color: 'var(--text2)', fontWeight: 600, marginBottom: 4 },
+  labelStyle: { color: 'var(--text2)', fontWeight: 700, marginBottom: 6 },
   itemStyle:  { color: 'var(--text2)' },
 }
 

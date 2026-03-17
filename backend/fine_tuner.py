@@ -20,19 +20,15 @@ class FineTuner:
     def decide_healing_action(self, drift_report, X_train, y_train, X_val, y_val, X_train_full=None, y_train_full=None):
         """
         Decide healing action based on drift severity:
-        - Low drift (KS < 0.05): Monitor only
-        - Mild drift (KS 0.05-0.15): Fine-tune
+        - none: Monitor only
+        - mild/severe: Fine-tune
         """
         severity = drift_report.get("severity", "none")
-        ks_stat = drift_report.get("ks_statistic", 0)
         
-        if severity == "none" or ks_stat < 0.05:
+        if severity == "none":
             return {"action": "monitor", "improvement": 0, "model_updated": False}
         
-        elif severity == "mild" or (0.05 <= ks_stat < 0.15):
-            return self._fine_tune(X_train, y_train, X_val, y_val)
-        
-        return {"action": "monitor", "improvement": 0, "model_updated": False}
+        return self._fine_tune(X_train, y_train, X_val, y_val)
 
     def _fine_tune(self, X_train, y_train, X_val, y_val):
         """Fine-tune: Add trees to existing model"""

@@ -35,7 +35,7 @@ class LogBook:
             "metrics": metrics,
         })
 
-    def log_batch_predictions(self, month_label, predictions, actuals, stores=None):
+    def log_batch_predictions(self, month_label, predictions, actuals, stores=None, products=None):
         if not predictions:
             return
         self._save_log("prediction_batches.json", {
@@ -49,10 +49,11 @@ class LogBook:
         csv_path = os.path.join(self.log_dir, f"predictions_{ts}.csv")
         with open(csv_path, "w", newline="") as f:
             writer = csv.writer(f)
-            writer.writerow(["month", "store", "prediction", "actual", "error"])
+            writer.writerow(["month", "store", "product", "prediction", "actual", "error"])
             for i, (p, a) in enumerate(zip(predictions, actuals)):
                 store = int(stores[i]) if stores is not None else ""
-                writer.writerow([month_label, store, round(p, 2), round(a, 2), round(a - p, 2)])
+                product = int(products[i]) if products is not None else ""
+                writer.writerow([month_label, store, product, round(p, 2), round(a, 2), round(a - p, 2)])
 
     def log_drift_detection(self, month_label, drift_report):
         self._save_log("drift_history.json", {
@@ -63,6 +64,15 @@ class LogBook:
             "mild_features": drift_report["mild_features"],
             "total_features": drift_report.get("total_features", 0),
             "error_trend": drift_report["error_trend"],
+        })
+
+    def log_healing_action(self, month_label, action):
+        self._save_log("healing_history.json", {
+            "timestamp": datetime.now().isoformat(),
+            "month": month_label,
+            "action": action.get("action", "monitor"),
+            "improvement": action.get("improvement", 0),
+            "model_updated": action.get("model_updated", False),
         })
 
     def log_phase1_completion(self, summary):

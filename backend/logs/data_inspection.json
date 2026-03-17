@@ -1,24 +1,30 @@
 {
-  "rows": 120,
+  "rows": 520,
   "columns": [
     "Date",
-    "Weekly_Sales",
-    "Holiday_Flag",
-    "Temperature",
-    "Store",
-    "Fuel_Price",
-    "CPI",
-    "Unemployment"
+    "Product",
+    "Demand"
   ],
   "date_range": [
-    "2012-01-01 00:00:00",
-    "2014-04-13 00:00:00"
+    "2024-01-05 00:00:00",
+    "2025-12-26 00:00:00"
   ],
-  "stores": 5,
+  "stores": 0,
+  "products": 5,
   "missing_values": 0,
-  "weekly_sales_stats": {
-    "mean": 137253.20958333332,
-    "min": 80662.65,
-    "max": 198426.43
-  }
+  "demand_stats": {
+    "mean": 123.99615384615385,
+    "min": 32.0,
+    "max": 305.0
+  },
+  "detected_columns": {
+    "target": "Demand",
+    "date": "Date",
+    "has_store": false,
+    "has_product": true,
+    "has_holiday": false,
+    "numeric_features": [],
+    "categorical_features": []
+  },
+  "user_features": []
 }

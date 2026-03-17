@@ -562,7 +562,7 @@ elif page == "Demand Insights":
                 fig_trend = go.Figure()
                 fig_trend.add_trace(go.Scatter(
                     x=trend_data["Date"], 
-                    y=trend_data["Weekly_Sales"],
+                    y=trend_data["Demand"],
                     mode="lines+markers",
                     line=dict(color=BLUE, width=2),
                     marker=dict(size=4),
@@ -580,11 +580,11 @@ elif page == "Demand Insights":
                 fig_monthly = go.Figure()
                 fig_monthly.add_trace(go.Bar(
                     x=monthly_data["Date"],
-                    y=monthly_data["Weekly_Sales"],
+                    y=monthly_data["Demand"],
                     marker_color=ORANGE,
                     opacity=0.85,
                     name="Monthly Total",
-                    text=[f"${v/1000:.0f}K" for v in monthly_data["Weekly_Sales"]],
+                    text=[f"{v:,.0f}" for v in monthly_data["Demand"]],
                     textposition="outside",
                     textfont=dict(color=TEXT3, size=9),
                     hovertemplate="Month: %{x}<br>Total: $%{y:,.0f}<extra></extra>"
@@ -606,10 +606,10 @@ elif page == "Demand Insights":
                     fig_store = go.Figure()
                     fig_store.add_trace(go.Bar(
                         x=store_data["Store"],
-                        y=store_data["Weekly_Sales"],
+                        y=store_data["Demand"],
                         marker_color=GREEN,
                         opacity=0.85,
-                        text=[f"${v/1000:.0f}K" for v in store_data["Weekly_Sales"]],
+                        text=[f"{v:,.0f}" for v in store_data["Demand"]],
                         textposition="outside",
                         textfont=dict(color=TEXT3, size=9),
                         hovertemplate="%{x}<br>Total: $%{y:,.0f}<extra></extra>"
@@ -624,7 +624,7 @@ elif page == "Demand Insights":
                     # Store performance distribution
                     fig_store_dist = go.Figure()
                     fig_store_dist.add_trace(go.Histogram(
-                        x=store_data["Weekly_Sales"],
+                        x=store_data["Demand"],
                         nbinsx=15,
                         marker_color=PURPLE,
                         opacity=0.75,
@@ -657,7 +657,7 @@ elif page == "Demand Insights":
             with col3:
                 if not store_data.empty:
                     top_store = store_data.iloc[0]
-                    st.markdown(f'<div class="alert alert-g">🏪 <strong>Top Performer:</strong> {top_store["Store"]} with ${format_number(top_store["Weekly_Sales"])} total sales</div>', unsafe_allow_html=True)
+                    st.markdown(f'<div class="alert alert-g">🏪 <strong>Top Performer:</strong> {top_store["Store"]} with {format_number(top_store["Demand"])} total demand</div>', unsafe_allow_html=True)
                 else:
                     st.markdown(f'<div class="alert alert-b">📊 <strong>Single Store:</strong> Analysis based on individual store performance</div>', unsafe_allow_html=True)
             
@@ -699,7 +699,7 @@ elif page == "Demand Insights":
                 
         except Exception as e:
             st.markdown(f'<div class="alert alert-r">❌ <strong>Error analyzing demand data:</strong> {str(e)}</div>', unsafe_allow_html=True)
-            st.markdown(f'<div class="alert alert-b">Please ensure your dataset contains the required columns: Date, Weekly_Sales, Store</div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="alert alert-b">Please ensure your dataset contains the required columns: Date, Demand, Store, Product</div>', unsafe_allow_html=True)
     split_info = load_json("data_split.json") or {}
     insp       = load_json("data_inspection.json") or {}
     dr         = insp.get("date_range", ["2010-02-05", "2012-10-26"])
@@ -1502,7 +1502,7 @@ elif page == "Upload & Monitor":
     _DATA     = os.path.join(_BASE, "data", "uploaded_data.csv")
     _PROC     = os.path.join(_BASE, "processed")
     _UPL      = os.path.join(_BASE, "uploads")
-    _REQUIRED = {"Store","Date","Weekly_Sales","Holiday_Flag","Temperature","Fuel_Price","CPI","Unemployment"}
+    _REQUIRED = {"Store","Product","Date","Demand","Holiday_Flag","Temperature","Fuel_Price","CPI","Unemployment"}
 
     @st.cache_resource(show_spinner=False)
     def _model():
@@ -1531,7 +1531,7 @@ elif page == "Upload & Monitor":
     def _predict(df):
         eng = FeatureEngineer()
         eng._store_stats = _uss if _uss is not None else \
-            df.groupby("Store")["Weekly_Sales"].agg(
+            df.groupby("Store")["Demand"].agg(
                 Store_Mean="mean", Store_Median="median", Store_Std="std").reset_index()
         if _ueng: eng.encoders = _ueng.encoders
         if _uhist is not None:
@@ -1543,7 +1543,7 @@ elif page == "Upload & Monitor":
             proc, _ = eng.run_feature_pipeline(df.copy(), fit=False)
         for f in _ufnames:
             if f not in proc.columns: proc[f] = 0
-        X = proc[_ufnames]; y = proc["Weekly_Sales"].values
+        X = proc[_ufnames]; y = proc["Demand"].values
         return proc, X, y, _umodel.predict(X)
 
     def _calc_metrics(y, p):
@@ -1562,7 +1562,7 @@ elif page == "Upload & Monitor":
             for f in _ufnames:
                 if f not in Xtr.columns: Xtr[f] = 0
             Xtr = Xtr[_ufnames]
-            det.set_baseline(Xtr, errors=_uproc["Weekly_Sales"].values - _umodel.predict(Xtr))
+            det.set_baseline(Xtr, errors=_uproc["Demand"].values - _umodel.predict(Xtr))
         else:
             det.set_baseline(X, errors=np.zeros(len(y)))
         return det.comprehensive_detection(X, y - preds)
@@ -1577,7 +1577,7 @@ elif page == "Upload & Monitor":
         ul_col, run_col = st.columns([3, 2])
         with ul_col:
             _uploaded = st.file_uploader("CSV", type=["csv"], label_visibility="collapsed",
-                help="Required columns: Store, Date, Weekly_Sales, Holiday_Flag, Temperature, Fuel_Price, CPI, Unemployment")
+                help="Required columns: Store, Product, Date, Demand, Holiday_Flag, Temperature, Fuel_Price, CPI, Unemployment")
             if _uploaded:
                 try:
                     _df = pd.read_csv(_uploaded)
@@ -1595,7 +1595,7 @@ elif page == "Upload & Monitor":
             with st.expander("Expected format"):
                 st.dataframe(pd.DataFrame({
                     "Store":[1,1],"Date":["01-02-2012","08-02-2012"],
-                    "Weekly_Sales":[124567.32,134567.89],"Holiday_Flag":[0,0],
+                    "Product":[1,1],"Demand":[152,168],"Holiday_Flag":[0,0],
                     "Temperature":[45.2,47.1],"Fuel_Price":[3.45,3.52],
                     "CPI":[228.5,229.1],"Unemployment":[8.2,8.1],
                 }), width='stretch', hide_index=True)
@@ -1687,52 +1687,52 @@ elif page == "Upload & Monitor":
             # ── Predicted values chart
             st.markdown('<div class="section-label">Actual vs Predicted Values</div>', unsafe_allow_html=True)
             xa = _proc["Date"].values if "Date" in _proc.columns else np.arange(len(_y))
-        fig_r = go.Figure()
-        fig_r.add_trace(go.Scatter(x=xa, y=_y, name="Actual",
-            line=dict(color=BLUE, width=2), mode="lines",
-            hovertemplate="Date: %{x}<br>Actual: $%{y:,.0f}<extra></extra>"))
-        fig_r.add_trace(go.Scatter(x=xa, y=_preds, name="Predicted",
-            line=dict(color=ORANGE, width=2, dash="dot"), mode="lines",
-            hovertemplate="Date: %{x}<br>Predicted: $%{y:,.0f}<extra></extra>"))
-        fig_r.add_trace(go.Scatter(x=xa, y=_abs_errors, name="Abs Error",
-            line=dict(color=RED, width=1), mode="lines", yaxis="y2", opacity=0.5))
-        fig_r.update_layout(**PLOT, height=300, hovermode="x unified",
-            xaxis=dict(gridcolor=GR),
-            yaxis=dict(title="Weekly Sales ($)", gridcolor=GR),
-            yaxis2=dict(title="Abs Error ($)", overlaying="y", side="right",
-                tickfont=dict(color=RED, size=10), gridcolor="rgba(0,0,0,0)"))
-        st.plotly_chart(fig_r, width='stretch')
+            fig_r = go.Figure()
+            fig_r.add_trace(go.Scatter(x=xa, y=_y, name="Actual",
+                line=dict(color=BLUE, width=2), mode="lines",
+                hovertemplate="Date: %{x}<br>Actual: $%{y:,.0f}<extra></extra>"))
+            fig_r.add_trace(go.Scatter(x=xa, y=_preds, name="Predicted",
+                line=dict(color=ORANGE, width=2, dash="dot"), mode="lines",
+                hovertemplate="Date: %{x}<br>Predicted: $%{y:,.0f}<extra></extra>"))
+            fig_r.add_trace(go.Scatter(x=xa, y=_abs_errors, name="Abs Error",
+                line=dict(color=RED, width=1), mode="lines", yaxis="y2", opacity=0.5))
+            fig_r.update_layout(**PLOT, height=300, hovermode="x unified",
+                xaxis=dict(gridcolor=GR),
+                yaxis=dict(title="Weekly Sales ($)", gridcolor=GR),
+                yaxis2=dict(title="Abs Error ($)", overlaying="y", side="right",
+                    tickfont=dict(color=RED, size=10), gridcolor="rgba(0,0,0,0)"))
+            st.plotly_chart(fig_r, width='stretch')
 
-        # ── Demand Forecast ───────────────────────────────────────────────────────────
-        st.markdown('<div class="section-label">Demand Forecast — Uploaded Data</div>', unsafe_allow_html=True)
+            # ── Demand Forecast ───────────────────────────────────────────────────────────
+            st.markdown('<div class="section-label">Demand Forecast — Uploaded Data</div>', unsafe_allow_html=True)
 
-        _forecast_df = _proc.copy()
-        _forecast_df["Predicted_Demand"] = _preds
-        _forecast_df["Abs_Error"] = _abs_errors
-        _forecast_df["Error_Pct"] = np.where(_y != 0, np.abs(_errors / _y) * 100, 0)
+            _forecast_df = _proc.copy()
+            _forecast_df["Predicted_Demand"] = _preds
+            _forecast_df["Abs_Error"] = _abs_errors
+            _forecast_df["Error_Pct"] = np.where(_y != 0, np.abs(_errors / _y) * 100, 0)
 
-        if "Date" in _forecast_df.columns:
-            _ftable = (_forecast_df.groupby(["Store", "Date"])
-                       .agg({"Weekly_Sales": "mean", "Predicted_Demand": "mean",
-                             "Abs_Error": "mean", "Error_Pct": "mean"})
-                       .reset_index().sort_values(["Store", "Date"]))
-            _ftable["Date"] = pd.to_datetime(_ftable["Date"]).dt.strftime("%Y-%m-%d")
-        else:
-            _ftable = (_forecast_df.groupby("Store")
-                       .agg({"Weekly_Sales": "mean", "Predicted_Demand": "mean",
-                             "Abs_Error": "mean", "Error_Pct": "mean"})
-                       .reset_index())
+            if "Date" in _forecast_df.columns:
+                _ftable = (_forecast_df.groupby(["Store", "Date"])
+                           .agg({"Demand": "mean", "Predicted_Demand": "mean",
+                                 "Abs_Error": "mean", "Error_Pct": "mean"})
+                           .reset_index().sort_values(["Store", "Date"]))
+                _ftable["Date"] = pd.to_datetime(_ftable["Date"]).dt.strftime("%Y-%m-%d")
+            else:
+                _ftable = (_forecast_df.groupby("Store")
+                           .agg({"Demand": "mean", "Predicted_Demand": "mean",
+                                 "Abs_Error": "mean", "Error_Pct": "mean"})
+                           .reset_index())
 
-        _ftable = _ftable.rename(columns={
-            "Weekly_Sales": "Actual ($)", "Predicted_Demand": "Forecast ($)",
-            "Abs_Error": "MAE ($)", "Error_Pct": "Error %",
-        })
-        for c in ["Actual ($)", "Forecast ($)", "MAE ($)"]:
-            _ftable[c] = _ftable[c].round(2)
-        _ftable["Error %"] = _ftable["Error %"].round(2)
+            _ftable = _ftable.rename(columns={
+                "Demand": "Actual", "Predicted_Demand": "Forecast",
+                "Abs_Error": "MAE ($)", "Error_Pct": "Error %",
+            })
+            for c in ["Actual ($)", "Forecast ($)", "MAE ($)"]:
+                _ftable[c] = _ftable[c].round(2)
+            _ftable["Error %"] = _ftable["Error %"].round(2)
 
-        ft1, ft2 = st.columns([3, 2])
-        with ft1:
+            ft1, ft2 = st.columns([3, 2])
+            with ft1:
             st.dataframe(
                 _ftable.style
                     .background_gradient(subset=["Forecast ($)"], cmap="Blues")
@@ -1762,7 +1762,7 @@ elif page == "Upload & Monitor":
 
         if "Date" in _forecast_df.columns:
             _weekly_fc = (_forecast_df.groupby("Date")
-                          .agg(Actual=("Weekly_Sales", "sum"), Forecast=("Predicted_Demand", "sum"))
+                          .agg(Actual=("Demand", "sum"), Forecast=("Predicted_Demand", "sum"))
                           .reset_index().sort_values("Date"))
             fig_fc_line = go.Figure()
             fig_fc_line.add_trace(go.Scatter(
@@ -1903,7 +1903,7 @@ elif page == "Upload & Monitor":
             st.markdown('<div class="section-label">Store-Level Performance</div>', unsafe_allow_html=True)
             tmp = _proc.copy(); tmp["_e"] = _abs_errors
             sg  = tmp.groupby("Store").agg(MAE=("_e","mean"), Count=("_e","count"),
-                                            Actual=("Weekly_Sales","mean")).reset_index().sort_values("MAE",ascending=False)
+                                            Actual=("Demand","mean")).reset_index().sort_values("MAE",ascending=False)
             q75 = sg["MAE"].quantile(0.75); q50 = sg["MAE"].quantile(0.5)
             sc  = [RED if v>q75 else ORANGE if v>q50 else GREEN for v in sg["MAE"]]
             sl1, sl2 = st.columns(2)

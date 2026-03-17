@@ -4,14 +4,32 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
-from fastapi.responses import JSONResponse
 import pandas as pd
 import joblib
+
 BASE      = Path(__file__).parent.resolve()
 LOGS      = BASE / "logs"
 UPLOAD    = BASE / "uploads"
 DATA      = BASE / "data"
 PROCESSED = BASE / "processed"
+
+def _get_product_names():
+    """Detect product names/IDs from data dynamically."""
+    data_file = DATA / "uploaded_data.csv"
+    if not data_file.exists():
+        return {}
+    try:
+        df = pd.read_csv(data_file, encoding="utf-8-sig")
+        df.columns = df.columns.str.strip()
+        if "Product" not in df.columns:
+            return {}
+        products = sorted(df["Product"].dropna().unique())
+        return {int(p): f"Product {int(p)}" for p in products}
+    except Exception:
+        return {}
+
+for d in [LOGS, UPLOAD, DATA, PROCESSED]:
+    d.mkdir(exist_ok=True)
 
 # ── Cache ─────────────────────────────────────────────────────────────────────
 _cache: dict = {}
@@ -49,6 +67,7 @@ def _build_store_stats():
             df = pd.read_csv(f)
             df.columns = [c.lower() for c in df.columns]
             if "weekly_sales" in df.columns: df = df.rename(columns={"weekly_sales": "actual"})
+            if "demand" in df.columns: df = df.rename(columns={"demand": "actual"})
             if "predicted"    in df.columns: df = df.rename(columns={"predicted": "prediction"})
             if {"store", "actual", "prediction"}.issubset(df.columns):
                 frames.append(df[["store", "actual", "prediction"]])
@@ -68,19 +87,28 @@ def _build_store_stats():
     if not data_file.exists(): return []
     raw = pd.read_csv(data_file)
     raw.columns = [c.lower() for c in raw.columns]
-    if "store" not in raw.columns or "weekly_sales" not in raw.columns: return []
+    if "store" not in raw.columns or "demand" not in raw.columns: return []
     batches = rj("prediction_batches.json") or []
     global_mae = 0.0
     if batches:
         vals = [abs((b.get("mean_actual") or 0) - (b.get("mean_pred") or 0)) for b in dedup(batches)]
         global_mae = sum(vals) / len(vals) if vals else 0.0
-    agg = raw.groupby("store")["weekly_sales"].agg(avg_sales="mean", count="count").reset_index().rename(columns={"store": "Store"})
+    agg = raw.groupby("store")["demand"].agg(avg_sales="mean", count="count").reset_index().rename(columns={"store": "Store"})
     agg["mae"] = global_mae
     return agg.round(2).to_dict(orient="records")
 
 def _get_analyzer():
     from demand_analyzer import DemandAnalyzer
     data_file = str(DATA / "uploaded_data.csv")
+    # Fix quoted-row CSVs
+    import csv
+    try:
+        df_test = pd.read_csv(data_file)
+        if len(df_test.columns) == 1 and ',' in df_test.columns[0]:
+            df_test = pd.read_csv(data_file, quoting=csv.QUOTE_ALL)
+            df_test.to_csv(data_file, index=False)
+    except Exception:
+        pass
     a = DemandAnalyzer()
     a.load_data(data_file)
     return a
@@ -92,18 +120,18 @@ def _build_demand_metrics():
 def _build_demand_trend():
     a = _get_analyzer()
     df = a.get_demand_trend_data()
-    return {"dates": df["Date"].astype(str).tolist(), "demand": df["Weekly_Sales"].tolist()}
+    return {"dates": df["Date"].astype(str).tolist(), "demand": df["Demand"].tolist()}
 
 def _build_monthly_demand():
     a = _get_analyzer()
     df = a.get_monthly_demand_data()
-    return {"months": df["Date"].tolist(), "demand": df["Weekly_Sales"].tolist()}
+    return {"months": df["Date"].tolist(), "demand": df["Demand"].tolist()}
 
 def _build_store_demand():
     a = _get_analyzer()
     df = a.get_store_demand_data()
     if df is None or df.empty: return {"stores": [], "demand": []}
-    return {"stores": df["Store"].tolist(), "demand": df["Weekly_Sales"].tolist()}
+    return {"stores": df["Store"].tolist(), "demand": df["Demand"].tolist()}
 
 # ── Startup: warm all slow caches before first request ───────────────────────
 @asynccontextmanager
@@ -119,8 +147,6 @@ async def lifespan(app):
         except Exception: pass
     yield
 
-import os
-
 CORS_ORIGINS = os.environ.get("CORS_ORIGINS", "*").split(",")
 
 app = FastAPI(title="SH-DFS API", version="2.0.0", lifespan=lifespan)
@@ -132,7 +158,7 @@ app.add_middleware(CORSMiddleware, allow_origins=CORS_ORIGINS, allow_methods=["G
 async def cache_headers(request, call_next):
     response = await call_next(request)
     if request.method == "GET" and response.status_code == 200:
-        response.headers["Cache-Control"] = "public, max-age=20, stale-while-revalidate=60"
+        response.headers["Cache-Control"] = "public, max-age=5, stale-while-revalidate=10"
     return response
 
 # ── Endpoints ─────────────────────────────────────────────────────────────────
@@ -145,19 +171,19 @@ def health():
 
 @app.get("/api/summary")
 def summary():
-    return _cached("summary", 60, lambda: rj("phase1_summary.json") or {})
+    return _cached("summary", 10, lambda: rj("phase1_summary.json") or {})
 
 @app.get("/api/baseline")
 def baseline():
-    return _cached("baseline", 60, lambda: rj("baseline_metrics.json") or {})
+    return _cached("baseline", 10, lambda: rj("baseline_metrics.json") or {})
 
 @app.get("/api/drift")
 def drift():
-    return _cached("drift", 30, lambda: dedup(rj("drift_history.json") or []))
+    return _cached("drift", 8, lambda: dedup(rj("drift_history.json") or []))
 
 @app.get("/api/batches")
 def batches():
-    return _cached("batches", 30, lambda: dedup(rj("prediction_batches.json") or []))
+    return _cached("batches", 8, lambda: dedup(rj("prediction_batches.json") or []))
 
 @app.get("/api/monthly-sales")
 def monthly_sales():
@@ -166,7 +192,7 @@ def monthly_sales():
         return [{"month": x["month"], "actual": x.get("mean_actual"),
                  "predicted": x.get("mean_pred"),
                  "mae": abs((x.get("mean_actual") or 0) - (x.get("mean_pred") or 0))} for x in b]
-    return _cached("monthly_sales", 60, _build)
+    return _cached("monthly_sales", 8, _build)
 
 @app.get("/api/store-stats")
 def store_stats():
@@ -235,10 +261,10 @@ def predictions(month: str):
     df = pd.read_csv(files[-1])
     for col in ["CI_Lower", "CI_Upper", "Abs_Error", "Error_Pct"]:
         if col not in df.columns:
-            if col == "Abs_Error" and "Weekly_Sales" in df.columns and "Predicted" in df.columns:
-                df[col] = (df["Weekly_Sales"] - df["Predicted"]).abs().round(2)
-            elif col == "Error_Pct" and "Weekly_Sales" in df.columns and "Predicted" in df.columns:
-                df[col] = (df["Abs_Error"] / (df["Weekly_Sales"].abs() + 1e-9) * 100).round(2)
+            if col == "Abs_Error" and "Demand" in df.columns and "Predicted" in df.columns:
+                df[col] = (df["Demand"] - df["Predicted"]).abs().round(2)
+            elif col == "Error_Pct" and "Demand" in df.columns and "Predicted" in df.columns:
+                df[col] = (df["Abs_Error"] / (df["Demand"].abs() + 1e-9) * 100).round(2)
             else:
                 df[col] = None
     return df.head(500).to_dict(orient="records")
@@ -295,6 +321,102 @@ def store_demand():
     try: return _cached("store_demand", 300, _build_store_demand)
     except Exception as e: raise HTTPException(404, f"No data available: {e}")
 
+@app.get("/api/product-demand")
+def product_demand():
+    def _build():
+        a = _get_analyzer()
+        df = a.get_product_demand_data()
+        if df is None or df.empty: return {"products": [], "demand": []}
+        return {"products": df["Product"].tolist(), "demand": df["Demand"].tolist()}
+    try: return _cached("product_demand", 300, _build)
+    except Exception as e: raise HTTPException(404, f"No data available: {e}")
+
+@app.get("/api/product-forecast")
+def product_forecast():
+    """Per-product forecast accuracy across all test months."""
+    def _build():
+        frames = []
+        for f in sorted(PROCESSED.glob("predictions_*.csv")):
+            try:
+                df = pd.read_csv(f)
+                if {"Product", "Demand", "Predicted"}.issubset(df.columns):
+                    frames.append(df)
+            except Exception: pass
+        if not frames: return []
+        df = pd.concat(frames, ignore_index=True)
+        df["abs_err"] = (df["Demand"] - df["Predicted"]).abs()
+        df["err_pct"] = df["abs_err"] / (df["Demand"].abs() + 1e-9) * 100
+        agg = df.groupby("Product").agg(
+            avg_demand=("Demand", "mean"), avg_predicted=("Predicted", "mean"),
+            mae=("abs_err", "mean"), mape=("err_pct", "mean"),
+            total_demand=("Demand", "sum"), count=("Demand", "count"),
+        ).reset_index()
+        pnames = _get_product_names()
+        agg["name"] = agg["Product"].map(pnames).fillna(agg["Product"].apply(lambda x: f"Product {int(x)}"))
+        agg["accuracy"] = (100 - agg["mape"]).clip(0, 100)
+        return agg.round(2).to_dict(orient="records")
+    return _cached("product_forecast", 60, _build)
+
+@app.get("/api/product-monthly")
+def product_monthly():
+    """Monthly forecast vs actual per product."""
+    def _build():
+        frames = []
+        for f in sorted(PROCESSED.glob("predictions_*.csv")):
+            try:
+                df = pd.read_csv(f)
+                if {"Product", "Demand", "Predicted", "Date"}.issubset(df.columns):
+                    df["month"] = pd.to_datetime(df["Date"]).dt.to_period("M").astype(str)
+                    frames.append(df)
+            except Exception: pass
+        if not frames: return []
+        df = pd.concat(frames, ignore_index=True)
+        agg = df.groupby(["month", "Product"]).agg(
+            demand=("Demand", "mean"), predicted=("Predicted", "mean"),
+        ).reset_index()
+        pnames = _get_product_names()
+        agg["name"] = agg["Product"].map(pnames).fillna(agg["Product"].apply(lambda x: f"Product {int(x)}"))
+        return agg.round(2).to_dict(orient="records")
+    return _cached("product_monthly", 60, _build)
+
+@app.get("/api/product-names")
+def product_names():
+    return _cached("product_names", 60, _get_product_names)
+
+@app.get("/api/detected-columns")
+def detected_columns():
+    """Return what columns the system detected in the uploaded data."""
+    insp = rj("data_inspection.json") or {}
+    return {
+        "columns": insp.get("columns", []),
+        "detected": insp.get("detected_columns", {}),
+        "user_features": insp.get("user_features", []),
+    }
+
+@app.get("/api/dataset-summary")
+def dataset_summary():
+    """Aggregated stats from the pipeline training data for comparison."""
+    def _build():
+        insp = rj("data_inspection.json") or {}
+        split = rj("data_split.json") or {}
+        batches = dedup(rj("prediction_batches.json") or [])
+        stats = insp.get("weekly_sales_stats") or {}
+        monthly_avg = []
+        for b in batches:
+            monthly_avg.append({"month": b["month"], "mean_actual": b.get("mean_actual"), "mean_pred": b.get("mean_pred")})
+        return {
+            "rows": insp.get("rows", 0),
+            "stores": insp.get("stores", 0),
+            "date_range": insp.get("date_range", []),
+            "demand_mean": stats.get("mean", 0),
+            "demand_min": stats.get("min", 0),
+            "demand_max": stats.get("max", 0),
+            "train_rows": split.get("train_rows", 0),
+            "test_rows": split.get("test_rows", 0),
+            "monthly_avg": monthly_avg,
+        }
+    return _cached("dataset_summary", 120, _build)
+
 @app.post("/api/upload-predict")
 async def upload_predict(file: UploadFile = File(...)):
     if not file.filename or not file.filename.lower().endswith(".csv"):
@@ -308,6 +430,13 @@ async def upload_predict(file: UploadFile = File(...)):
         raise HTTPException(413, "File too large (max 50 MB)")
     dest = UPLOAD / safe_name
     with open(dest, "wb") as f: f.write(content)
+    # Read with BOM handling and re-save clean
+    try:
+        clean_df = pd.read_csv(dest, encoding="utf-8-sig")
+        clean_df.columns = clean_df.columns.str.strip()
+        clean_df.to_csv(dest, index=False)
+    except Exception:
+        pass
     shutil.copy(dest, DATA / "uploaded_data.csv")
     result = subprocess.run(
         [sys.executable, str(BASE / "main.py")],
@@ -356,6 +485,10 @@ def healing_actions():
         }
     return _cached("healing_actions", 60, _build)
 
+@app.get("/api/healing-history")
+def healing_history():
+    return _cached("healing_history", 8, lambda: dedup(rj("healing_history.json") or []))
+
 @app.get("/api/healing-status")
 def healing_status():
     def _build():
@@ -363,3 +496,123 @@ def healing_status():
         indicator = HealingStatusIndicator()
         return indicator.get_current_status()
     return _cached("healing_status", 5, _build)
+
+
+# ── Sequential Prediction Endpoints ───────────────────────────────────────────
+
+@app.get("/api/seq/status")
+def seq_status():
+    """Get the current sequential prediction cycle status."""
+    try:
+        from sequential_predictor import SequentialPredictor
+        sp = SequentialPredictor()
+        return sp.get_status()
+    except Exception as e:
+        raise HTTPException(500, f"Status error: {e}")
+
+
+@app.post("/api/seq/predict-next")
+def seq_predict_next():
+    """Predict the next month based on all available data."""
+    try:
+        from sequential_predictor import SequentialPredictor
+        sp = SequentialPredictor()
+        result = sp.predict_next_month()
+        _bust()
+        return result
+    except Exception as e:
+        raise HTTPException(422, f"Prediction failed: {e}")
+
+
+@app.post("/api/seq/upload-actuals")
+async def seq_upload_actuals(file: UploadFile = File(...)):
+    """
+    Upload ACTUAL data for a completed month (with Demand).
+    Compares with predictions, then auto-predicts next month.
+    Only requires: Date + Demand (or Sales/Weekly_Sales). Other columns auto-filled.
+    """
+    if not file.filename or not file.filename.lower().endswith(".csv"):
+        raise HTTPException(400, "Only .csv files are accepted")
+    content = await file.read()
+    if len(content) > 50 * 1024 * 1024:
+        raise HTTPException(413, "File too large (max 50 MB)")
+    import io
+    try:
+        df = pd.read_csv(io.BytesIO(content), encoding="utf-8-sig")
+        df.columns = df.columns.str.strip()
+    except Exception as e:
+        raise HTTPException(400, f"Failed to parse CSV: {e}")
+    # Require Date + Product + Demand
+    has_date = any(c.lower().replace(" ","_") in ("date","week","order_date") for c in df.columns)
+    has_product = any(c.lower().replace(" ","_") in ("product","item","product_id","item_id","sku","category") for c in df.columns)
+    has_demand = any(c.lower().replace(" ","_") in ("demand","sales","weekly_sales","units","quantity") for c in df.columns)
+    missing = []
+    if not has_date: missing.append("Date")
+    if not has_product: missing.append("Product")
+    if not has_demand: missing.append("Demand")
+    if missing:
+        raise HTTPException(400, f"Missing required columns: {missing}. Need Date, Product, Demand. Got: {list(df.columns)}")
+    try:
+        from sequential_predictor import SequentialPredictor
+        sp = SequentialPredictor()
+        result = sp.process_actuals_upload(df)
+        _bust()
+        return result
+    except Exception as e:
+        raise HTTPException(422, f"Upload failed: {e}")
+
+
+@app.get("/api/seq/prediction/{month}")
+def seq_get_prediction(month: str):
+    """Get saved predictions for a specific month."""
+    if not month.replace("-", "").isalnum():
+        raise HTTPException(400, "Invalid month format")
+    try:
+        from sequential_predictor import SequentialPredictor
+        sp = SequentialPredictor()
+        result = sp.get_prediction(month)
+        if result is None:
+            raise HTTPException(404, f"No predictions for {month}")
+        # Sanitize NaN values for JSON serialization
+        import math
+        for p in result.get("predictions", []):
+            for k, v in p.items():
+                if isinstance(v, float) and math.isnan(v):
+                    p[k] = None
+        return result
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(500, str(e))
+
+
+@app.get("/api/seq/comparison/{month}")
+def seq_get_comparison(month: str):
+    """Get predicted vs actual comparison for a specific month."""
+    if not month.replace("-", "").isalnum():
+        raise HTTPException(400, "Invalid month format")
+    try:
+        from sequential_predictor import SequentialPredictor
+        sp = SequentialPredictor()
+        result = sp.get_comparison(month)
+        if result is None:
+            raise HTTPException(404, f"No comparison for {month}")
+        return result
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(500, str(e))
+
+
+@app.get("/api/forecast-status")
+def forecast_status():
+    """Get the current state: last known month, next predictable month."""
+    try:
+        from sequential_predictor import SequentialPredictor
+        sp = SequentialPredictor()
+        return sp.get_status()
+    except Exception as e:
+        data_file = DATA / "uploaded_data.csv"
+        if not data_file.exists():
+            return {"status": "no_data", "message": "No data uploaded yet"}
+        return {"status": "error", "message": str(e)}

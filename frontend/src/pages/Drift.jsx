@@ -24,7 +24,7 @@ const DriftRow = memo(({ d, isActive, isSelected, onClick }) => (
 ))
 
 export default function Drift() {
-  const { data: drift, loading, error } = useFetch('/api/drift')
+  const { data: drift, loading, error } = useFetch('/api/drift', { pollMs: 10000 })
   const slicer = useSlicerStore()
 
   const months = useMemo(() => (drift || []).map(d => d.month), [drift])
@@ -56,26 +56,26 @@ export default function Drift() {
 
   const onBarClick = e => { if (e?.activeLabel) slicerActions.toggleMonth(e.activeLabel) }
 
-  if (error)   return <ErrorBox msg={error} />
-  if (loading) return <Spinner />
+  if (error)              return <ErrorBox msg={error} />
+  if (loading && !drift)  return <Spinner />
 
   return (
     <>
       <div className="page-header">
-        <div className="page-title">Drift Analysis</div>
-        <div className="page-sub">5 detection methods: KS Test · PSI · Wasserstein · JS Divergence · Error Trend</div>
+        <div className="page-title">Drift Detection</div>
+        <div className="page-sub">Baseline vs test set distribution shift — KS Test · PSI · Wasserstein · JS Divergence · Error Trend</div>
       </div>
 
       <SlicerPanel months={months} slicer={slicer} />
 
       <div className="kpi-grid" style={{ gridTemplateColumns: 'repeat(3,1fr)' }}>
-        <KPI label="Months Monitored"  value={filtered.length} delta={filtered.length !== drift?.length ? `of ${drift?.length} total` : 'all'} />
-        <KPI label="Severe Months"     value={filtered.filter(d => d.severity === 'severe').length} color="var(--red)" />
-        <KPI label="Avg Error Increase" value={avgIncrease} color="var(--orange)" />
+        <KPI label="Test Months"        value={filtered.length} delta={filtered.length !== drift?.length ? `of ${drift?.length} total` : 'all'} />
+        <KPI label="Severe Months"       value={filtered.filter(d => d.severity === 'severe').length} color="var(--red)" />
+        <KPI label="Avg Error vs Baseline" value={avgIncrease} color="var(--orange)" />
       </div>
 
       <div className="grid-2">
-        <SectionCard title="Error Increase % — click bar to filter">
+        <SectionCard title="Error Increase vs Baseline (%) — click bar to filter">
           <ResponsiveContainer width="100%" height={230} debounce={200}>
             <BarChart data={errorData} margin={{ top: 4, right: 8, bottom: 0, left: 0 }} onClick={onBarClick}>
               <CartesianGrid strokeDasharray="3 3" />
@@ -96,7 +96,7 @@ export default function Drift() {
           </ResponsiveContainer>
         </SectionCard>
 
-        <SectionCard title="Drifted Feature Count — click bar to filter">
+        <SectionCard title="Drifted Feature Count per Test Month — click bar to filter">
           <ResponsiveContainer width="100%" height={230} debounce={200}>
             <BarChart data={featureData} margin={{ top: 4, right: 8, bottom: 0, left: 0 }} onClick={onBarClick}>
               <CartesianGrid strokeDasharray="3 3" />
@@ -115,13 +115,13 @@ export default function Drift() {
         </SectionCard>
       </div>
 
-      <SectionCard title="Drift History">
+      <SectionCard title="Drift History — Baseline vs Test Set">
         <div style={{ overflowX: 'auto' }}>
           <table className="tbl">
             <thead>
               <tr>
-                <th>Month</th><th>Severity</th><th>Severe Feats</th><th>Mild Feats</th>
-                <th>Baseline MAE</th><th>Current MAE</th><th>Error Increase</th>
+                <th>Test Month</th><th>Severity</th><th>Severe Feats</th><th>Mild Feats</th>
+                <th>Baseline MAE</th><th>Test Set MAE</th><th>Error Increase</th>
               </tr>
             </thead>
             <tbody>
