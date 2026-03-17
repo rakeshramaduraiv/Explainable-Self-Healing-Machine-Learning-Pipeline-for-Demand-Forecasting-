@@ -1,8 +1,8 @@
 {
-  "train_year": 2024,
-  "test_year": 2025,
-  "train_rows": 260,
-  "test_rows": 260,
+  "train_year": 2016,
+  "test_year": 2017,
+  "train_rows": 795,
+  "test_rows": 780,
   "train_months": 12,
   "test_months": 12
 }

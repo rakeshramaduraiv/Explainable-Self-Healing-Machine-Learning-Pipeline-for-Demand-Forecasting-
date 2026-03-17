@@ -798,3 +798,373 @@
 2026-03-17 08:19:22 | INFO     | pipeline | PHASE 1 COMPLETE in 41s
 2026-03-17 08:19:22 | INFO     | __main__ | Final Drift Severity: SEVERE
 2026-03-17 08:19:22 | INFO     | __main__ | Recommendation: Severe drift detected: Fine-tuning applied
+2026-03-17 09:06:39 | INFO     | demand_analyzer | Loaded 520 rows for demand analysis
+2026-03-17 09:06:39 | INFO     | demand_analyzer | Demand metrics calculated: avg=124
+2026-03-17 09:06:39 | INFO     | demand_analyzer | Loaded 520 rows for demand analysis
+2026-03-17 09:06:39 | INFO     | demand_analyzer | Loaded 520 rows for demand analysis
+2026-03-17 09:06:39 | INFO     | demand_analyzer | Loaded 520 rows for demand analysis
+2026-03-17 09:19:42 | INFO     | demand_analyzer | Loaded 520 rows for demand analysis
+2026-03-17 09:19:42 | INFO     | demand_analyzer | Demand metrics calculated: avg=124
+2026-03-17 09:19:42 | INFO     | demand_analyzer | Loaded 520 rows for demand analysis
+2026-03-17 09:19:42 | INFO     | demand_analyzer | Loaded 520 rows for demand analysis
+2026-03-17 09:19:42 | INFO     | demand_analyzer | Loaded 520 rows for demand analysis
+2026-03-17 09:33:39 | INFO     | pipeline | ============================================================
+2026-03-17 09:33:39 | INFO     | pipeline | PHASE 1: SELF-HEALING DEMAND FORECASTING SYSTEM
+2026-03-17 09:33:39 | INFO     | pipeline | ============================================================
+2026-03-17 09:33:39 | INFO     | pipeline | [1/7] Loading data
+2026-03-17 09:33:39 | INFO     | data_loader | Numeric features: []
+2026-03-17 09:33:39 | INFO     | data_loader | Categorical features: []
+2026-03-17 09:33:39 | INFO     | data_loader | Loaded 1575 rows, 3 columns
+2026-03-17 09:33:39 | INFO     | data_loader | Detected roles: {'target': 'Demand', 'date': 'Date', 'has_store': False, 'has_product': True, 'has_holiday': False, 'numeric_features': [], 'categorical_features': []}
+2026-03-17 09:33:39 | INFO     | data_loader | Stores: 0 | Products: 15 | Missing: 0
+2026-03-17 09:33:39 | INFO     | pipeline | [1/7] Loading data done in 0s
+2026-03-17 09:33:39 | INFO     | pipeline | [2/7] Splitting data
+2026-03-17 09:33:39 | INFO     | data_loader | Train: 2016 (795 rows, 12 months)
+2026-03-17 09:33:39 | INFO     | data_loader | Test:  2017 (780 rows, 12 months)
+2026-03-17 09:33:39 | INFO     | pipeline | Train year: 2016 | Test year: 2017
+2026-03-17 09:33:39 | INFO     | pipeline | [2/7] Splitting data done in 0s
+2026-03-17 09:33:39 | INFO     | pipeline | [3/7] Feature engineering
+2026-03-17 09:33:39 | INFO     | feature_engineering | Group cols: ['Product']
+2026-03-17 09:33:39 | INFO     | feature_engineering | Numeric user cols: []
+2026-03-17 09:33:39 | INFO     | feature_engineering | Categorical user cols: []
+2026-03-17 09:33:40 | INFO     | feature_engineering | Feature pipeline: 54 features from 795 rows
+2026-03-17 09:33:40 | INFO     | feature_engineering | Feature pipeline: 54 features from 780 rows
+2026-03-17 09:33:40 | INFO     | pipeline | Features: 54 | Train rows: 795 | Test rows: 780
+2026-03-17 09:33:40 | INFO     | pipeline | [3/7] Feature engineering done in 0s
+2026-03-17 09:33:40 | INFO     | pipeline | [4/7] Training model
+2026-03-17 09:34:36 | INFO     | model_trainer | Best RF params: {'n_estimators': 500, 'min_samples_split': 2, 'min_samples_leaf': 1, 'min_impurity_decrease': 0.0001, 'max_features': 0.5, 'max_depth': 30}
+2026-03-17 09:35:02 | INFO     | model_trainer | RF:6 GB:2 XGB:1 Stack:11 → XGB
+2026-03-17 09:35:02 | INFO     | model_trainer | train → RMSE:2 MAE:1 R²:100% MAPE:0% Accuracy:100%
+2026-03-17 09:35:03 | INFO     | model_trainer | Model saved: models/active_model.pkl | Version:v1_20260317_093502 | Type:XGB
+2026-03-17 09:35:03 | INFO     | model_trainer | Metrics saved: logs/baseline_metrics.json
+2026-03-17 09:35:03 | INFO     | drift_detector | Dynamic thresholds set for 54 features
+2026-03-17 09:35:04 | INFO     | model_trainer | CI Coverage:100.00% | Avg Width:71
+2026-03-17 09:35:04 | INFO     | drift_detector | Baseline set: 54 features
+2026-03-17 09:35:04 | INFO     | pipeline | [4/7] Training model done in 84s
+2026-03-17 09:35:04 | INFO     | pipeline | [5/7] Simulating months
+2026-03-17 09:35:04 | INFO     | pipeline | Simulating 12 months...
+2026-03-17 09:35:05 | INFO     | healing_status | 🔧 Fine-tuning started for 2017-01
+2026-03-17 09:35:05 | INFO     | fine_tuner | 🔧 Fine-tuning: Adding trees to existing model...
+2026-03-17 09:35:05 | INFO     | fine_tuner | ⚠️ Fine-tune improvement -73.4% < threshold, rolling back
+2026-03-17 09:35:05 | WARNING  | healing_status | ❌ Fine-tuning failed or rolled back
+2026-03-17 09:35:05 | INFO     | pipeline |   2017-01: FINE-TUNE | Improvement: 0.0%
+2026-03-17 09:35:05 | INFO     | healing_status | 🔧 Fine-tuning started for 2017-02
+2026-03-17 09:35:05 | INFO     | fine_tuner | 🔧 Fine-tuning: Adding trees to existing model...
+2026-03-17 09:35:06 | INFO     | fine_tuner | ✅ Fine-tune successful: 38.9% improvement
+2026-03-17 09:35:06 | INFO     | healing_status | ✅ Fine-tuning complete: 38.9% improvement
+2026-03-17 09:35:06 | INFO     | pipeline |   2017-02: FINE-TUNE | Improvement: 38.9%
+2026-03-17 09:35:06 | INFO     | healing_status | 🔧 Fine-tuning started for 2017-03
+2026-03-17 09:35:06 | INFO     | fine_tuner | 🔧 Fine-tuning: Adding trees to existing model...
+2026-03-17 09:35:06 | INFO     | fine_tuner | ✅ Fine-tune successful: 64.1% improvement
+2026-03-17 09:35:06 | INFO     | healing_status | ✅ Fine-tuning complete: 64.1% improvement
+2026-03-17 09:35:06 | INFO     | pipeline |   2017-03: FINE-TUNE | Improvement: 64.1%
+2026-03-17 09:35:07 | INFO     | healing_status | 🔧 Fine-tuning started for 2017-04
+2026-03-17 09:35:07 | INFO     | fine_tuner | 🔧 Fine-tuning: Adding trees to existing model...
+2026-03-17 09:35:07 | INFO     | fine_tuner | ✅ Fine-tune successful: 61.2% improvement
+2026-03-17 09:35:07 | INFO     | healing_status | ✅ Fine-tuning complete: 61.2% improvement
+2026-03-17 09:35:07 | INFO     | pipeline |   2017-04: FINE-TUNE | Improvement: 61.2%
+2026-03-17 09:35:08 | INFO     | healing_status | 🔧 Fine-tuning started for 2017-05
+2026-03-17 09:35:08 | INFO     | fine_tuner | 🔧 Fine-tuning: Adding trees to existing model...
+2026-03-17 09:35:08 | INFO     | fine_tuner | ✅ Fine-tune successful: 5.6% improvement
+2026-03-17 09:35:08 | INFO     | healing_status | ✅ Fine-tuning complete: 5.6% improvement
+2026-03-17 09:35:08 | INFO     | pipeline |   2017-05: FINE-TUNE | Improvement: 5.6%
+2026-03-17 09:35:09 | INFO     | healing_status | 🔧 Fine-tuning started for 2017-06
+2026-03-17 09:35:09 | INFO     | fine_tuner | 🔧 Fine-tuning: Adding trees to existing model...
+2026-03-17 09:35:09 | INFO     | fine_tuner | ✅ Fine-tune successful: 17.4% improvement
+2026-03-17 09:35:09 | INFO     | healing_status | ✅ Fine-tuning complete: 17.4% improvement
+2026-03-17 09:35:09 | INFO     | pipeline |   2017-06: FINE-TUNE | Improvement: 17.4%
+2026-03-17 09:35:09 | INFO     | healing_status | 🔧 Fine-tuning started for 2017-07
+2026-03-17 09:35:09 | INFO     | fine_tuner | 🔧 Fine-tuning: Adding trees to existing model...
+2026-03-17 09:35:09 | INFO     | fine_tuner | ⚠️ Fine-tune improvement -17.8% < threshold, rolling back
+2026-03-17 09:35:09 | WARNING  | healing_status | ❌ Fine-tuning failed or rolled back
+2026-03-17 09:35:09 | INFO     | pipeline |   2017-07: FINE-TUNE | Improvement: 0.0%
+2026-03-17 09:35:10 | INFO     | healing_status | 🔧 Fine-tuning started for 2017-08
+2026-03-17 09:35:10 | INFO     | fine_tuner | 🔧 Fine-tuning: Adding trees to existing model...
+2026-03-17 09:35:10 | INFO     | fine_tuner | ✅ Fine-tune successful: 12.9% improvement
+2026-03-17 09:35:10 | INFO     | healing_status | ✅ Fine-tuning complete: 12.9% improvement
+2026-03-17 09:35:10 | INFO     | pipeline |   2017-08: FINE-TUNE | Improvement: 12.9%
+2026-03-17 09:35:11 | INFO     | healing_status | 🔧 Fine-tuning started for 2017-09
+2026-03-17 09:35:11 | INFO     | fine_tuner | 🔧 Fine-tuning: Adding trees to existing model...
+2026-03-17 09:35:11 | INFO     | fine_tuner | ⚠️ Fine-tune improvement -1.8% < threshold, rolling back
+2026-03-17 09:35:11 | WARNING  | healing_status | ❌ Fine-tuning failed or rolled back
+2026-03-17 09:35:11 | INFO     | pipeline |   2017-09: FINE-TUNE | Improvement: 0.0%
+2026-03-17 09:35:12 | INFO     | healing_status | 🔧 Fine-tuning started for 2017-10
+2026-03-17 09:35:12 | INFO     | fine_tuner | 🔧 Fine-tuning: Adding trees to existing model...
+2026-03-17 09:35:12 | INFO     | fine_tuner | ⚠️ Fine-tune improvement -1.1% < threshold, rolling back
+2026-03-17 09:35:12 | WARNING  | healing_status | ❌ Fine-tuning failed or rolled back
+2026-03-17 09:35:12 | INFO     | pipeline |   2017-10: FINE-TUNE | Improvement: 0.0%
+2026-03-17 09:35:13 | INFO     | healing_status | 🔧 Fine-tuning started for 2017-11
+2026-03-17 09:35:13 | INFO     | fine_tuner | 🔧 Fine-tuning: Adding trees to existing model...
+2026-03-17 09:35:13 | INFO     | fine_tuner | ✅ Fine-tune successful: 18.8% improvement
+2026-03-17 09:35:13 | INFO     | healing_status | ✅ Fine-tuning complete: 18.8% improvement
+2026-03-17 09:35:13 | INFO     | pipeline |   2017-11: FINE-TUNE | Improvement: 18.8%
+2026-03-17 09:35:13 | INFO     | healing_status | 🔧 Fine-tuning started for 2017-12
+2026-03-17 09:35:13 | INFO     | fine_tuner | 🔧 Fine-tuning: Adding trees to existing model...
+2026-03-17 09:35:14 | INFO     | fine_tuner | ✅ Fine-tune successful: 52.3% improvement
+2026-03-17 09:35:14 | INFO     | healing_status | ✅ Fine-tuning complete: 52.3% improvement
+2026-03-17 09:35:14 | INFO     | pipeline |   2017-12: FINE-TUNE | Improvement: 52.3%
+2026-03-17 09:35:14 | INFO     | pipeline | [5/7] Simulating months done in 9s
+2026-03-17 09:35:14 | INFO     | pipeline | [6/7] Generating summary
+2026-03-17 09:35:14 | INFO     | pipeline | Final Severity: SEVERE | Severe drift detected: Fine-tuning applied
+2026-03-17 09:35:14 | INFO     | pipeline | Healing Summary: {'total_actions': 12, 'monitor_only': 0, 'fine_tuned': 8, 'rollbacks': 4}
+2026-03-17 09:35:14 | INFO     | pipeline | [6/7] Generating summary done in 0s
+2026-03-17 09:35:14 | INFO     | pipeline | [7/7] Saving results
+2026-03-17 09:35:14 | INFO     | log_book | All logs saved
+2026-03-17 09:35:14 | INFO     | fine_tuner | 💾 Healed model saved to C:\Users\balan\OneDrive\Desktop\caps\backend\models\active_model.pkl
+2026-03-17 09:35:14 | INFO     | pipeline | Healed model saved after 12 healing actions
+2026-03-17 09:35:14 | INFO     | pipeline | All results saved
+2026-03-17 09:35:14 | INFO     | pipeline | [7/7] Saving results done in 0s
+2026-03-17 09:35:14 | INFO     | pipeline | [8/7] First future prediction
+2026-03-17 09:35:14 | INFO     | sequential_predictor | Loaded model with 54 features
+2026-03-17 09:35:14 | INFO     | sequential_predictor | Loaded feature engineer state
+2026-03-17 09:35:14 | INFO     | feature_engineering | Feature pipeline: 54 features from 1635 rows
+2026-03-17 09:35:17 | INFO     | sequential_predictor | Predicted 2018-01: 60 rows, mean=208 units
+2026-03-17 09:35:17 | INFO     | pipeline | First prediction: 2018-01 (60 rows)
+2026-03-17 09:35:17 | INFO     | pipeline | [8/7] First future prediction done in 2s
+2026-03-17 09:35:17 | INFO     | pipeline | PHASE 1 COMPLETE in 97s
+2026-03-17 09:35:17 | INFO     | __main__ | Final Drift Severity: SEVERE
+2026-03-17 09:35:17 | INFO     | __main__ | Recommendation: Severe drift detected: Fine-tuning applied
+2026-03-17 09:39:36 | INFO     | pipeline | ============================================================
+2026-03-17 09:39:36 | INFO     | pipeline | PHASE 1: SELF-HEALING DEMAND FORECASTING SYSTEM
+2026-03-17 09:39:36 | INFO     | pipeline | ============================================================
+2026-03-17 09:39:36 | INFO     | pipeline | [1/7] Loading data
+2026-03-17 09:39:36 | INFO     | data_loader | Numeric features: []
+2026-03-17 09:39:36 | INFO     | data_loader | Categorical features: []
+2026-03-17 09:39:36 | INFO     | data_loader | Loaded 1575 rows, 3 columns
+2026-03-17 09:39:36 | INFO     | data_loader | Detected roles: {'target': 'Demand', 'date': 'Date', 'has_store': False, 'has_product': True, 'has_holiday': False, 'numeric_features': [], 'categorical_features': []}
+2026-03-17 09:39:36 | INFO     | data_loader | Stores: 0 | Products: 15 | Missing: 0
+2026-03-17 09:39:36 | INFO     | pipeline | [1/7] Loading data done in 0s
+2026-03-17 09:39:36 | INFO     | pipeline | [2/7] Splitting data
+2026-03-17 09:39:36 | INFO     | data_loader | Train: 2016 (795 rows, 12 months)
+2026-03-17 09:39:36 | INFO     | data_loader | Test:  2017 (780 rows, 12 months)
+2026-03-17 09:39:36 | INFO     | pipeline | Train year: 2016 | Test year: 2017
+2026-03-17 09:39:36 | INFO     | pipeline | [2/7] Splitting data done in 0s
+2026-03-17 09:39:36 | INFO     | pipeline | [3/7] Feature engineering
+2026-03-17 09:39:36 | INFO     | feature_engineering | Group cols: ['Product']
+2026-03-17 09:39:36 | INFO     | feature_engineering | Numeric user cols: []
+2026-03-17 09:39:36 | INFO     | feature_engineering | Categorical user cols: []
+2026-03-17 09:39:37 | INFO     | feature_engineering | Feature pipeline: 54 features from 795 rows
+2026-03-17 09:39:37 | INFO     | feature_engineering | Feature pipeline: 54 features from 780 rows
+2026-03-17 09:39:37 | INFO     | pipeline | Features: 54 | Train rows: 795 | Test rows: 780
+2026-03-17 09:39:37 | INFO     | pipeline | [3/7] Feature engineering done in 0s
+2026-03-17 09:39:37 | INFO     | pipeline | [4/7] Training model
+2026-03-17 09:40:15 | INFO     | model_trainer | Best RF params: {'n_estimators': 500, 'min_samples_split': 5, 'min_samples_leaf': 3, 'min_impurity_decrease': 0.001, 'max_features': 0.5, 'max_depth': 20}
+2026-03-17 09:40:33 | INFO     | model_trainer | RF:8 GB:2 XGB:2 Stack:11 → XGB
+2026-03-17 09:40:33 | INFO     | model_trainer | train → RMSE:3 MAE:2 R²:100% MAPE:1% Accuracy:99%
+2026-03-17 09:40:33 | INFO     | model_trainer | Model saved: models/active_model.pkl | Version:v1_20260317_094033 | Type:XGB
+2026-03-17 09:40:33 | INFO     | model_trainer | Metrics saved: logs/baseline_metrics.json
+2026-03-17 09:40:33 | INFO     | drift_detector | Dynamic thresholds set for 54 features
+2026-03-17 09:40:33 | INFO     | model_trainer | CI Coverage:100.00% | Avg Width:74
+2026-03-17 09:40:33 | INFO     | drift_detector | Baseline set: 54 features
+2026-03-17 09:40:34 | INFO     | pipeline | [4/7] Training model done in 56s
+2026-03-17 09:40:34 | INFO     | pipeline | [5/7] Simulating months
+2026-03-17 09:40:34 | INFO     | pipeline | Simulating 12 months...
+2026-03-17 09:40:34 | INFO     | healing_status | 🔧 Fine-tuning started for 2017-01
+2026-03-17 09:40:34 | INFO     | fine_tuner | Fine-tuning: Adding trees to existing model...
+2026-03-17 09:40:34 | INFO     | fine_tuner | Fine-tune improvement -61.1% < threshold, rolling back
+2026-03-17 09:40:34 | WARNING  | healing_status | ❌ Fine-tuning failed or rolled back
+2026-03-17 09:40:34 | INFO     | pipeline |   2017-01: FINE-TUNE | Improvement: 0.0%
+2026-03-17 09:40:34 | INFO     | healing_status | 🔧 Fine-tuning started for 2017-02
+2026-03-17 09:40:34 | INFO     | fine_tuner | Fine-tuning: Adding trees to existing model...
+2026-03-17 09:40:34 | INFO     | fine_tuner | Fine-tune successful: 31.9% improvement
+2026-03-17 09:40:34 | INFO     | healing_status | ✅ Fine-tuning complete: 31.9% improvement
+2026-03-17 09:40:34 | INFO     | pipeline |   2017-02: FINE-TUNE | Improvement: 31.9%
+2026-03-17 09:40:35 | INFO     | healing_status | 🔧 Fine-tuning started for 2017-03
+2026-03-17 09:40:35 | INFO     | fine_tuner | Fine-tuning: Adding trees to existing model...
+2026-03-17 09:40:35 | INFO     | fine_tuner | Fine-tune successful: 64.5% improvement
+2026-03-17 09:40:35 | INFO     | healing_status | ✅ Fine-tuning complete: 64.5% improvement
+2026-03-17 09:40:35 | INFO     | pipeline |   2017-03: FINE-TUNE | Improvement: 64.5%
+2026-03-17 09:40:35 | INFO     | healing_status | 🔧 Fine-tuning started for 2017-04
+2026-03-17 09:40:35 | INFO     | fine_tuner | Fine-tuning: Adding trees to existing model...
+2026-03-17 09:40:35 | INFO     | fine_tuner | Fine-tune successful: 62.7% improvement
+2026-03-17 09:40:35 | INFO     | healing_status | ✅ Fine-tuning complete: 62.7% improvement
+2026-03-17 09:40:35 | INFO     | pipeline |   2017-04: FINE-TUNE | Improvement: 62.7%
+2026-03-17 09:40:36 | INFO     | healing_status | 🔧 Fine-tuning started for 2017-05
+2026-03-17 09:40:36 | INFO     | fine_tuner | Fine-tuning: Adding trees to existing model...
+2026-03-17 09:40:36 | INFO     | fine_tuner | Fine-tune improvement -8.1% < threshold, rolling back
+2026-03-17 09:40:36 | WARNING  | healing_status | ❌ Fine-tuning failed or rolled back
+2026-03-17 09:40:36 | INFO     | pipeline |   2017-05: FINE-TUNE | Improvement: 0.0%
+2026-03-17 09:40:36 | INFO     | healing_status | 🔧 Fine-tuning started for 2017-06
+2026-03-17 09:40:36 | INFO     | fine_tuner | Fine-tuning: Adding trees to existing model...
+2026-03-17 09:40:36 | INFO     | fine_tuner | Fine-tune successful: 8.7% improvement
+2026-03-17 09:40:36 | INFO     | healing_status | ✅ Fine-tuning complete: 8.7% improvement
+2026-03-17 09:40:36 | INFO     | pipeline |   2017-06: FINE-TUNE | Improvement: 8.7%
+2026-03-17 09:40:37 | INFO     | healing_status | 🔧 Fine-tuning started for 2017-07
+2026-03-17 09:40:37 | INFO     | fine_tuner | Fine-tuning: Adding trees to existing model...
+2026-03-17 09:40:37 | INFO     | fine_tuner | Fine-tune successful: 12.6% improvement
+2026-03-17 09:40:37 | INFO     | healing_status | ✅ Fine-tuning complete: 12.6% improvement
+2026-03-17 09:40:37 | INFO     | pipeline |   2017-07: FINE-TUNE | Improvement: 12.6%
+2026-03-17 09:40:37 | INFO     | healing_status | 🔧 Fine-tuning started for 2017-08
+2026-03-17 09:40:37 | INFO     | fine_tuner | Fine-tuning: Adding trees to existing model...
+2026-03-17 09:40:38 | INFO     | fine_tuner | Fine-tune improvement 1.8% < threshold, rolling back
+2026-03-17 09:40:38 | WARNING  | healing_status | ❌ Fine-tuning failed or rolled back
+2026-03-17 09:40:38 | INFO     | pipeline |   2017-08: FINE-TUNE | Improvement: 0.0%
+2026-03-17 09:40:38 | INFO     | healing_status | 🔧 Fine-tuning started for 2017-09
+2026-03-17 09:40:38 | INFO     | fine_tuner | Fine-tuning: Adding trees to existing model...
+2026-03-17 09:40:39 | INFO     | fine_tuner | Fine-tune improvement -11.1% < threshold, rolling back
+2026-03-17 09:40:39 | WARNING  | healing_status | ❌ Fine-tuning failed or rolled back
+2026-03-17 09:40:39 | INFO     | pipeline |   2017-09: FINE-TUNE | Improvement: 0.0%
+2026-03-17 09:40:39 | INFO     | healing_status | 🔧 Fine-tuning started for 2017-10
+2026-03-17 09:40:39 | INFO     | fine_tuner | Fine-tuning: Adding trees to existing model...
+2026-03-17 09:40:40 | INFO     | fine_tuner | Fine-tune improvement -5.8% < threshold, rolling back
+2026-03-17 09:40:40 | WARNING  | healing_status | ❌ Fine-tuning failed or rolled back
+2026-03-17 09:40:40 | INFO     | pipeline |   2017-10: FINE-TUNE | Improvement: 0.0%
+2026-03-17 09:40:40 | INFO     | healing_status | 🔧 Fine-tuning started for 2017-11
+2026-03-17 09:40:40 | INFO     | fine_tuner | Fine-tuning: Adding trees to existing model...
+2026-03-17 09:40:41 | INFO     | fine_tuner | Fine-tune successful: 16.3% improvement
+2026-03-17 09:40:41 | INFO     | healing_status | ✅ Fine-tuning complete: 16.3% improvement
+2026-03-17 09:40:41 | INFO     | pipeline |   2017-11: FINE-TUNE | Improvement: 16.3%
+2026-03-17 09:40:41 | INFO     | healing_status | 🔧 Fine-tuning started for 2017-12
+2026-03-17 09:40:41 | INFO     | fine_tuner | Fine-tuning: Adding trees to existing model...
+2026-03-17 09:40:42 | INFO     | fine_tuner | Fine-tune successful: 54.9% improvement
+2026-03-17 09:40:42 | INFO     | healing_status | ✅ Fine-tuning complete: 54.9% improvement
+2026-03-17 09:40:42 | INFO     | pipeline |   2017-12: FINE-TUNE | Improvement: 54.9%
+2026-03-17 09:40:42 | INFO     | pipeline | [5/7] Simulating months done in 8s
+2026-03-17 09:40:42 | INFO     | pipeline | [6/7] Generating summary
+2026-03-17 09:40:42 | INFO     | pipeline | Final Severity: SEVERE | Severe drift detected: Fine-tuning applied
+2026-03-17 09:40:42 | INFO     | pipeline | Healing Summary: {'total_actions': 12, 'monitor_only': 0, 'fine_tuned': 7, 'rollbacks': 5}
+2026-03-17 09:40:42 | INFO     | pipeline | [6/7] Generating summary done in 0s
+2026-03-17 09:40:42 | INFO     | pipeline | [7/7] Saving results
+2026-03-17 09:40:42 | INFO     | log_book | All logs saved
+2026-03-17 09:40:42 | INFO     | fine_tuner | 💾 Healed model saved to C:\Users\balan\OneDrive\Desktop\caps\backend\models\active_model.pkl
+2026-03-17 09:40:42 | INFO     | pipeline | Healed model saved after 12 healing actions
+2026-03-17 09:40:42 | INFO     | pipeline | All results saved
+2026-03-17 09:40:42 | INFO     | pipeline | [7/7] Saving results done in 0s
+2026-03-17 09:40:42 | INFO     | pipeline | [8/7] First future prediction
+2026-03-17 09:40:42 | INFO     | sequential_predictor | Loaded model with 54 features
+2026-03-17 09:40:42 | INFO     | sequential_predictor | Loaded feature engineer state
+2026-03-17 09:40:42 | INFO     | feature_engineering | Feature pipeline: 54 features from 1635 rows
+2026-03-17 09:40:43 | INFO     | sequential_predictor | Predicted 2018-01: 60 rows, mean=229 units
+2026-03-17 09:40:43 | INFO     | pipeline | First prediction: 2018-01 (60 rows)
+2026-03-17 09:40:43 | INFO     | pipeline | [8/7] First future prediction done in 0s
+2026-03-17 09:40:43 | INFO     | pipeline | PHASE 1 COMPLETE in 66s
+2026-03-17 09:40:43 | INFO     | __main__ | Final Drift Severity: SEVERE
+2026-03-17 09:40:43 | INFO     | __main__ | Recommendation: Severe drift detected: Fine-tuning applied
+2026-03-17 09:41:10 | INFO     | demand_analyzer | Loaded 1575 rows for demand analysis
+2026-03-17 09:41:10 | INFO     | demand_analyzer | Demand metrics calculated: avg=394
+2026-03-17 09:41:10 | INFO     | demand_analyzer | Loaded 1575 rows for demand analysis
+2026-03-17 09:41:10 | INFO     | demand_analyzer | Loaded 1575 rows for demand analysis
+2026-03-17 09:41:10 | INFO     | demand_analyzer | Loaded 1575 rows for demand analysis
+2026-03-17 09:41:49 | INFO     | pipeline | ============================================================
+2026-03-17 09:41:49 | INFO     | pipeline | PHASE 1: SELF-HEALING DEMAND FORECASTING SYSTEM
+2026-03-17 09:41:49 | INFO     | pipeline | ============================================================
+2026-03-17 09:41:49 | INFO     | pipeline | [1/7] Loading data
+2026-03-17 09:41:49 | INFO     | data_loader | Numeric features: []
+2026-03-17 09:41:49 | INFO     | data_loader | Categorical features: []
+2026-03-17 09:41:49 | INFO     | data_loader | Loaded 1575 rows, 3 columns
+2026-03-17 09:41:49 | INFO     | data_loader | Detected roles: {'target': 'Demand', 'date': 'Date', 'has_store': False, 'has_product': True, 'has_holiday': False, 'numeric_features': [], 'categorical_features': []}
+2026-03-17 09:41:49 | INFO     | data_loader | Stores: 0 | Products: 15 | Missing: 0
+2026-03-17 09:41:49 | INFO     | pipeline | [1/7] Loading data done in 0s
+2026-03-17 09:41:49 | INFO     | pipeline | [2/7] Splitting data
+2026-03-17 09:41:49 | INFO     | data_loader | Train: 2016 (795 rows, 12 months)
+2026-03-17 09:41:49 | INFO     | data_loader | Test:  2017 (780 rows, 12 months)
+2026-03-17 09:41:49 | INFO     | pipeline | Train year: 2016 | Test year: 2017
+2026-03-17 09:41:49 | INFO     | pipeline | [2/7] Splitting data done in 0s
+2026-03-17 09:41:49 | INFO     | pipeline | [3/7] Feature engineering
+2026-03-17 09:41:49 | INFO     | feature_engineering | Group cols: ['Product']
+2026-03-17 09:41:49 | INFO     | feature_engineering | Numeric user cols: []
+2026-03-17 09:41:49 | INFO     | feature_engineering | Categorical user cols: []
+2026-03-17 09:41:49 | INFO     | feature_engineering | Feature pipeline: 54 features from 795 rows
+2026-03-17 09:41:49 | INFO     | feature_engineering | Feature pipeline: 54 features from 780 rows
+2026-03-17 09:41:49 | INFO     | pipeline | Features: 54 | Train rows: 795 | Test rows: 780
+2026-03-17 09:41:49 | INFO     | pipeline | [3/7] Feature engineering done in 0s
+2026-03-17 09:41:49 | INFO     | pipeline | [4/7] Training model
+2026-03-17 09:42:24 | INFO     | model_trainer | Best RF params: {'n_estimators': 500, 'min_samples_split': 5, 'min_samples_leaf': 3, 'min_impurity_decrease': 0.001, 'max_features': 0.5, 'max_depth': 20}
+2026-03-17 09:42:42 | INFO     | model_trainer | RF:8 GB:2 XGB:2 Stack:11 → XGB
+2026-03-17 09:42:42 | INFO     | model_trainer | train → RMSE:3 MAE:2 R²:100% MAPE:1% Accuracy:99%
+2026-03-17 09:42:42 | INFO     | model_trainer | Model saved: models/active_model.pkl | Version:v1_20260317_094242 | Type:XGB
+2026-03-17 09:42:42 | INFO     | model_trainer | Metrics saved: logs/baseline_metrics.json
+2026-03-17 09:42:42 | INFO     | drift_detector | Dynamic thresholds set for 54 features
+2026-03-17 09:42:42 | INFO     | model_trainer | CI Coverage:100.00% | Avg Width:74
+2026-03-17 09:42:42 | INFO     | drift_detector | Baseline set: 54 features
+2026-03-17 09:42:42 | INFO     | pipeline | [4/7] Training model done in 53s
+2026-03-17 09:42:42 | INFO     | pipeline | [5/7] Simulating months
+2026-03-17 09:42:42 | INFO     | pipeline | Simulating 12 months...
+2026-03-17 09:42:42 | INFO     | healing_status | 🔧 Fine-tuning started for 2017-01
+2026-03-17 09:42:42 | INFO     | fine_tuner | Fine-tuning: Adding trees to existing model...
+2026-03-17 09:42:43 | INFO     | fine_tuner | Fine-tune improvement -61.1% < threshold, rolling back
+2026-03-17 09:42:43 | WARNING  | healing_status | ❌ Fine-tuning failed or rolled back
+2026-03-17 09:42:43 | INFO     | pipeline |   2017-01: FINE-TUNE | Improvement: 0.0%
+2026-03-17 09:42:43 | INFO     | healing_status | 🔧 Fine-tuning started for 2017-02
+2026-03-17 09:42:43 | INFO     | fine_tuner | Fine-tuning: Adding trees to existing model...
+2026-03-17 09:42:43 | INFO     | fine_tuner | Fine-tune successful: 31.9% improvement
+2026-03-17 09:42:43 | INFO     | healing_status | ✅ Fine-tuning complete: 31.9% improvement
+2026-03-17 09:42:43 | INFO     | pipeline |   2017-02: FINE-TUNE | Improvement: 31.9%
+2026-03-17 09:42:43 | INFO     | healing_status | 🔧 Fine-tuning started for 2017-03
+2026-03-17 09:42:43 | INFO     | fine_tuner | Fine-tuning: Adding trees to existing model...
+2026-03-17 09:42:43 | INFO     | fine_tuner | Fine-tune successful: 64.5% improvement
+2026-03-17 09:42:43 | INFO     | healing_status | ✅ Fine-tuning complete: 64.5% improvement
+2026-03-17 09:42:43 | INFO     | pipeline |   2017-03: FINE-TUNE | Improvement: 64.5%
+2026-03-17 09:42:43 | INFO     | healing_status | 🔧 Fine-tuning started for 2017-04
+2026-03-17 09:42:43 | INFO     | fine_tuner | Fine-tuning: Adding trees to existing model...
+2026-03-17 09:42:44 | INFO     | fine_tuner | Fine-tune successful: 62.7% improvement
+2026-03-17 09:42:44 | INFO     | healing_status | ✅ Fine-tuning complete: 62.7% improvement
+2026-03-17 09:42:44 | INFO     | pipeline |   2017-04: FINE-TUNE | Improvement: 62.7%
+2026-03-17 09:42:44 | INFO     | healing_status | 🔧 Fine-tuning started for 2017-05
+2026-03-17 09:42:44 | INFO     | fine_tuner | Fine-tuning: Adding trees to existing model...
+2026-03-17 09:42:44 | INFO     | fine_tuner | Fine-tune improvement -8.1% < threshold, rolling back
+2026-03-17 09:42:44 | WARNING  | healing_status | ❌ Fine-tuning failed or rolled back
+2026-03-17 09:42:44 | INFO     | pipeline |   2017-05: FINE-TUNE | Improvement: 0.0%
+2026-03-17 09:42:44 | INFO     | healing_status | 🔧 Fine-tuning started for 2017-06
+2026-03-17 09:42:44 | INFO     | fine_tuner | Fine-tuning: Adding trees to existing model...
+2026-03-17 09:42:44 | INFO     | fine_tuner | Fine-tune successful: 8.7% improvement
+2026-03-17 09:42:44 | INFO     | healing_status | ✅ Fine-tuning complete: 8.7% improvement
+2026-03-17 09:42:44 | INFO     | pipeline |   2017-06: FINE-TUNE | Improvement: 8.7%
+2026-03-17 09:42:45 | INFO     | healing_status | 🔧 Fine-tuning started for 2017-07
+2026-03-17 09:42:45 | INFO     | fine_tuner | Fine-tuning: Adding trees to existing model...
+2026-03-17 09:42:45 | INFO     | fine_tuner | Fine-tune successful: 12.6% improvement
+2026-03-17 09:42:45 | INFO     | healing_status | ✅ Fine-tuning complete: 12.6% improvement
+2026-03-17 09:42:45 | INFO     | pipeline |   2017-07: FINE-TUNE | Improvement: 12.6%
+2026-03-17 09:42:45 | INFO     | healing_status | 🔧 Fine-tuning started for 2017-08
+2026-03-17 09:42:45 | INFO     | fine_tuner | Fine-tuning: Adding trees to existing model...
+2026-03-17 09:42:45 | INFO     | fine_tuner | Fine-tune improvement 1.8% < threshold, rolling back
+2026-03-17 09:42:45 | WARNING  | healing_status | ❌ Fine-tuning failed or rolled back
+2026-03-17 09:42:45 | INFO     | pipeline |   2017-08: FINE-TUNE | Improvement: 0.0%
+2026-03-17 09:42:45 | INFO     | healing_status | 🔧 Fine-tuning started for 2017-09
+2026-03-17 09:42:45 | INFO     | fine_tuner | Fine-tuning: Adding trees to existing model...
+2026-03-17 09:42:46 | INFO     | fine_tuner | Fine-tune improvement -11.1% < threshold, rolling back
+2026-03-17 09:42:46 | WARNING  | healing_status | ❌ Fine-tuning failed or rolled back
+2026-03-17 09:42:46 | INFO     | pipeline |   2017-09: FINE-TUNE | Improvement: 0.0%
+2026-03-17 09:42:46 | INFO     | healing_status | 🔧 Fine-tuning started for 2017-10
+2026-03-17 09:42:46 | INFO     | fine_tuner | Fine-tuning: Adding trees to existing model...
+2026-03-17 09:42:46 | INFO     | fine_tuner | Fine-tune improvement -5.8% < threshold, rolling back
+2026-03-17 09:42:46 | WARNING  | healing_status | ❌ Fine-tuning failed or rolled back
+2026-03-17 09:42:46 | INFO     | pipeline |   2017-10: FINE-TUNE | Improvement: 0.0%
+2026-03-17 09:42:46 | INFO     | healing_status | 🔧 Fine-tuning started for 2017-11
+2026-03-17 09:42:46 | INFO     | fine_tuner | Fine-tuning: Adding trees to existing model...
+2026-03-17 09:42:47 | INFO     | fine_tuner | Fine-tune successful: 16.3% improvement
+2026-03-17 09:42:47 | INFO     | healing_status | ✅ Fine-tuning complete: 16.3% improvement
+2026-03-17 09:42:47 | INFO     | pipeline |   2017-11: FINE-TUNE | Improvement: 16.3%
+2026-03-17 09:42:47 | INFO     | healing_status | 🔧 Fine-tuning started for 2017-12
+2026-03-17 09:42:47 | INFO     | fine_tuner | Fine-tuning: Adding trees to existing model...
+2026-03-17 09:42:47 | INFO     | fine_tuner | Fine-tune successful: 54.9% improvement
+2026-03-17 09:42:47 | INFO     | healing_status | ✅ Fine-tuning complete: 54.9% improvement
+2026-03-17 09:42:47 | INFO     | pipeline |   2017-12: FINE-TUNE | Improvement: 54.9%
+2026-03-17 09:42:47 | INFO     | pipeline | [5/7] Simulating months done in 5s
+2026-03-17 09:42:47 | INFO     | pipeline | [6/7] Generating summary
+2026-03-17 09:42:47 | INFO     | pipeline | Final Severity: SEVERE | Severe drift detected: Fine-tuning applied
+2026-03-17 09:42:47 | INFO     | pipeline | Healing Summary: {'total_actions': 12, 'monitor_only': 0, 'fine_tuned': 7, 'rollbacks': 5}
+2026-03-17 09:42:47 | INFO     | pipeline | [6/7] Generating summary done in 0s
+2026-03-17 09:42:47 | INFO     | pipeline | [7/7] Saving results
+2026-03-17 09:42:47 | INFO     | log_book | All logs saved
+2026-03-17 09:42:47 | INFO     | fine_tuner | 💾 Healed model saved to C:\Users\balan\OneDrive\Desktop\caps\backend\models\active_model.pkl
+2026-03-17 09:42:47 | INFO     | pipeline | Healed model saved after 12 healing actions
+2026-03-17 09:42:47 | INFO     | pipeline | All results saved
+2026-03-17 09:42:47 | INFO     | pipeline | [7/7] Saving results done in 0s
+2026-03-17 09:42:47 | INFO     | pipeline | [8/7] First future prediction
+2026-03-17 09:42:47 | INFO     | sequential_predictor | Loaded model with 54 features
+2026-03-17 09:42:47 | INFO     | sequential_predictor | Loaded feature engineer state
+2026-03-17 09:42:48 | INFO     | feature_engineering | Feature pipeline: 54 features from 1635 rows
+2026-03-17 09:42:48 | INFO     | sequential_predictor | Predicted 2018-01: 60 rows, mean=229 units
+2026-03-17 09:42:48 | INFO     | pipeline | First prediction: 2018-01 (60 rows)
+2026-03-17 09:42:48 | INFO     | pipeline | [8/7] First future prediction done in 0s
+2026-03-17 09:42:48 | INFO     | pipeline | PHASE 1 COMPLETE in 59s
+2026-03-17 09:42:48 | INFO     | __main__ | Final Drift Severity: SEVERE
+2026-03-17 09:42:48 | INFO     | __main__ | Recommendation: Severe drift detected: Fine-tuning applied
+2026-03-17 09:58:30 | INFO     | demand_analyzer | Loaded 1575 rows for demand analysis
+2026-03-17 09:58:30 | INFO     | demand_analyzer | Demand metrics calculated: avg=394
+2026-03-17 09:58:31 | INFO     | demand_analyzer | Loaded 1575 rows for demand analysis
+2026-03-17 09:58:31 | INFO     | demand_analyzer | Loaded 1575 rows for demand analysis
+2026-03-17 09:58:31 | INFO     | demand_analyzer | Loaded 1575 rows for demand analysis
+2026-03-17 10:01:15 | INFO     | sequential_predictor | Loaded model with 54 features
+2026-03-17 10:01:15 | INFO     | sequential_predictor | Loaded feature engineer state

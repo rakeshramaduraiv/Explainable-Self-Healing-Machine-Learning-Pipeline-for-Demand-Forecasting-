@@ -1,21 +1,21 @@
 {
-  "rows": 520,
+  "rows": 1575,
   "columns": [
-    "Date",
     "Product",
+    "Date",
     "Demand"
   ],
   "date_range": [
-    "2024-01-05 00:00:00",
-    "2025-12-26 00:00:00"
+    "2016-01-01 00:00:00",
+    "2017-12-29 00:00:00"
   ],
   "stores": 0,
-  "products": 5,
+  "products": 15,
   "missing_values": 0,
   "demand_stats": {
-    "mean": 123.99615384615385,
-    "min": 32.0,
-    "max": 305.0
+    "mean": 394.43555555555554,
+    "min": 77.0,
+    "max": 844.0
   },
   "detected_columns": {
     "target": "Demand",

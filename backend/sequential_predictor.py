@@ -213,7 +213,7 @@ class SequentialPredictor:
             all_data = all_data.sort_values(sort_cols).reset_index(drop=True)
 
         target_rows, feat_cols = self._build_features(all_data, target_month)
-        X = target_rows[feat_cols]
+        X = target_rows[feat_cols].values
         predictions = self.model.predict(X)
 
         # Confidence intervals

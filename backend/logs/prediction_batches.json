@@ -1,170 +1,170 @@
 [
   {
-    "timestamp": "2026-03-17T07:10:46.068470",
-    "month": "2025-01",
+    "timestamp": "2026-03-17T09:40:34.296194",
+    "month": "2017-01",
+    "count": 60,
+    "mean_pred": 264.31,
+    "mean_actual": 275.35
+  },
+  {
+    "timestamp": "2026-03-17T09:40:34.574244",
+    "month": "2017-02",
+    "count": 60,
+    "mean_pred": 247.48,
+    "mean_actual": 298.22
+  },
+  {
+    "timestamp": "2026-03-17T09:40:34.991178",
+    "month": "2017-03",
     "count": 75,
-    "mean_pred": 286.54,
-    "mean_actual": 286.08
+    "mean_pred": 277.42,
+    "mean_actual": 352.21
   },
   {
-    "timestamp": "2026-03-17T07:10:47.456738",
-    "month": "2025-02",
+    "timestamp": "2026-03-17T09:40:35.450900",
+    "month": "2017-04",
     "count": 60,
-    "mean_pred": 296.89,
-    "mean_actual": 315.3
+    "mean_pred": 356.84,
+    "mean_actual": 428.3
   },
   {
-    "timestamp": "2026-03-17T07:10:48.396602",
-    "month": "2025-03",
+    "timestamp": "2026-03-17T09:40:35.889581",
+    "month": "2017-05",
     "count": 60,
-    "mean_pred": 296.74,
-    "mean_actual": 287.75
+    "mean_pred": 438.46,
+    "mean_actual": 453.62
   },
   {
-    "timestamp": "2026-03-17T07:10:49.517634",
-    "month": "2025-04",
-    "count": 60,
-    "mean_pred": 297.45,
-    "mean_actual": 304.22
-  },
-  {
-    "timestamp": "2026-03-17T07:10:50.412655",
-    "month": "2025-05",
+    "timestamp": "2026-03-17T09:40:36.379423",
+    "month": "2017-06",
     "count": 75,
-    "mean_pred": 319.09,
-    "mean_actual": 320.88
+    "mean_pred": 462.24,
+    "mean_actual": 478.55
   },
   {
-    "timestamp": "2026-03-17T07:10:51.783446",
-    "month": "2025-06",
+    "timestamp": "2026-03-17T09:40:37.018326",
+    "month": "2017-07",
     "count": 60,
-    "mean_pred": 323.91,
-    "mean_actual": 315.55
+    "mean_pred": 478.97,
+    "mean_actual": 517.3
   },
   {
-    "timestamp": "2026-03-17T07:10:53.060716",
-    "month": "2025-07",
+    "timestamp": "2026-03-17T09:40:37.689707",
+    "month": "2017-08",
     "count": 60,
-    "mean_pred": 323.47,
-    "mean_actual": 318.75
+    "mean_pred": 476.6,
+    "mean_actual": 465.58
   },
   {
-    "timestamp": "2026-03-17T07:10:54.151501",
-    "month": "2025-08",
+    "timestamp": "2026-03-17T09:40:38.366477",
+    "month": "2017-09",
     "count": 75,
-    "mean_pred": 351.47,
-    "mean_actual": 364.91
+    "mean_pred": 425.82,
+    "mean_actual": 430.44
   },
   {
-    "timestamp": "2026-03-17T07:10:55.726669",
-    "month": "2025-09",
+    "timestamp": "2026-03-17T09:40:39.294896",
+    "month": "2017-10",
     "count": 60,
-    "mean_pred": 353.42,
-    "mean_actual": 329.18
+    "mean_pred": 389.69,
+    "mean_actual": 391.53
   },
   {
-    "timestamp": "2026-03-17T07:10:57.325429",
-    "month": "2025-10",
+    "timestamp": "2026-03-17T09:40:40.191634",
+    "month": "2017-11",
+    "count": 60,
+    "mean_pred": 382.97,
+    "mean_actual": 422.33
+  },
+  {
+    "timestamp": "2026-03-17T09:40:41.219220",
+    "month": "2017-12",
     "count": 75,
-    "mean_pred": 332.86,
-    "mean_actual": 315.96
+    "mean_pred": 371.5,
+    "mean_actual": 325.13
   },
   {
-    "timestamp": "2026-03-17T07:10:59.355724",
-    "month": "2025-11",
+    "timestamp": "2026-03-17T09:42:42.872918",
+    "month": "2017-01",
     "count": 60,
-    "mean_pred": 377.29,
-    "mean_actual": 373.35
+    "mean_pred": 264.31,
+    "mean_actual": 275.35
   },
   {
-    "timestamp": "2026-03-17T07:11:01.396895",
-    "month": "2025-12",
+    "timestamp": "2026-03-17T09:42:43.140102",
+    "month": "2017-02",
     "count": 60,
-    "mean_pred": 405.59,
-    "mean_actual": 408.65
+    "mean_pred": 247.48,
+    "mean_actual": 298.22
   },
   {
-    "timestamp": "2026-03-17T08:19:12.368163",
-    "month": "2025-01",
-    "count": 25,
-    "mean_pred": 109.6,
-    "mean_actual": 109.96
+    "timestamp": "2026-03-17T09:42:43.433424",
+    "month": "2017-03",
+    "count": 75,
+    "mean_pred": 277.42,
+    "mean_actual": 352.21
   },
   {
-    "timestamp": "2026-03-17T08:19:12.821653",
-    "month": "2025-02",
-    "count": 20,
-    "mean_pred": 110.36,
-    "mean_actual": 113.45
+    "timestamp": "2026-03-17T09:42:43.843607",
+    "month": "2017-04",
+    "count": 60,
+    "mean_pred": 356.84,
+    "mean_actual": 428.3
   },
   {
-    "timestamp": "2026-03-17T08:19:13.350328",
-    "month": "2025-03",
-    "count": 20,
-    "mean_pred": 126.5,
-    "mean_actual": 128.95
+    "timestamp": "2026-03-17T09:42:44.233231",
+    "month": "2017-05",
+    "count": 60,
+    "mean_pred": 438.46,
+    "mean_actual": 453.62
   },
   {
-    "timestamp": "2026-03-17T08:19:13.919505",
-    "month": "2025-04",
-    "count": 20,
-    "mean_pred": 128.45,
-    "mean_actual": 110.95
+    "timestamp": "2026-03-17T09:42:44.548937",
+    "month": "2017-06",
+    "count": 75,
+    "mean_pred": 462.24,
+    "mean_actual": 478.55
   },
   {
-    "timestamp": "2026-03-17T08:19:14.519485",
-    "month": "2025-05",
-    "count": 25,
-    "mean_pred": 107.03,
-    "mean_actual": 116.72
+    "timestamp": "2026-03-17T09:42:44.907296",
+    "month": "2017-07",
+    "count": 60,
+    "mean_pred": 478.97,
+    "mean_actual": 517.3
   },
   {
-    "timestamp": "2026-03-17T08:19:15.159627",
-    "month": "2025-06",
-    "count": 20,
-    "mean_pred": 121.24,
-    "mean_actual": 128.15
+    "timestamp": "2026-03-17T09:42:45.287951",
+    "month": "2017-08",
+    "count": 60,
+    "mean_pred": 476.6,
+    "mean_actual": 465.58
   },
   {
-    "timestamp": "2026-03-17T08:19:15.819701",
-    "month": "2025-07",
-    "count": 20,
-    "mean_pred": 140.7,
-    "mean_actual": 134.4
+    "timestamp": "2026-03-17T09:42:45.692835",
+    "month": "2017-09",
+    "count": 75,
+    "mean_pred": 425.82,
+    "mean_actual": 430.44
   },
   {
-    "timestamp": "2026-03-17T08:19:16.515905",
-    "month": "2025-08",
-    "count": 25,
-    "mean_pred": 144.74,
-    "mean_actual": 128.84
+    "timestamp": "2026-03-17T09:42:46.181943",
+    "month": "2017-10",
+    "count": 60,
+    "mean_pred": 389.69,
+    "mean_actual": 391.53
   },
   {
-    "timestamp": "2026-03-17T08:19:17.306823",
-    "month": "2025-09",
-    "count": 20,
-    "mean_pred": 125.04,
-    "mean_actual": 110.0
+    "timestamp": "2026-03-17T09:42:46.677492",
+    "month": "2017-11",
+    "count": 60,
+    "mean_pred": 382.97,
+    "mean_actual": 422.33
   },
   {
-    "timestamp": "2026-03-17T08:19:18.146637",
-    "month": "2025-10",
-    "count": 25,
-    "mean_pred": 104.08,
-    "mean_actual": 120.2
-  },
-  {
-    "timestamp": "2026-03-17T08:19:19.348443",
-    "month": "2025-11",
-    "count": 20,
-    "mean_pred": 137.65,
-    "mean_actual": 141.35
-  },
-  {
-    "timestamp": "2026-03-17T08:19:20.456623",
-    "month": "2025-12",
-    "count": 20,
-    "mean_pred": 142.34,
-    "mean_actual": 134.5
+    "timestamp": "2026-03-17T09:42:47.241777",
+    "month": "2017-12",
+    "count": 75,
+    "mean_pred": 371.5,
+    "mean_actual": 325.13
   }
 ]

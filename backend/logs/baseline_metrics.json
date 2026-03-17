@@ -1,11 +1,11 @@
 {
   "train": {
-    "RMSE": 0,
-    "MAE": 0,
+    "RMSE": 3,
+    "MAE": 2,
     "R2": 100,
-    "MAPE": 0,
-    "WMAPE": 0,
-    "Accuracy": 100,
-    "model": "GB"
+    "MAPE": 1,
+    "WMAPE": 1,
+    "Accuracy": 99,
+    "model": "XGB"
   }
 }

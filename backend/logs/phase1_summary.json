@@ -1,9 +1,9 @@
 {
   "confidence_intervals": {
     "coverage": 1.0,
-    "avg_width": 31.43280672687187
+    "avg_width": 73.94330521205445
   },
-  "timestamp": "2026-03-17T08:19:21.488006",
+  "timestamp": "2026-03-17T09:42:47.861523",
   "final_severity": "severe",
   "recommendation": "Severe drift detected: Fine-tuning applied",
   "months_monitored": 12,
@@ -15,18 +15,18 @@
   "healing_stats": {
     "total_actions": 12,
     "monitor_only": 0,
-    "fine_tuned": 4,
-    "rollbacks": 8
+    "fine_tuned": 7,
+    "rollbacks": 5
   },
-  "avg_improvement": 0.0585,
+  "avg_improvement": 0.2097,
   "train_metrics": {
-    "RMSE": 0,
-    "MAE": 0,
+    "RMSE": 3,
+    "MAE": 2,
     "R2": 100,
-    "MAPE": 0,
-    "WMAPE": 0,
-    "Accuracy": 100,
-    "model": "GB"
+    "MAPE": 1,
+    "WMAPE": 1,
+    "Accuracy": 99,
+    "model": "XGB"
   },
   "feature_names": [
     "Year",

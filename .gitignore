@@ -7,6 +7,14 @@ uploads/
 processed/
 test_data/
 
+# Kaggle raw data
+backend/train.csv
+backend/test.csv
+backend/sample_submission.csv
+
+# Predictions output
+predictions/
+
 # Logs
 logs/*.csv
 logs/*.db

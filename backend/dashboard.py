@@ -388,7 +388,7 @@ SUBTITLES = {
 }
 
 crumb_page = BREADCRUMB[page]
-proj_id    = (summary or {}).get("project_id", "shdfs-phase1-walmart")
+proj_id    = (summary or {}).get("project_id", "shdfs-phase1-kaggle")
 
 st.markdown(f"""
 <div style="padding:18px 0 0">
@@ -476,7 +476,7 @@ if page == "Overview":
     with ca:
         st.markdown(f"""<div class="card">
         <div class="card-title">Dataset</div>
-        <div class="kv"><span class="k">Source</span><span class="v">Walmart Weekly Sales</span></div>
+        <div class="kv"><span class="k">Source</span><span class="v">Kaggle Store Item Demand</span></div>
         <div class="kv"><span class="k">Total Records</span><span class="v">6,435 rows</span></div>
         <div class="kv"><span class="k">Stores</span><span class="v">45</span></div>
         <div class="kv"><span class="k">Train rows</span><span class="v">{train_rows:,}</span></div>
@@ -711,7 +711,7 @@ elif page == "Demand Insights":
     st.markdown(f"""<div class="card">
     <div style="display:flex;justify-content:space-between;align-items:flex-start">
       <div>
-        <div style="font-size:14px;font-weight:600;color:{TEXT};margin-bottom:10px">Walmart Weekly Sales — Training Split</div>
+        <div style="font-size:14px;font-weight:600;color:{TEXT};margin-bottom:10px">Kaggle Store Item Demand — Training Split</div>
         <div style="display:flex;gap:32px;flex-wrap:wrap">
           <div><div style="font-size:10px;color:{TEXT3};text-transform:uppercase;letter-spacing:1px;margin-bottom:3px">Records</div>
                <div style="font-size:16px;font-weight:700;color:{TEXT};font-family:'JetBrains Mono',monospace">{train_rows:,}</div></div>

@@ -29,14 +29,15 @@ class ModelTrainer:
     def tune_hyperparameters(self, X_train, y_train):
         param_dist = {
             "n_estimators":          [200, 300, 500],
-            "max_depth":             [None, 20, 30],
-            "min_samples_split":     [2, 5],
-            "min_samples_leaf":      [1, 2],
+            "max_depth":             [10, 15, 20],
+            "min_samples_split":     [5, 10],
+            "min_samples_leaf":      [3, 5],
             "max_features":          ["sqrt", 0.5, 0.7],
-            "min_impurity_decrease": [0.0, 1e-4],
+            "min_impurity_decrease": [1e-4, 1e-3],
         }
         n_splits = min(5, max(2, len(X_train) // 50))
         tscv = TimeSeriesSplit(n_splits=n_splits)
+        X_arr = X_train.values if hasattr(X_train, 'values') else X_train
         search = RandomizedSearchCV(
             RandomForestRegressor(random_state=42, n_jobs=-1),
             param_dist, n_iter=min(20, len(X_train) // 20 + 5),
@@ -45,7 +46,7 @@ class ModelTrainer:
         )
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
-            search.fit(X_train, y_train)
+            search.fit(X_arr, y_train)
         self.best_params = search.best_params_
         log.info(f"Best RF params: {self.best_params}")
         return self.best_params
@@ -56,60 +57,63 @@ class ModelTrainer:
                 f"Training set too small ({len(X_train)} rows). "
                 "Upload a dataset with more rows or a wider date range."
             )
+        # Store feature names, convert to arrays to avoid sklearn warnings
+        self._feature_names_in = list(X_train.columns) if hasattr(X_train, 'columns') else None
+        X_arr = X_train.values if hasattr(X_train, 'values') else X_train
+        y_arr = np.asarray(y_train)
+
         params = {k: v for k, v in (self.best_params or {}).items()
                   if k in RandomForestRegressor().get_params()}
         rf = RandomForestRegressor(**params, random_state=42, n_jobs=-1)
         gb = GradientBoostingRegressor(
             n_estimators=300, max_depth=5, learning_rate=0.03,
-            subsample=0.8, min_samples_leaf=2,
+            subsample=0.8, min_samples_leaf=4,
             max_features=0.7, random_state=42
         )
 
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
-            rf.fit(X_train, y_train)
-            gb.fit(X_train, y_train)
+            rf.fit(X_arr, y_arr)
+            gb.fit(X_arr, y_arr)
 
-        rf_mae = mean_absolute_error(y_train, rf.predict(X_train))
-        gb_mae = mean_absolute_error(y_train, gb.predict(X_train))
+        rf_mae = mean_absolute_error(y_arr, rf.predict(X_arr))
+        gb_mae = mean_absolute_error(y_arr, gb.predict(X_arr))
 
-        if _HAS_XGB and len(X_train) >= 100:
+        if _HAS_XGB and len(X_arr) >= 100:
             xgb = XGBRegressor(
                 n_estimators=300, max_depth=6, learning_rate=0.03,
                 subsample=0.8, colsample_bytree=0.7,
-                min_child_weight=3, reg_alpha=0.1, reg_lambda=1.0,
+                min_child_weight=5, reg_alpha=0.5, reg_lambda=2.0,
                 random_state=42, n_jobs=-1, verbosity=0
             )
             with warnings.catch_warnings():
                 warnings.simplefilter("ignore")
-                xgb.fit(X_train, y_train)
-            xgb_mae = mean_absolute_error(y_train, xgb.predict(X_train))
+                xgb.fit(X_arr, y_arr)
+            xgb_mae = mean_absolute_error(y_arr, xgb.predict(X_arr))
 
-            # Stacking: RF + GB + XGB → Ridge meta-learner
-            # Need at least 2 splits, and each fold needs enough samples
-            n_splits_stack = max(2, min(5, len(X_train) // 100))
+            n_splits_stack = max(2, min(5, len(X_arr) // 100))
             stack = StackingRegressor(
                 estimators=[("rf", rf), ("gb", gb), ("xgb", xgb)],
                 final_estimator=Ridge(alpha=1.0),
-                cv=n_splits_stack,  # Use integer for simple KFold
+                cv=n_splits_stack,
                 n_jobs=-1
             )
             with warnings.catch_warnings():
                 warnings.simplefilter("ignore")
-                stack.fit(X_train, y_train)
-            stack_mae = mean_absolute_error(y_train, stack.predict(X_train))
+                stack.fit(X_arr, y_arr)
+            stack_mae = mean_absolute_error(y_arr, stack.predict(X_arr))
 
             best_mae   = min(rf_mae, gb_mae, xgb_mae, stack_mae)
             model_name = {rf_mae:"RF", gb_mae:"GB", xgb_mae:"XGB", stack_mae:"Stack"}[best_mae]
             self.model = {"RF":rf,"GB":gb,"XGB":xgb,"Stack":stack}[model_name]
             log.info(f"RF:{rf_mae:,.0f} GB:{gb_mae:,.0f} XGB:{xgb_mae:,.0f} Stack:{stack_mae:,.0f} → {model_name}")
         else:
-            use_gb = gb_mae < rf_mae and len(X_train) > 500
+            use_gb = gb_mae < rf_mae and len(X_arr) > 500
             self.model = gb if use_gb else rf
             model_name = "GB" if use_gb else "RF"
-            log.info(f"RF:{rf_mae:,.0f} GB:{gb_mae:,.0f} → {model_name} | Rows:{len(X_train)}")
+            log.info(f"RF:{rf_mae:,.0f} GB:{gb_mae:,.0f} → {model_name} | Rows:{len(X_arr)}")
 
-        self._rf = rf  # always keep RF for confidence intervals
+        self._rf = rf
         self._model_name = model_name
         return self.model
 
@@ -138,9 +142,10 @@ class ModelTrainer:
     def predict_with_confidence(self, X, confidence=0.95):
         z  = {0.90:1.645, 0.95:1.96, 0.99:2.576}.get(confidence, 1.96)
         rf = getattr(self, "_rf", self.model)
+        X_arr = X.values if hasattr(X, 'values') else X
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
-            tree_preds = np.array([t.predict(X) for t in rf.estimators_])
+            tree_preds = np.array([t.predict(X_arr) for t in rf.estimators_])
         mean_pred = np.mean(tree_preds, axis=0)
         std_pred  = np.std(tree_preds,  axis=0)
         lower = np.maximum(mean_pred - z * std_pred, 0)

@@ -1,8 +1,15 @@
+import warnings
 import numpy as np
 import joblib
 from pathlib import Path
 from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
 from logger import get_logger
+
+try:
+    from xgboost import XGBRegressor
+    _HAS_XGB = True
+except ImportError:
+    _HAS_XGB = False
 
 log = get_logger(__name__)
 
@@ -33,39 +40,45 @@ class FineTuner:
     def _fine_tune(self, X_train, y_train, X_val, y_val):
         """Fine-tune: Add trees to existing model"""
         try:
-            log.info("🔧 Fine-tuning: Adding trees to existing model...")
-            
-            # Get baseline validation error
-            baseline_pred = self.model.predict(X_val)
+            log.info("Fine-tuning: Adding trees to existing model...")
+            X_tr = X_train.values if hasattr(X_train, 'values') else X_train
+            X_v = X_val.values if hasattr(X_val, 'values') else X_val
+
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore")
+                baseline_pred = self.model.predict(X_v)
             baseline_mae = np.mean(np.abs(y_val - baseline_pred))
-            
-            # Clone model and add trees
+
             if isinstance(self.model, RandomForestRegressor):
-                n_estimators_add = max(10, int(self.model.n_estimators * 0.2))  # Add 20%
-                self.model.n_estimators += n_estimators_add
-                self.model.fit(X_train, y_train)
+                self.model.n_estimators += max(10, int(self.model.n_estimators * 0.2))
+                self.model.fit(X_tr, y_train)
             elif isinstance(self.model, GradientBoostingRegressor):
-                n_estimators_add = max(5, int(self.model.n_estimators * 0.15))  # Add 15%
-                self.model.n_estimators += n_estimators_add
-                self.model.fit(X_train, y_train)
+                self.model.n_estimators += max(5, int(self.model.n_estimators * 0.15))
+                self.model.fit(X_tr, y_train)
+            elif _HAS_XGB and isinstance(self.model, XGBRegressor):
+                self.model.n_estimators += max(10, int(self.model.n_estimators * 0.2))
+                self.model.fit(X_tr, y_train)
             else:
-                self.model.fit(X_train, y_train)
-            
-            # Validate improvement
-            new_pred = self.model.predict(X_val)
+                with warnings.catch_warnings():
+                    warnings.simplefilter("ignore")
+                    self.model.fit(X_tr, y_train)
+
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore")
+                new_pred = self.model.predict(X_v)
             new_mae = np.mean(np.abs(y_val - new_pred))
             improvement = (baseline_mae - new_mae) / (baseline_mae + 1e-9)
-            
+
             if improvement >= self.improvement_threshold:
-                log.info(f"✅ Fine-tune successful: {improvement*100:.1f}% improvement")
+                log.info(f"Fine-tune successful: {improvement*100:.1f}% improvement")
                 self.healed_model = self.model
                 return {"action": "fine_tune", "improvement": improvement, "model_updated": True}
             else:
-                log.info(f"⚠️ Fine-tune improvement {improvement*100:.1f}% < threshold, rolling back")
+                log.info(f"Fine-tune improvement {improvement*100:.1f}% < threshold, rolling back")
                 return {"action": "rollback", "improvement": 0, "model_updated": False}
-        
+
         except Exception as e:
-            log.error(f"❌ Fine-tune failed: {e}")
+            log.error(f"Fine-tune failed: {e}")
             return {"action": "monitor", "improvement": 0, "model_updated": False}
 
 

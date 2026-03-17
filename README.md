@@ -2,6 +2,16 @@
 
 ML platform that predicts **product demand (units)** using self-healing capabilities with dynamic feature engineering.
 
+## Dataset
+
+**Store Item Demand Forecasting Dataset** (Kaggle)
+- **URL:** https://www.kaggle.com/datasets/dhrubangtalukdar/store-item-demand-forecasting-dataset
+- 5 years of daily sales data (2013–2017), 50 items, 10 stores
+- Columns: `date`, `store`, `item`, `sales`
+- ~913,000 rows → converted to weekly product demand (~1,560 rows for 2 years, 15 products)
+
+The system auto-renames: `sales`→Demand, `item`→Product, `store`→Store, `date`→Date.
+
 ## System Flow
 
 ```
@@ -19,6 +29,30 @@ ML platform that predicts **product demand (units)** using self-healing capabili
 │  ONGOING → MONTHLY PREDICTION CYCLE                             │
 │  Predict Month N+1 → User uploads actuals → Compare → Repeat    │
 └─────────────────────────────────────────────────────────────────┘
+```
+
+## Quick Start
+
+```bash
+# 1. Download train.csv from Kaggle (link above) into backend/
+cd backend
+
+# 2. Convert Kaggle data → pipeline format
+python generate_data.py train.csv
+
+# 3. Run the ML pipeline
+pip install -r requirements.txt
+python main.py
+
+# 4. Start backend API
+uvicorn api:app --reload --port 8000
+
+# 5. Start frontend (new terminal)
+cd frontend
+npm install
+npm run dev
+
+# 6. Open http://localhost:5173 → Dashboard ready
 ```
 
 ## Data Format
@@ -43,35 +77,9 @@ ML platform that predicts **product demand (units)** using self-healing capabili
 | `Unemployment` | float | Regional unemployment rate |
 | *Any other columns* | numeric/text | Auto-detected as features |
 
-### Sample CSV
-
-```csv
-Date,Product,Demand,Holiday_Flag,Temperature,Fuel_Price,CPI,Unemployment
-05-01-2024,1,152,0,35.2,3.25,230.5,5.2
-05-01-2024,2,89,0,35.2,3.25,230.5,5.2
-05-01-2024,3,214,0,35.2,3.25,230.5,5.2
-12-01-2024,1,168,0,38.1,3.28,230.8,5.1
-```
-
-## Dataset Source
-
-This project uses a **dynamic feature engineering system** — it accepts ANY CSV with at least `Date`, `Product`, and `Demand` columns. All other columns are auto-detected as features.
-
-**Compatible public datasets:**
-
-- **Store Item Demand Forecasting** — https://www.kaggle.com/competitions/demand-forecasting-kernels-only
-  - Contains: date, store, item, sales (5 years, 50 items, 10 stores)
-  - Map: `date`→Date, `item`→Product, `sales`→Demand
-
-- **Walmart Dataset** — https://www.kaggle.com/datasets/yasserh/walmart-dataset
-  - Contains: Store, Date, Weekly_Sales, Holiday_Flag, Temperature, Fuel_Price, CPI, Unemployment
-  - Map: `Weekly_Sales`→Demand (add Product column or use Store as grouping)
-
-The system auto-renames common aliases: `sales`→Demand, `item`→Product, `Weekly_Sales`→Demand, `category`→Product, etc.
-
 ## Dynamic Feature Engineering
 
-The system auto-generates **87+ features** from any dataset:
+The system auto-generates **40–87+ features** from any dataset:
 
 | Feature Group | Count | Source |
 |---------------|-------|--------|
@@ -84,41 +92,12 @@ The system auto-generates **87+ features** from any dataset:
 | Momentum/Volatility | 4 | Always |
 
 **Minimum input:** Date + Product + Demand → 40+ features generated
-**Full input:** All 9 columns → 87+ features generated
-
-## Quick Start
-
-```bash
-# 1. Generate synthetic data (or use your own CSV)
-cd backend
-python generate_data.py
-
-# 2. Start backend
-pip install -r requirements.txt
-uvicorn api:app --reload --port 8000
-
-# 3. Start frontend (new terminal)
-cd frontend
-npm install
-npm run dev
-
-# 4. Upload CSV via dashboard → Pipeline runs automatically
-```
 
 ## What the Model Predicts
 
-**Input:** Product, Date, economic indicators (if provided), historical demand patterns
+**Input:** Product, Date, historical demand patterns, engineered features
 
 **Output:** `Predicted_Demand` — number of units expected to be demanded for each Product in the next month
-
-## Auto-Fill for Predictions
-
-When predicting future months, the system auto-fills missing optional columns (Temperature, CPI, etc.) from the last known row in the dataset. This means:
-
-1. User uploads 2 years of data with Date + Product + Demand (+ optional columns)
-2. Pipeline trains on Year 1, tests on Year 2 with self-healing
-3. For Month N+1 prediction, system creates scaffold rows and fills optional columns from last known values
-4. User uploads actual data for Month N+1 → system compares with predictions → predicts Month N+2
 
 ## API Endpoints
 
@@ -135,14 +114,20 @@ When predicting future months, the system auto-fills missing optional columns (T
 
 ```
 backend/
-├── generate_data.py          # Generate synthetic demand data
+├── generate_data.py          # Kaggle dataset converter (or synthetic fallback)
 ├── data_loader.py            # Dynamic CSV loader (Date+Product+Demand required)
 ├── pipeline.py               # 8-step ML pipeline
 ├── feature_engineering.py    # Dynamic feature engine (40-87+ features)
 ├── model_trainer.py          # RF/GB/XGB ensemble
-├── drift_detector.py         # Detect data drift
+├── drift_detector.py         # Detect data drift (KS, PSI, Wasserstein, JS, Error Trend)
 ├── fine_tuner.py             # Self-healing logic
 ├── sequential_predictor.py   # Monthly prediction cycle
 ├── api.py                    # FastAPI endpoints
 └── data/uploaded_data.csv    # Input data
+
+frontend/
+├── src/App.jsx               # Main app with 10 dashboard pages
+├── src/api.js                # API client with caching
+├── src/pages/                # Overview, Drift, Performance, Features, etc.
+└── package.json              # React + Recharts + Vite
 ```

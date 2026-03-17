@@ -106,7 +106,7 @@ class Phase1Pipeline:
             y = month_df["Demand"].values
             stores = month_df["Store"].values if "Store" in month_df.columns else None
             products = month_df["Product"].values if "Product" in month_df.columns else None
-            preds = self.trainer.model.predict(X)
+            preds = self.trainer.model.predict(X.values)
             _, lower, upper = self.trainer.predict_with_confidence(X)
             self.logbook.log_batch_predictions(str(month), preds.tolist(), y.tolist(), stores, products)
             ts = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -137,7 +137,7 @@ class Phase1Pipeline:
             elif severity in ["mild", "severe"]:
                 self.status_indicator.start_fine_tune(month)
                 split_idx = max(1, len(X) // 2)
-                X_train_ft, X_val_ft = X.iloc[:split_idx], X.iloc[split_idx:]
+                X_train_ft, X_val_ft = X.iloc[:split_idx].values, X.iloc[split_idx:].values
                 y_train_ft, y_val_ft = y[:split_idx], y[split_idx:]
                 action = self.fine_tuner.decide_healing_action(
                     report, X_train_ft, y_train_ft, X_val_ft, y_val_ft,

@@ -400,7 +400,7 @@ def dataset_summary():
         insp = rj("data_inspection.json") or {}
         split = rj("data_split.json") or {}
         batches = dedup(rj("prediction_batches.json") or [])
-        stats = insp.get("weekly_sales_stats") or {}
+        stats = insp.get("demand_stats") or insp.get("weekly_sales_stats") or {}
         monthly_avg = []
         for b in batches:
             monthly_avg.append({"month": b["month"], "mean_actual": b.get("mean_actual"), "mean_pred": b.get("mean_pred")})

@@ -1,47 +1,47 @@
 [
   {
-    "timestamp": "2026-03-17T07:10:45.593648",
-    "feature_count": 87,
+    "timestamp": "2026-03-17T09:40:33.956828",
+    "feature_count": 54,
     "params": {
-      "n_estimators": 300,
-      "min_samples_split": 2,
-      "min_samples_leaf": 2,
-      "min_impurity_decrease": 0.0001,
-      "max_features": 0.7,
+      "n_estimators": 500,
+      "min_samples_split": 5,
+      "min_samples_leaf": 3,
+      "min_impurity_decrease": 0.001,
+      "max_features": 0.5,
       "max_depth": 20
     },
     "metrics": {
       "train": {
-        "RMSE": 1,
-        "MAE": 0,
+        "RMSE": 3,
+        "MAE": 2,
         "R2": 100,
-        "MAPE": 0,
-        "WMAPE": 0,
-        "Accuracy": 100,
-        "model": "GB"
+        "MAPE": 1,
+        "WMAPE": 1,
+        "Accuracy": 99,
+        "model": "XGB"
       }
     }
   },
   {
-    "timestamp": "2026-03-17T08:19:12.032531",
+    "timestamp": "2026-03-17T09:42:42.602752",
     "feature_count": 54,
     "params": {
-      "n_estimators": 200,
+      "n_estimators": 500,
       "min_samples_split": 5,
-      "min_samples_leaf": 2,
-      "min_impurity_decrease": 0.0,
+      "min_samples_leaf": 3,
+      "min_impurity_decrease": 0.001,
       "max_features": 0.5,
-      "max_depth": 30
+      "max_depth": 20
     },
     "metrics": {
       "train": {
-        "RMSE": 0,
-        "MAE": 0,
+        "RMSE": 3,
+        "MAE": 2,
         "R2": 100,
-        "MAPE": 0,
-        "WMAPE": 0,
-        "Accuracy": 100,
-        "model": "GB"
+        "MAPE": 1,
+        "WMAPE": 1,
+        "Accuracy": 99,
+        "model": "XGB"
       }
     }
   }
