@@ -5,10 +5,10 @@ import { Spinner, ErrorBox, KPI, SectionCard, fmtD, CHART_STYLE } from '../ui.js
 import { SlicerPanel, useSlicerStore, slicerActions } from '../slicer.jsx'
 
 export default function Performance() {
-  const { data: baseline, loading: lb, error: eb } = useFetch('/api/baseline',      { pollMs: 15000 })
-  const { data: drift,    loading: ld, error: ed } = useFetch('/api/drift',          { pollMs: 10000 })
-  const { data: summary,  loading: ls, error: es } = useFetch('/api/summary',        { pollMs: 15000 })
-  const { data: monthly }                          = useFetch('/api/monthly-sales',  { pollMs: 10000 })
+  const { data: baseline, loading: lb, error: eb } = useFetch('/api/baseline',      { pollMs: 120000 })
+  const { data: drift,    loading: ld, error: ed } = useFetch('/api/drift',          { pollMs: 60000 })
+  const { data: summary,  loading: ls, error: es } = useFetch('/api/summary',        { pollMs: 120000 })
+  const { data: monthly }                          = useFetch('/api/monthly-sales',  { pollMs: 60000 })
   const slicer = useSlicerStore()
 
   const months = useMemo(() => (drift || []).map(d => d.month), [drift])
@@ -40,16 +40,16 @@ export default function Performance() {
     return { r2: Math.round(r2), mae: Math.round(mae), rmse: Math.round(rmse), mape: Math.round(mape), wmape: Math.round(wmape) }
   }, [monthly])
 
-  const maeTrend = filtered.map(d => ({
+  const maeTrend = useMemo(() => filtered.map(d => ({
     month:          d.month,
-    'Test MAE':     d.error_trend?.current_error,
-    'Baseline MAE': d.error_trend?.baseline_error,
-  }))
+    'Test MAE':     d.error_trend?.current_error  ?? null,
+    'Baseline MAE': d.error_trend?.baseline_error ?? null,
+  })), [filtered])
 
-  const errorPct = filtered.map(d => ({
+  const errorPct = useMemo(() => filtered.map(d => ({
     month:     d.month,
     'Error %': d.error_trend?.error_increase ? +(d.error_trend.error_increase * 100).toFixed(1) : 0,
-  }))
+  })), [filtered])
 
   const onLineClick = e => { if (e?.activeLabel) slicerActions.toggleMonth(e.activeLabel) }
 

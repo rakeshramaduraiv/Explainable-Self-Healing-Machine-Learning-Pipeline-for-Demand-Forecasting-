@@ -1,7 +1,6 @@
 import { useMemo, memo } from 'react'
 import {
   LineChart, Line, AreaChart, Area, BarChart, Bar,
-  ComposedChart,
   XAxis, YAxis, Tooltip, Legend,
   ResponsiveContainer, CartesianGrid,
 } from 'recharts'
@@ -67,12 +66,12 @@ const SystemTable = memo(({ m, summary, datasets }) => {
 })
 
 export default function Overview() {
-  const { data: summary,  loading: ls, error: es } = useFetch('/api/summary',         { pollMs: 15000 })
-  const { data: baseline, loading: lb, error: eb } = useFetch('/api/baseline',        { pollMs: 15000 })
-  const { data: drift,    loading: ld, error: ed } = useFetch('/api/drift',           { pollMs: 10000 })
-  const { data: monthly,  loading: lm }            = useFetch('/api/monthly-sales',   { pollMs: 10000 })
-  const { data: datasets }                         = useFetch('/api/datasets',        { pollMs: 30000 })
-  const { data: healing }                          = useFetch('/api/healing-actions', { pollMs: 15000 })
+  const { data: summary,  loading: ls, error: es } = useFetch('/api/summary',         { pollMs: 120000 })
+  const { data: baseline, loading: lb, error: eb } = useFetch('/api/baseline',        { pollMs: 120000 })
+  const { data: drift,    loading: ld, error: ed } = useFetch('/api/drift',           { pollMs: 60000 })
+  const { data: monthly,  loading: lm }            = useFetch('/api/monthly-sales',   { pollMs: 60000 })
+  const { data: datasets }                         = useFetch('/api/datasets',        { pollMs: 120000 })
+  const { data: healing }                          = useFetch('/api/healing-actions', { pollMs: 120000 })
 
   const loading = (ls && !baseline && !summary) || (lb && !baseline) || (ld && !drift) || (lm && !monthly)
   const error   = es || eb || ed
@@ -154,7 +153,7 @@ export default function Overview() {
             <KPI label="MAE"              value={(live?.mae ?? (m.MAE != null ? Math.round(m.MAE) : null)) != null ? (live?.mae ?? Math.round(m.MAE)).toLocaleString() + ' units' : '—'} delta={live ? 'Live · test set' : 'Baseline'} />
             <KPI label="RMSE"             value={(live?.rmse ?? (m.RMSE != null ? Math.round(m.RMSE) : null)) != null ? (live?.rmse ?? Math.round(m.RMSE)).toLocaleString() + ' units' : '—'} delta={live ? 'Live · test set' : 'Baseline'} />
             <KPI label="MAPE"             value={(live?.mape ?? (m.MAPE != null ? Math.round(m.MAPE) : null)) != null ? (live?.mape ?? Math.round(m.MAPE)) + '%' : '—'} delta={live ? 'Live · test set' : 'Baseline'} />
-            <KPI label="Accuracy"         value={(live?.accuracy ?? (m.Accuracy != null ? m.Accuracy : m.MAPE != null ? Math.round(100 - m.MAPE) : null)) != null ? (live?.accuracy ?? (m.Accuracy || Math.round(100 - m.MAPE))) + '%' : '—'} color="var(--green)" delta={live ? 'Live · test set' : 'Baseline'} />
+            <KPI label="Accuracy"         value={(live?.accuracy ?? (m.Accuracy != null ? m.Accuracy : m.MAPE != null ? Math.round(100 - m.MAPE) : null)) != null ? (live?.accuracy ?? (m.Accuracy ?? Math.round(100 - m.MAPE))) + '%' : '—'} color="var(--green)" delta={live ? 'Live · test set' : 'Baseline'} />
             <KPI label="Severe Drift"     value={`${severe}/${months}`} color="var(--red)" delta="Test months triggered" />
           </>
         }
@@ -226,15 +225,13 @@ export default function Overview() {
             </div>
           ) :
           <ResponsiveContainer width="100%" height={H}>
-            <ComposedChart data={maeData} margin={{ top: 8, right: 12, bottom: 0, left: 0 }}>
+            <BarChart data={maeData} margin={{ top: 8, right: 12, bottom: 0, left: 0 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
               <XAxis dataKey="month" tick={{ fontSize: 10 }} />
               <YAxis tick={{ fontSize: 10 }} tickFormatter={v => (v / 1000).toFixed(0) + 'K'} />
               <Tooltip content={<CustomTooltip />} />
-              <Legend wrapperStyle={{ fontSize: 12 }} />
               <Bar dataKey="MAE" fill="#2563eb" opacity={0.8} radius={[3, 3, 0, 0]} />
-              <Line type="monotone" dataKey="MAE" stroke="#f59e0b" strokeWidth={2} dot={false} />
-            </ComposedChart>
+            </BarChart>
           </ResponsiveContainer>}
         </SectionCard>
       </div>

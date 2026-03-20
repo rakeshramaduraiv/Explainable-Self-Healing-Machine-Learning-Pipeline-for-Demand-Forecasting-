@@ -1,6 +1,6 @@
 import { memo } from 'react'
 import { useFetch } from '../api.js'
-import { Spinner, ErrorBox, KPI, SectionCard, SevBadge, fmtD, EmptyState } from '../ui.jsx'
+import { ErrorBox, KPI, SectionCard, SevBadge, fmtD, EmptyState, SkeletonCard } from '../ui.jsx'
 
 const BatchRow = memo(({ b }) => (
   <tr>
@@ -17,10 +17,9 @@ const BatchRow = memo(({ b }) => (
 export default function Datasets() {
   const { data, loading, error, reload } = useFetch('/api/datasets')
 
-  if (error)   return <ErrorBox msg={error} onRetry={reload} />
-  if (loading) return <Spinner />
+  if (error) return <ErrorBox msg={error} onRetry={reload} />
 
-  const split   = data?.split || {}
+  const split   = data?.split   || {}
   const insp    = data?.inspection || {}
   const batches = data?.batches || []
   const dr      = insp.date_range || ['—', '—']
@@ -39,11 +38,11 @@ export default function Datasets() {
       </div>
 
       <div className="kpi-grid" style={{ gridTemplateColumns: 'repeat(5,1fr)' }}>
-        <KPI label="Train Rows"    value={(split.train_rows || 0).toLocaleString()} />
-        <KPI label="Test Rows"     value={(split.test_rows  || 0).toLocaleString()} />
-        <KPI label="Train / Test"  value={split.train_year && split.test_year ? `${split.train_year} / ${split.test_year}` : '—'} />
-        <KPI label="Products"      value={insp.products || 0} />
-        <KPI label="Batches"       value={batches.length} delta={`${sevCounts.severe || 0} severe`} color={sevCounts.severe ? 'var(--red)' : undefined} />
+        <KPI label="Train Rows"    value={loading ? '…' : (split.train_rows || 0).toLocaleString()} />
+        <KPI label="Test Rows"     value={loading ? '…' : (split.test_rows  || 0).toLocaleString()} />
+        <KPI label="Train / Test"  value={loading ? '…' : (split.train_year && split.test_year ? `${split.train_year} / ${split.test_year}` : '—')} />
+        <KPI label="Products"      value={loading ? '…' : (insp.products || 0)} />
+        <KPI label="Batches"       value={loading ? '…' : batches.length} delta={`${sevCounts.severe || 0} severe`} color={sevCounts.severe ? 'var(--red)' : undefined} />
       </div>
 
       <div className="grid-2">
@@ -88,7 +87,7 @@ export default function Datasets() {
       </div>
 
       <SectionCard title="Monitored Batches">
-        {batches.length === 0 ? (
+        {loading ? <SkeletonCard rows={4} /> : batches.length === 0 ? (
           <EmptyState title="No batch data" sub="Run python main.py first to generate batch predictions." />
         ) : (
           <div style={{ overflowX: 'auto' }}>

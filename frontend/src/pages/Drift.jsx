@@ -1,4 +1,4 @@
-import { useState, useMemo, memo } from 'react'
+import { useState, useMemo, useCallback, memo } from 'react'
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Cell, Legend } from 'recharts'
 import { useFetch } from '../api.js'
 import { Spinner, ErrorBox, KPI, SectionCard, SevBadge, fmtD, CHART_STYLE } from '../ui.jsx'
@@ -24,7 +24,7 @@ const DriftRow = memo(({ d, isActive, isSelected, onClick }) => (
 ))
 
 export default function Drift() {
-  const { data: drift, loading, error } = useFetch('/api/drift', { pollMs: 10000 })
+  const { data: drift, loading, error } = useFetch('/api/drift', { pollMs: 60000 })
   const slicer = useSlicerStore()
 
   const months = useMemo(() => (drift || []).map(d => d.month), [drift])
@@ -35,10 +35,11 @@ export default function Drift() {
     return true
   }), [drift, slicer])
 
-  const isActive = d => {
+  const activeMonths = useMemo(() => new Set(filtered.map(f => f.month)), [filtered])
+  const isActive = useCallback(d => {
     if (!slicer.months.length && !slicer.severity) return true
-    return filtered.some(f => f.month === d.month)
-  }
+    return activeMonths.has(d.month)
+  }, [activeMonths, slicer.months.length, slicer.severity])
 
   const errorData   = useMemo(() => (drift || []).map(d => ({
     month: d.month,

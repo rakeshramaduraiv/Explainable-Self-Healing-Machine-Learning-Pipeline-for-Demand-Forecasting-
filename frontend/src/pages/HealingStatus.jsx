@@ -29,7 +29,7 @@ export function HealingStatusDisplay({ running }) {
       } catch (e) {
         console.error('Failed to fetch healing status:', e)
       }
-    }, 1000)
+    }, 3000)
 
     return () => clearInterval(interval)
   }, [running])

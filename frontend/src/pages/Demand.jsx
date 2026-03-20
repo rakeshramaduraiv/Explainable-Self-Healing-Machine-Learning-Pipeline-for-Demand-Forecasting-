@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useState, useCallback } from 'react'
 import {
   AreaChart, Area, BarChart, Bar, XAxis, YAxis, Tooltip,
   ResponsiveContainer, CartesianGrid, Legend, Cell, PieChart, Pie,
@@ -9,37 +9,39 @@ import { ErrorBox, KPI, SectionCard, fmtD, CHART_STYLE } from '../ui.jsx'
 
 const PALETTE = ['#3b82f6','#6366f1','#8b5cf6','#10b981','#f59e0b','#ef4444','#60a5fa','#34d399','#06b6d4','#a78bfa','#f472b6','#fb923c','#4ade80','#818cf8','#e879f9']
 
-// Always returns a string label
-const pName = (id, names) => names?.[id] || `Product ${id}`
+// Parse numeric ID from either a number or "Product N" string
+const toId = p => {
+  if (typeof p === 'number') return p
+  const n = parseInt(String(p).replace(/\D/g, ''), 10)
+  return isNaN(n) ? p : n
+}
+// Always returns a string label — productNames keys are strings after JSON parse
+const pName = (id, names) => names?.[String(id)] || `Product ${id}`
 
 const Skel = ({ h }) => <div className="skel" style={{ height: h, borderRadius: 8 }} />
 
 export default function Demand() {
-  const { data: metrics, error: em }  = useFetch('/api/demand-metrics')
-  const { data: monthly,  loading: lmo } = useFetch('/api/monthly-demand')
-  const { data: prodData, loading: lp  } = useFetch('/api/product-demand')
-  const { data: prodForecast }           = useFetch('/api/product-forecast')
-  const { data: prodMonthly }            = useFetch('/api/product-monthly')
-  const { data: datasets }               = useFetch('/api/datasets')
-  const { data: productNames }           = useFetch('/api/product-names')
+  const { data: metrics, error: em }       = useFetch('/api/demand-metrics',  { pollMs: 120_000 })
+  const { data: monthly,  loading: lmo }    = useFetch('/api/monthly-demand',   { pollMs: 120_000 })
+  const { data: prodData, loading: lpd }    = useFetch('/api/product-demand',   { pollMs: 120_000 })
+  const { data: prodForecast, loading: lpf }= useFetch('/api/product-forecast', { pollMs: 120_000 })
+  const { data: prodMonthly }               = useFetch('/api/product-monthly',  { pollMs: 120_000 })
+  const { data: datasets }                  = useFetch('/api/datasets',          { pollMs: 120_000 })
+  const { data: productNames }              = useFetch('/api/product-names',     { pollMs: 300_000 })
   const [selectedProduct, setProduct] = useState(null)
+  const toggleProduct = useCallback(id => setProduct(prev => prev === id ? null : id), [])
 
   // ── Monthly demand bar chart data ─────────────────────────────────────────
   const monthlyData = useMemo(() =>
     (monthly?.months || []).map((m, i) => ({ month: m, demand: monthly.demand[i] })),
   [monthly])
 
-  // ── Product demand — parse numeric ID from "Product N" string ──────────────
+  // ── Product demand — strip "Product " prefix from demand_analyzer strings ──
   const productData = useMemo(() => {
     if (!prodData?.products?.length) return []
     return prodData.products.map((p, i) => {
-      // API returns "Product 1", "Product 2" etc. — extract the numeric ID
-      const id = parseInt(String(p).replace(/\D/g, ''), 10)
-      return {
-        id:     isNaN(id) ? i + 1 : id,
-        name:   pName(isNaN(id) ? i + 1 : id, productNames) || String(p),
-        demand: prodData.demand[i] ?? 0,
-      }
+      const id = toId(p)
+      return { id, name: pName(id, productNames), demand: prodData.demand[i] ?? 0 }
     }).sort((a, b) => b.demand - a.demand)
   }, [prodData, productNames])
 
@@ -62,9 +64,9 @@ export default function Demand() {
       .slice()
       .sort((a, b) => b.avg_demand - a.avg_demand)
       .map((d, i) => ({
-        name:           pName(d.Product, productNames),
+        name:           d.name || pName(d.Product, productNames),
         Product:        d.Product,
-        'Avg Demand':   Math.round(d.avg_demand   ?? 0),
+        'Avg Demand':   Math.round(d.avg_demand    ?? 0),
         'Avg Forecast': Math.round(d.avg_predicted ?? 0),
         Accuracy:       Math.round(d.accuracy      ?? 0),
         fill:           PALETTE[i % PALETTE.length],
@@ -87,30 +89,31 @@ export default function Demand() {
   // ── Radar — normalize Demand to 0-100 so both axes are comparable ─────────
   const radarData = useMemo(() => {
     if (!prodForecast?.length) return []
-    const sorted   = prodForecast.slice(0, 10).sort((a, b) => b.avg_demand - a.avg_demand)
+    const sorted    = prodForecast.slice(0, 10).sort((a, b) => b.avg_demand - a.avg_demand)
     const maxDemand = Math.max(...sorted.map(d => d.avg_demand), 1)
     return sorted.map(d => ({
-      name:     pName(d.Product, productNames),
-      Demand:   +((d.avg_demand / maxDemand) * 100).toFixed(1),  // normalized 0-100
+      name:     d.name || pName(d.Product, productNames),
+      Demand:   +((d.avg_demand / maxDemand) * 100).toFixed(1),
       Accuracy: Math.round(d.accuracy ?? 0),
     }))
   }, [prodForecast, productNames])
 
   // ── Selected product monthly trend ────────────────────────────────────────
   const selectedTrend = useMemo(() => {
-    if (!selectedProduct || !prodMonthly?.length) return []
+    if (selectedProduct == null || !prodMonthly?.length) return []
     return prodMonthly
       .filter(d => Number(d.Product) === Number(selectedProduct))
-      .sort((a, b) => a.month.localeCompare(b.month))
+      .sort((a, b) => String(a.month).localeCompare(String(b.month)))
       .map(d => ({
         month:      d.month,
-        'Actual':   Math.round(d.demand    ?? 0),
-        'Forecast': Math.round(d.predicted ?? 0),
+        Actual:     d.demand    != null ? Math.round(d.demand)    : null,
+        Forecast:   d.predicted != null ? Math.round(d.predicted) : null,
       }))
   }, [selectedProduct, prodMonthly])
 
   if (em) return <ErrorBox msg={em} />
 
+  const lp            = lpd || lpf
   const inspection    = datasets?.inspection
   const growth        = metrics?.demand_growth_rate ?? 0
   const topProduct    = productData[0]
@@ -148,7 +151,7 @@ export default function Demand() {
             <button key={d.id}
               className={`btn ${selectedProduct === d.id ? 'btn-primary' : 'btn-outline'}`}
               style={{ padding: '3px 10px', fontSize: 11 }}
-              onClick={() => setProduct(prev => prev === d.id ? null : d.id)}>
+              onClick={() => toggleProduct(d.id)}>
               {d.name}
             </button>
           ))}
@@ -192,7 +195,7 @@ export default function Demand() {
                 <Tooltip {...CHART_STYLE} formatter={v => [fmtD(v) + ' units']} />
                 <Legend wrapperStyle={{ fontSize: 11 }} />
                 <Bar dataKey="Avg Demand"   fill="var(--blue)"  radius={[0, 4, 4, 0]} barSize={9}
-                  onClick={d => setProduct(prev => prev === d.Product ? null : d.Product)} style={{ cursor: 'pointer' }} />
+                  onClick={d => toggleProduct(d.Product)} style={{ cursor: 'pointer' }} />
                 <Bar dataKey="Avg Forecast" fill="var(--green)" radius={[0, 4, 4, 0]} barSize={9} />
               </BarChart>
             </ResponsiveContainer>
@@ -208,11 +211,11 @@ export default function Demand() {
               <PieChart>
                 <Pie data={pieData} dataKey="value" nameKey="name" cx="50%" cy="50%"
                   outerRadius={100} innerRadius={45} paddingAngle={1} strokeWidth={2} stroke="#fff"
-                  onClick={d => setProduct(prev => prev === d.id ? null : d.id)}
+                  onClick={d => toggleProduct(d.id)}
                   style={{ cursor: 'pointer' }}>
                   {pieData.map((d, i) => (
                     <Cell key={i} fill={d.fill}
-                      opacity={selectedProduct && selectedProduct !== d.id ? 0.35 : 1} />
+                      opacity={selectedProduct != null && selectedProduct !== d.id ? 0.35 : 1} />
                   ))}
                 </Pie>
                 <Tooltip content={({ active, payload }) => {
@@ -225,7 +228,6 @@ export default function Demand() {
                     </div>
                   )
                 }} />
-                <Legend wrapperStyle={{ fontSize: 11 }} />
               </PieChart>
             </ResponsiveContainer>
           )}
@@ -287,7 +289,7 @@ export default function Demand() {
                   const max  = Math.max(...vals, 1)
                   return (
                     <tr key={row.Product}
-                      onClick={() => setProduct(prev => prev === row.Product ? null : row.Product)}
+                      onClick={() => toggleProduct(row.Product)}
                       style={{ cursor: 'pointer', background: selectedProduct === row.Product ? 'rgba(59,130,246,0.06)' : undefined }}>
                       <td style={{ color: 'var(--blue)', fontWeight: 600, fontSize: 11, whiteSpace: 'nowrap' }}>{row.product}</td>
                       {heatmapData.months.map(m => {

@@ -12,10 +12,10 @@ const PALETTE = ['#3b82f6','#6366f1','#8b5cf6','#10b981','#f59e0b','#ef4444','#6
 const Skel = ({ h }) => <div className="skel" style={{ height: h, borderRadius: 8 }} />
 
 export default function StoreStats() {
-  const { data: products, loading: l1, error: e1 } = useFetch('/api/product-forecast', { pollMs: 15000 })
-  const { data: monthly, loading: l2 }              = useFetch('/api/monthly-sales', { pollMs: 10000 })
-  const { data: prodMonthly }                        = useFetch('/api/product-monthly', { pollMs: 15000 })
-  const { data: drift }                              = useFetch('/api/drift', { pollMs: 10000 })
+  const { data: products, loading: l1, error: e1 } = useFetch('/api/product-forecast', { pollMs: 120000 })
+  const { data: monthly, loading: l2 }              = useFetch('/api/monthly-sales', { pollMs: 60000 })
+  const { data: prodMonthly }                        = useFetch('/api/product-monthly', { pollMs: 120000 })
+  const { data: drift }                              = useFetch('/api/drift', { pollMs: 60000 })
   const [selected, setSelected] = useState(null)
 
   const sorted = useMemo(() => (products || []).slice().sort((a, b) => b.total_demand - a.total_demand), [products])
@@ -33,8 +33,8 @@ export default function StoreStats() {
   // Monthly forecast vs test set chart
   const forecastData = useMemo(() => (monthly || []).map(d => ({
     month: d.month,
-    'Test Set': Math.round(d.actual),
-    'Forecast': Math.round(d.predicted),
+    'Test Set': d.actual    != null ? Math.round(d.actual)    : null,
+    'Forecast': d.predicted != null ? Math.round(d.predicted) : null,
     Error: d.mae ? Math.round(d.mae) : 0,
   })), [monthly])
 
@@ -58,7 +58,6 @@ export default function StoreStats() {
   const radarData = useMemo(() => sorted.slice(0, 8).map(d => ({
     name: d.name.length > 14 ? d.name.slice(0, 12) + '…' : d.name,
     Accuracy: Math.round(d.accuracy),
-    Demand: Math.round(d.avg_demand),
   })), [sorted])
 
   // Filtered product monthly data
@@ -208,7 +207,7 @@ export default function StoreStats() {
             <RadarChart data={radarData} cx="50%" cy="50%" outerRadius={100}>
               <PolarGrid stroke="var(--border)" />
               <PolarAngleAxis dataKey="name" tick={{ fontSize: 9, fill: 'var(--text2)' }} />
-              <PolarRadiusAxis tick={{ fontSize: 9 }} domain={[0, 100]} />
+              <PolarRadiusAxis tick={{ fontSize: 9 }} domain={[0, 100]} tickFormatter={v => v + '%'} />
               <Radar name="Accuracy %" dataKey="Accuracy" stroke="var(--blue)" fill="var(--blue)" fillOpacity={0.15} strokeWidth={2} />
             </RadarChart>
           </ResponsiveContainer>}

@@ -79,8 +79,8 @@ const PredRow = memo(({ r, i, highlight, onHover, onClick }) => {
 })
 
 export default function Predictions() {
-  const { data: months, loading: lm, error: em } = useFetch('/api/processed-months', { pollMs: 60_000 })
-  const { data: monthly }                         = useFetch('/api/monthly-sales',    { pollMs: 120_000 })
+  const { data: months, loading: lm, error: em } = useFetch('/api/processed-months', { pollMs: 30_000 })
+  const { data: monthly }                         = useFetch('/api/monthly-sales',    { pollMs: 60_000 })
   const { data: productNames }                     = useFetch('/api/product-names')
   const [selected, setSelected]   = useState(null)
   const [prodFilter, setProd]     = useState(null)
@@ -187,7 +187,7 @@ export default function Predictions() {
         }} />
         <span>{fresh ? 'Data refreshed' : updatedAt ? `Last updated ${updatedAt.toLocaleTimeString()}` : 'Loading…'}</span>
         <span style={{ marginLeft: 'auto' }}>
-          Auto-polls every 12s ·{' '}
+          Auto-refreshes on change ·{' '}
           <button className="btn btn-outline" style={{ padding: '2px 10px', fontSize: 10 }} onClick={reload}>Refresh</button>
         </span>
       </div>
@@ -249,7 +249,7 @@ export default function Predictions() {
                 <Area type="monotone" dataKey="Actual"   stroke="var(--blue)"   fill="url(#gAct)" strokeWidth={2} dot={false} name="Test Set" />
                 <Line type="monotone" dataKey="Predicted" stroke="var(--orange)" strokeWidth={2} dot={false} strokeDasharray="4 2" name="Predicted" />
                 <Brush dataKey="idx" height={22} stroke="var(--border2)" fill="var(--card2)" travellerWidth={6}
-                  startIndex={0} endIndex={Math.min(49, chartData.length - 1)} />
+                  startIndex={0} endIndex={Math.min(chartData.length - 1, 149)} />
               </ComposedChart>
             </ResponsiveContainer>
           </SectionCard>
@@ -289,8 +289,8 @@ export default function Predictions() {
                   <YAxis tick={{ fontSize: 10 }} />
                   <Tooltip {...CHART_STYLE} formatter={v => [Number(v).toLocaleString() + ' units']} />
                   <Legend wrapperStyle={{ fontSize: 12 }} />
-                  <Area type="monotone" dataKey="actual"    stroke="var(--green)"  fill="url(#gM1)" strokeWidth={2} dot={false} name="Test Set" />
-                  <Area type="monotone" dataKey="predicted" stroke="var(--orange)" fill="url(#gM2)" strokeWidth={2} dot={false} name="Predicted" strokeDasharray="4 2" />
+                  <Area type="monotone" dataKey="actual"    stroke="var(--green)"  fill="url(#gM1)" strokeWidth={2} dot={false} name="Test Set"  connectNulls={false} />
+                  <Area type="monotone" dataKey="predicted" stroke="var(--orange)" fill="url(#gM2)" strokeWidth={2} dot={false} name="Predicted" strokeDasharray="4 2" connectNulls={false} />
                   {activeMonth && <ReferenceLine x={activeMonth} stroke="var(--blue)" strokeDasharray="3 2"
                     label={{ value: 'Selected', fill: 'var(--blue)', fontSize: 9, position: 'insideTopRight' }} />}
                 </AreaChart>
@@ -316,7 +316,7 @@ export default function Predictions() {
                     />
                   ))}
                 </Bar>
-                {stats.mae && <ReferenceLine y={stats.mae} stroke="var(--orange)" strokeDasharray="4 2"
+                {stats.mae != null && <ReferenceLine y={stats.mae} stroke="var(--orange)" strokeDasharray="4 2"
                   label={{ value: 'MAE', fill: 'var(--orange)', fontSize: 10, position: 'insideTopRight' }} />}
               </BarChart>
             </ResponsiveContainer>
