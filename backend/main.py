@@ -28,7 +28,7 @@ def prepare_real_data():
     tr["date"] = pd.to_datetime(tr["date"])
 
     # Aggregate daily → weekly (week ending Friday)
-    tr["week"] = tr["date"].dt.to_period("W-FRI").apply(lambda p: p.end_time.normalize())
+    tr["week"] = tr["date"] - pd.to_timedelta((tr["date"].dt.dayofweek - 4) % 7 - 7, unit="D")
     weekly = tr.groupby(["week", "store", "item"])["sales"].sum().reset_index()
 
     # Use last 2 full years: 2016 (train) + 2017 (test/drift)
@@ -47,10 +47,6 @@ def prepare_real_data():
     DATA_OUT.parent.mkdir(exist_ok=True)
     train_data.to_csv(DATA_OUT, index=False)
     log.info(f"Saved {len(train_data):,} rows to {DATA_OUT} | years: {use}")
-
-    # ── test.csv: future dates for sequential prediction (no sales — ignored) ──
-    if TEST_CSV.exists():
-        log.info("test.csv found — not used (no sales column, Kaggle competition blind test)")
 
     return train_data
 

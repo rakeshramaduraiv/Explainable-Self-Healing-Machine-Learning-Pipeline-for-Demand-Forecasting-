@@ -213,6 +213,13 @@ class SequentialPredictor:
             all_data = all_data.sort_values(sort_cols).reset_index(drop=True)
 
         target_rows, feat_cols = self._build_features(all_data, target_month)
+        # Align to model's expected features
+        if self.feature_names:
+            feat_cols = self.feature_names
+            for c in feat_cols:
+                if c not in target_rows.columns:
+                    target_rows[c] = 0
+            target_rows[feat_cols] = target_rows[feat_cols].fillna(0)
         X = target_rows[feat_cols].values
         predictions = self.model.predict(X)
 

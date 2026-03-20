@@ -4,7 +4,7 @@ import {
   LineChart, Line, Legend, Cell, AreaChart, Area, ComposedChart, ReferenceLine,
 } from 'recharts'
 import { API, useFetch } from '../api.js'
-import { KPI, SectionCard, Spinner, ErrorBox, fmtD, toast, Badge } from '../ui.jsx'
+import { KPI, SectionCard, Spinner, ErrorBox, toast, Badge } from '../ui.jsx'
 
 const pName = (id, names) => names?.[id] || `Product ${id}`
 
@@ -113,17 +113,17 @@ export default function Predict() {
     try {
       const s = await API.seqStatus()
       setStatus(s)
-      if (s.available_predictions?.length && !selectedPred) {
-        setSelectedPred(s.available_predictions[s.available_predictions.length - 1])
+      if (s.available_predictions?.length) {
+        setSelectedPred(p => p || s.available_predictions[s.available_predictions.length - 1])
       }
     } catch (e) {
       setError(e.message || 'Failed to connect to API. Make sure backend is running.')
     } finally {
       setLoading(false)
     }
-  }, [selectedPred])
+  }, [])
 
-  useEffect(() => { loadStatus() }, [])
+  useEffect(() => { loadStatus() }, [loadStatus])
 
   // Load prediction data
   useEffect(() => {
@@ -150,13 +150,18 @@ export default function Predict() {
     pickFile(e.dataTransfer.files[0])
   }, [pickFile])
 
+  const onDragOver  = useCallback(e => { e.preventDefault(); setDrag(true) }, [])
+  const onDragLeave = useCallback(() => setDrag(false), [])
+
   const uploadActuals = useCallback(async () => {
     if (!file) return
     setUploading(true)
     setError(null)
     setResult(null)
     try {
-      const r = await API.seqUploadActuals(file)
+      const resp = await API.seqUploadActuals(file)
+      const r = await resp.json()
+      if (!resp.ok) throw new Error(r.detail || r.error || `Upload failed (HTTP ${resp.status})`)
       if (r.error || r.detail) throw new Error(r.detail || r.error)
       setResult(r)
       setFile(null)
@@ -171,14 +176,17 @@ export default function Predict() {
   }, [file, loadStatus])
 
   // Chart data
-  const comparisonData = useMemo(() =>
-    (result?.comparison?.products || result?.comparison?.stores || []).map(s => ({
+  const comparisonData = useMemo(() => {
+    const rows = result?.comparison?.products?.length
+      ? result.comparison.products
+      : (result?.comparison?.stores || [])
+    return rows.map(s => ({
       product: pName(s.Product, productNames),
       'Actual': Math.round(s.Actual),
       Predicted: Math.round(s.Predicted),
       Error: Math.round(Math.abs(s.Actual - s.Predicted)),
-    })),
-  [result, productNames])
+    }))
+  }, [result, productNames])
 
   const historyData = useMemo(() =>
     status?.comparisons?.map(c => ({
@@ -303,8 +311,8 @@ export default function Predict() {
         <SectionCard title="📤 Upload Monthly Actuals">
           <div
             className={`upload-zone${drag ? ' drag' : ''}`}
-            onDragOver={e => { e.preventDefault(); setDrag(true) }}
-            onDragLeave={() => setDrag(false)}
+            onDragOver={onDragOver}
+            onDragLeave={onDragLeave}
             onDrop={onDrop}
             onClick={() => inputRef.current?.click()}
             style={{

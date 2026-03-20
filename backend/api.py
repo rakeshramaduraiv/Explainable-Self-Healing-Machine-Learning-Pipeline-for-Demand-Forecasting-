@@ -179,11 +179,11 @@ def baseline():
 
 @app.get("/api/drift")
 def drift():
-    return _cached("drift", 8, lambda: dedup(rj("drift_history.json") or []))
+    return _cached("drift", 60, lambda: dedup(rj("drift_history.json") or []))
 
 @app.get("/api/batches")
 def batches():
-    return _cached("batches", 8, lambda: dedup(rj("prediction_batches.json") or []))
+    return _cached("batches", 60, lambda: dedup(rj("prediction_batches.json") or []))
 
 @app.get("/api/monthly-sales")
 def monthly_sales():
@@ -192,7 +192,7 @@ def monthly_sales():
         return [{"month": x["month"], "actual": x.get("mean_actual"),
                  "predicted": x.get("mean_pred"),
                  "mae": abs((x.get("mean_actual") or 0) - (x.get("mean_pred") or 0))} for x in b]
-    return _cached("monthly_sales", 8, _build)
+    return _cached("monthly_sales", 60, _build)
 
 @app.get("/api/store-stats")
 def store_stats():
@@ -430,7 +430,6 @@ async def upload_predict(file: UploadFile = File(...)):
         raise HTTPException(413, "File too large (max 50 MB)")
     dest = UPLOAD / safe_name
     with open(dest, "wb") as f: f.write(content)
-    # Read with BOM handling and re-save clean
     try:
         clean_df = pd.read_csv(dest, encoding="utf-8-sig")
         clean_df.columns = clean_df.columns.str.strip()
@@ -438,31 +437,30 @@ async def upload_predict(file: UploadFile = File(...)):
     except Exception:
         pass
     shutil.copy(dest, DATA / "uploaded_data.csv")
-    result = subprocess.run(
-        [sys.executable, str(BASE / "main.py")],
-        capture_output=True, text=True, timeout=300, cwd=str(BASE)
-    )
+    import asyncio
+    loop = asyncio.get_event_loop()
+    try:
+        result = await asyncio.wait_for(
+            loop.run_in_executor(None, lambda: subprocess.run(
+                [sys.executable, str(BASE / "main.py")],
+                capture_output=True, text=True, timeout=600, cwd=str(BASE)
+            )),
+            timeout=620
+        )
+    except asyncio.TimeoutError:
+        raise HTTPException(504, "Pipeline timed out — dataset may be too large. Try a smaller sample.")
     if result.returncode != 0:
         combined = (result.stdout + "\n" + result.stderr)[-3000:]
-        print("=== PIPELINE STDOUT ===", flush=True)
-        print(result.stdout[-2000:], flush=True)
-        print("=== PIPELINE STDERR ===", flush=True)
-        print(result.stderr[-2000:], flush=True)
-        print("=== END ===", flush=True)
         error_line = ""
         for line in reversed(combined.splitlines()):
             line = line.strip()
-            if not line:
-                continue
+            if not line: continue
             if any(x in line for x in ["ValueError", "FileNotFoundError", "KeyError",
                                         "Missing required", "too small", "Error:", "error:"]):
-                error_line = line
-                break
+                error_line = line; break
         if not error_line:
             for line in reversed(combined.splitlines()):
-                if line.strip():
-                    error_line = line.strip()
-                    break
+                if line.strip(): error_line = line.strip(); break
         raise HTTPException(422, error_line or "Pipeline failed — check backend terminal")
     _bust()
     return {"status": "ok", "stdout": result.stdout[-1000:]}
@@ -483,11 +481,11 @@ def healing_actions():
             "avg_improvement": summary.get("avg_improvement", 0.0),
             "recommendation": summary.get("recommendation", "No data"),
         }
-    return _cached("healing_actions", 60, _build)
+    return _cached("healing_actions", 120, _build)
 
 @app.get("/api/healing-history")
 def healing_history():
-    return _cached("healing_history", 8, lambda: dedup(rj("healing_history.json") or []))
+    return _cached("healing_history", 60, lambda: dedup(rj("healing_history.json") or []))
 
 @app.get("/api/healing-status")
 def healing_status():
@@ -495,7 +493,7 @@ def healing_status():
         from healing_status import HealingStatusIndicator
         indicator = HealingStatusIndicator()
         return indicator.get_current_status()
-    return _cached("healing_status", 5, _build)
+    return _cached("healing_status", 30, _build)
 
 
 # ── Sequential Prediction Endpoints ───────────────────────────────────────────
@@ -554,10 +552,20 @@ async def seq_upload_actuals(file: UploadFile = File(...)):
         raise HTTPException(400, f"Missing required columns: {missing}. Need Date, Product, Demand. Got: {list(df.columns)}")
     try:
         from sequential_predictor import SequentialPredictor
+        import math
         sp = SequentialPredictor()
         result = sp.process_actuals_upload(df)
         _bust()
-        return result
+        # Sanitize NaN/Inf floats so JSON serialization never fails
+        def _clean(obj):
+            if isinstance(obj, float):
+                return None if (math.isnan(obj) or math.isinf(obj)) else obj
+            if isinstance(obj, dict):
+                return {k: _clean(v) for k, v in obj.items()}
+            if isinstance(obj, list):
+                return [_clean(v) for v in obj]
+            return obj
+        return _clean(result)
     except Exception as e:
         raise HTTPException(422, f"Upload failed: {e}")
 

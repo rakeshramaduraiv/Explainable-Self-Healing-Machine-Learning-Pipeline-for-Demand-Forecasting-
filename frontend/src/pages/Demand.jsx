@@ -15,7 +15,6 @@ const Skel = ({ h }) => <div className="skel" style={{ height: h, borderRadius: 
 
 export default function Demand() {
   const { data: metrics, loading: lm, error: em } = useFetch('/api/demand-metrics')
-  const { data: trend,   loading: lt, error: et } = useFetch('/api/demand-trend')
   const { data: monthly, loading: lmo }           = useFetch('/api/monthly-demand')
   const { data: prodData, loading: lp }           = useFetch('/api/product-demand')
   const { data: prodForecast }                    = useFetch('/api/product-forecast')
@@ -24,7 +23,6 @@ export default function Demand() {
   const { data: productNames }                     = useFetch('/api/product-names')
   const [selectedProduct, setProduct] = useState(null)
 
-  const trendData   = useMemo(() => (trend?.dates || []).map((d, i) => ({ date: d, demand: trend.demand[i] })), [trend])
   const monthlyData = useMemo(() => (monthly?.months || []).map((m, i) => ({ month: m, demand: monthly.demand[i] })), [monthly])
 
   // Product demand sorted
@@ -93,8 +91,8 @@ export default function Demand() {
   const inspection = datasets?.inspection
   const growth = metrics?.demand_growth_rate ?? 0
 
-  if (em || et) return <ErrorBox msg={em || et} />
-  if (lm || lt) return <Spinner />
+  if (em) return <ErrorBox msg={em} />
+  if (lm) return <Spinner />
 
   return (
     <>
@@ -147,27 +145,6 @@ export default function Demand() {
               <Area type="monotone" dataKey="Test Set" stroke="var(--blue)" fill="url(#gSel)" strokeWidth={2} dot={false} />
               <Line type="monotone" dataKey="Forecast" stroke="var(--green)" strokeWidth={2} dot={{ r: 3, fill: 'var(--green)' }} />
             </ComposedChart>
-          </ResponsiveContainer>
-        </SectionCard>
-      )}
-
-      {/* Weekly trend */}
-      {!selectedProduct && (
-        <SectionCard title="Weekly Demand Trend — All Products">
-          <ResponsiveContainer width="100%" height={240}>
-            <AreaChart data={trendData} margin={{ top: 4, right: 8, bottom: 0, left: 0 }}>
-              <defs>
-                <linearGradient id="gDemand" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.2} />
-                  <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
-                </linearGradient>
-              </defs>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="date" tick={{ fontSize: 9 }} interval="preserveStartEnd" />
-              <YAxis tick={{ fontSize: 10 }} />
-              <Tooltip {...CHART_STYLE} formatter={v => [fmtD(v) + ' units', 'Weekly Demand']} />
-              <Area type="monotone" dataKey="demand" stroke="var(--blue)" fill="url(#gDemand)" strokeWidth={2} dot={false} />
-            </AreaChart>
           </ResponsiveContainer>
         </SectionCard>
       )}

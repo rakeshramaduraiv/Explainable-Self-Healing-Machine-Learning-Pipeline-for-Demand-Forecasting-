@@ -53,9 +53,9 @@ export default function App() {
   const [page, setPage]   = useState('overview')
   const [apiOk, setApiOk] = useState(null)
   const [isPending, startTransition] = useTransition()
-  const { data: health } = useFetch('/api/health', { pollMs: 20000 })
-  const { data: summary } = useFetch('/api/summary', { pollMs: 60000 })
-  const { data: datasets } = useFetch('/api/datasets', { pollMs: 60000 })
+  const { data: health } = useFetch('/api/health', { pollMs: 60000 })
+  const { data: summary } = useFetch('/api/summary', { pollMs: 120000 })
+  const { data: datasets } = useFetch('/api/datasets', { pollMs: 120000 })
 
   const navigate = useCallback(id => { startTransition(() => setPage(id)) }, [])
 
@@ -67,7 +67,7 @@ export default function App() {
   useEffect(() => {
     const check = () => API.health().then(() => setApiOk(true)).catch(() => setApiOk(false))
     check()
-    const id = setInterval(check, 20000)
+    const id = setInterval(check, 60000)
     return () => clearInterval(id)
   }, [])
 

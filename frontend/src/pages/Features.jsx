@@ -1,8 +1,7 @@
 import { useState, useMemo, memo } from 'react'
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
-  CartesianGrid, Cell, RadialBarChart, RadialBar, Legend,
-  Treemap, ComposedChart, Line, Area,
+  CartesianGrid, Cell, Treemap,
 } from 'recharts'
 import { useFetch } from '../api.js'
 import { Spinner, ErrorBox, KPI, SectionCard, CHART_STYLE } from '../ui.jsx'
@@ -72,7 +71,6 @@ const TreeContent = ({ x, y, width, height, name, value, color }) => {
 export default function Features() {
   const { data: summary, loading: ls, error: es } = useFetch('/api/summary')
   const { data: fiData,   loading: lf, error: ef } = useFetch('/api/feature-importances')
-  const { data: prodForecast }                      = useFetch('/api/product-forecast')
   const { data: monthly }                           = useFetch('/api/monthly-sales')
   const [activeGroup, setGroup] = useState(null)
   const [selectedFeat, setFeat] = useState(null)
@@ -80,16 +78,16 @@ export default function Features() {
   const features    = fiData?.feature_names || summary?.feature_names || []
   const importances = fiData?.importances   || null
 
-  // Top 20 sorted
-  const top20 = useMemo(() => features
+  // Top 10 for simplified view
+  const top10 = useMemo(() => features
     .map(name => ({ name, value: importances ? +(importances[name] || 0) : 0, group: getGroup(name) }))
     .sort((a, b) => b.value - a.value)
-    .slice(0, 20),
+    .slice(0, 10),
   [features, importances])
 
   const chartData = useMemo(() =>
-    activeGroup ? top20.filter(d => d.group === activeGroup) : top20,
-  [top20, activeGroup])
+    activeGroup ? top10.filter(d => d.group === activeGroup) : top10,
+  [top10, activeGroup])
 
   // Group totals
   const groupTotals = useMemo(() => {
@@ -104,26 +102,6 @@ export default function Features() {
       .sort((a, b) => b.value - a.value)
   }, [features, importances])
 
-  // Top 10 radial
-  const radialData = useMemo(() => top20.slice(0, 10).map((d, i) => ({
-    name: d.name.length > 18 ? d.name.slice(0, 16) + '…' : d.name,
-    fullName: d.name, value: +(d.value * 100).toFixed(2),
-    fill: PALETTE[i % PALETTE.length],
-  })), [top20])
-
-  // Product accuracy vs top feature importance correlation
-  const prodFeatureData = useMemo(() => {
-    if (!prodForecast?.length) return []
-    return prodForecast.slice().sort((a, b) => b.accuracy - a.accuracy).map((d, i) => ({
-      name: d.name.length > 14 ? d.name.slice(0, 12) + '…' : d.name,
-      fullName: d.name,
-      Accuracy: Math.round(d.accuracy),
-      MAE: Math.round(d.mae),
-      'Avg Demand': Math.round(d.avg_demand),
-      fill: PALETTE[i % PALETTE.length],
-    }))
-  }, [prodForecast])
-
   // Live model accuracy
   const liveAccuracy = useMemo(() => {
     if (!monthly?.length) return null
@@ -136,8 +114,8 @@ export default function Features() {
   if (es || ef) return <ErrorBox msg={es || ef} />
   if (ls || lf) return <Spinner />
 
-  const totalImp = top20.reduce((s, d) => s + d.value, 0)
-  const topFeat = top20[0]
+  const totalImp = top10.reduce((s, d) => s + d.value, 0)
+  const topFeat = top10[0]
 
   return (
     <>
@@ -150,7 +128,7 @@ export default function Features() {
         <KPI label="Total Features" value={features.length} delta="Engineered" />
         <KPI label="Feature Groups" value={groupTotals.length} delta="Categories" />
         <KPI label="Top Feature" value={topFeat?.name || '—'} delta={topFeat ? (topFeat.value * 100).toFixed(1) + '% importance' : ''} />
-        <KPI label="Top 20 Coverage" value={(totalImp * 100).toFixed(1) + '%'} delta="of total importance" />
+        <KPI label="Top 10 Coverage" value={(totalImp * 100).toFixed(1) + '%'} delta="of total importance" />
         <KPI label="Model Accuracy" value={liveAccuracy != null ? liveAccuracy + '%' : '—'} color="var(--green)" delta="Live · test set" />
       </div>
 
@@ -182,7 +160,7 @@ export default function Features() {
         )}
       </div>
 
-      {/* Row 1 — Top features + Treemap */}
+      {/* Main Charts - Only 2 charts for simplicity */}
       <div className="grid-2" style={{ alignItems: 'start' }}>
         <SectionCard title={`Top ${chartData.length} Features — click to inspect`}>
           <ResponsiveContainer width="100%" height={Math.max(300, chartData.length * 26)}>
@@ -236,131 +214,56 @@ export default function Features() {
         </SectionCard>
       </div>
 
-      {/* Row 2 — Product accuracy context + Group bar */}
-      <div className="grid-2">
-        <SectionCard title="Product Forecast Accuracy — feature impact on predictions">
-          {prodFeatureData.length ? (
-            <ResponsiveContainer width="100%" height={320}>
-              <ComposedChart data={prodFeatureData} margin={{ top: 8, right: 16, bottom: 40, left: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" tick={{ fontSize: 9, fill: 'var(--text2)' }} angle={-30} textAnchor="end" interval={0} />
-                <YAxis yAxisId="acc" tick={{ fontSize: 10 }} domain={[0, 100]} tickFormatter={v => v + '%'} />
-                <YAxis yAxisId="mae" orientation="right" tick={{ fontSize: 10 }} />
-                <Tooltip content={({ active, payload }) => {
-                  if (!active || !payload?.length) return null
-                  const d = payload[0]?.payload
-                  return (
-                    <div style={{ background: '#fff', border: '1px solid var(--border2)', borderRadius: 8, padding: '10px 14px', fontSize: 12, boxShadow: '0 4px 20px rgba(37,99,235,0.12)' }}>
-                      <div style={{ fontWeight: 700, marginBottom: 4 }}>{d?.fullName}</div>
-                      <div>Accuracy: <strong style={{ color: 'var(--green)' }}>{d?.Accuracy}%</strong></div>
-                      <div>MAE: <strong style={{ color: 'var(--orange)' }}>{d?.MAE} units</strong></div>
-                      <div>Avg Demand: <strong>{d?.['Avg Demand']} units</strong></div>
-                    </div>
-                  )
-                }} />
-                <Legend wrapperStyle={{ fontSize: 11 }} />
-                <Bar yAxisId="acc" dataKey="Accuracy" name="Accuracy %" radius={[4, 4, 0, 0]}>
-                  {prodFeatureData.map((d, i) => (
-                    <Cell key={i} fill={d.Accuracy >= 95 ? 'var(--green)' : d.Accuracy >= 90 ? 'var(--blue)' : d.Accuracy >= 80 ? 'var(--orange)' : 'var(--red)'} />
-                  ))}
-                </Bar>
-                <Line yAxisId="mae" type="monotone" dataKey="MAE" stroke="var(--orange)" strokeWidth={2} dot={{ r: 3 }} name="MAE (units)" />
-              </ComposedChart>
-            </ResponsiveContainer>
-          ) : <div style={{ textAlign: 'center', padding: 40, color: 'var(--text3)' }}>Loading product data...</div>}
-        </SectionCard>
-
-        <SectionCard title="Group Importance — click to filter">
-          <ResponsiveContainer width="100%" height={320}>
-            <BarChart data={groupTotals} margin={{ top: 8, right: 16, bottom: 40, left: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
-              <XAxis dataKey="name" tick={{ fontSize: 10, fill: 'var(--text2)' }} angle={-25} textAnchor="end" interval={0} />
-              <YAxis tick={{ fontSize: 10 }} tickFormatter={v => (v * 100).toFixed(0) + '%'} />
-              <Tooltip content={({ active, payload, label }) => {
-                if (!active || !payload?.length) return null
-                const d = payload[0]?.payload
-                return (
-                  <div style={{ background: '#fff', border: '1px solid var(--border2)', borderRadius: 8, padding: '10px 14px', fontSize: 12, boxShadow: '0 4px 20px rgba(37,99,235,0.12)' }}>
-                    <div style={{ fontWeight: 700, color: d?.color, marginBottom: 4 }}>{label}</div>
-                    <div style={{ color: 'var(--text2)' }}>Total share: <strong>{(d?.value * 100).toFixed(1)}%</strong></div>
-                    <div style={{ color: 'var(--text3)' }}>{d?.count} features</div>
-                  </div>
-                )
-              }} />
-              <Bar dataKey="value" name="Group Share" radius={[4, 4, 0, 0]}
-                onClick={d => setGroup(p => p === d.name ? null : d.name)}>
-                {groupTotals.map((d, i) => (
-                  <Cell key={i} fill={d.color}
-                    opacity={activeGroup && activeGroup !== d.name ? 0.2 : 1}
-                    stroke={activeGroup === d.name ? '#1e3a8a' : 'none'}
-                    strokeWidth={1.5} style={{ cursor: 'pointer' }}
-                  />
-                ))}
-              </Bar>
-            </BarChart>
-          </ResponsiveContainer>
-        </SectionCard>
-      </div>
-
-      {/* Radial */}
-      <SectionCard title="Top 10 Features — radial importance scale">
-        <ResponsiveContainer width="100%" height={300}>
-          <RadialBarChart cx="50%" cy="50%" innerRadius={20} outerRadius={130}
-            data={radialData} startAngle={180} endAngle={-180}>
-            <RadialBar minAngle={4} dataKey="value" cornerRadius={4} label={false} />
-            <Tooltip content={({ active, payload }) => {
-              if (!active || !payload?.length) return null
-              const d = payload[0]?.payload
-              return (
-                <div style={{ background: '#fff', border: '1px solid var(--border2)', borderRadius: 8, padding: '10px 14px', fontSize: 12, boxShadow: '0 4px 20px rgba(37,99,235,0.12)' }}>
-                  <div style={{ fontWeight: 700, marginBottom: 4 }}>{d?.fullName}</div>
-                  <div style={{ color: 'var(--text2)' }}>Importance: <strong>{d?.value}%</strong></div>
+      {/* Feature group detail cards - simplified */}
+      <SectionCard title="Feature Groups Detail" style={{ marginTop: 20 }}>
+        <div className="grid-2">
+          {Object.entries(GROUPS).map(([group, test]) => {
+            const feats = features.filter(test)
+              .map(f => ({ name: f, val: importances?.[f] || 0 }))
+              .sort((a, b) => b.val - a.val)
+            const color = GROUP_COLOR[group]
+            return (
+              <div key={group}
+                style={{
+                  padding: '16px 20px', borderRadius: 10, border: '1px solid var(--border)',
+                  background: 'var(--card2)', opacity: !activeGroup || activeGroup === group ? 1 : 0.35,
+                  transition: 'opacity 0.15s',
+                }}>
+                <div style={{ fontSize: 14, fontWeight: 700, color: color, marginBottom: 8 }}>
+                  {group} — {feats.length} features
                 </div>
-              )
-            }} />
-            <Legend iconSize={8} wrapperStyle={{ fontSize: 10, paddingTop: 8 }}
-              formatter={(value, entry) => entry.payload.name} />
-          </RadialBarChart>
-        </ResponsiveContainer>
-      </SectionCard>
-
-      {/* Feature group detail cards */}
-      <div className="grid-2">
-        {Object.entries(GROUPS).map(([group, test]) => {
-          const feats = features.filter(test)
-            .map(f => ({ name: f, val: importances?.[f] || 0 }))
-            .sort((a, b) => b.val - a.val)
-          const color = GROUP_COLOR[group]
-          return (
-            <SectionCard key={group}
-              title={`${group} — ${feats.length} features`}
-              style={{ opacity: !activeGroup || activeGroup === group ? 1 : 0.35, transition: 'opacity 0.15s' }}>
-              {GROUP_DESC[group] && (
-                <div style={{ fontSize: 11, color: 'var(--text3)', marginBottom: 8 }}>{GROUP_DESC[group]}</div>
-              )}
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5 }}>
-                {feats.length
-                  ? feats.map(({ name, val }) => (
-                    <span key={name}
-                      onClick={() => setFeat(p => p === name ? null : name)}
-                      style={{
-                        padding: '2px 9px', borderRadius: 4, fontSize: 10.5, fontWeight: 600,
-                        cursor: 'pointer', border: `1px solid ${color}30`,
-                        background: selectedFeat === name ? color : color + '12',
-                        color: selectedFeat === name ? '#fff' : color,
-                        opacity: selectedFeat && selectedFeat !== name ? 0.3 : 1,
-                        transition: 'all 0.12s',
-                      }}>
-                      {name}
+                {GROUP_DESC[group] && (
+                  <div style={{ fontSize: 11, color: 'var(--text3)', marginBottom: 12 }}>{GROUP_DESC[group]}</div>
+                )}
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5 }}>
+                  {feats.length
+                    ? feats.slice(0, 8).map(({ name, val }) => (
+                      <span key={name}
+                        onClick={() => setFeat(p => p === name ? null : name)}
+                        style={{
+                          padding: '2px 9px', borderRadius: 4, fontSize: 10.5, fontWeight: 600,
+                          cursor: 'pointer', border: `1px solid ${color}30`,
+                          background: selectedFeat === name ? color : color + '12',
+                          color: selectedFeat === name ? '#fff' : color,
+                          opacity: selectedFeat && selectedFeat !== name ? 0.3 : 1,
+                          transition: 'all 0.12s',
+                        }}>
+                        {name}
+                      </span>
+                    ))
+                    : <span style={{ color: 'var(--text3)', fontSize: 12 }}>None</span>
+                  }
+                  {feats.length > 8 && (
+                    <span style={{ color: 'var(--text3)', fontSize: 10, fontStyle: 'italic' }}>
+                      +{feats.length - 8} more
                     </span>
-                  ))
-                  : <span style={{ color: 'var(--text3)', fontSize: 12 }}>None</span>
-                }
+                  )}
+                </div>
               </div>
-            </SectionCard>
-          )
-        })}
-      </div>
+            )
+          })}
+        </div>
+      </SectionCard>
     </>
   )
 }

@@ -1,8 +1,7 @@
-import { useState, useRef, useCallback, memo } from 'react'
+import { useState, useRef, useCallback } from 'react'
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid,
-  LineChart, Line, Legend, ReferenceLine, ComposedChart, Area, AreaChart,
-  Cell, Scatter, ScatterChart, ZAxis,
+  LineChart, Line, Legend, ReferenceLine, ComposedChart, Area, AreaChart, Cell,
 } from 'recharts'
 import { API, useFetch } from '../api.js'
 import { KPI, SectionCard, SevBadge, fmtD, toast } from '../ui.jsx'
@@ -78,6 +77,7 @@ export default function Upload() {
 
   const run = useCallback(async () => {
     if (!file) return
+    const BASE = import.meta.env.VITE_API_URL || ''
     setRunning(true); setError(null); setResult(null); setProgress(15)
     try {
       const r = await API.uploadPredict(file)
@@ -88,11 +88,10 @@ export default function Upload() {
       }
       const data = await r.json()
       setProgress(85)
-      const base = import.meta.env.VITE_API_URL || ''
       const [drift, monthly, healing] = await Promise.all([
         API.drift(),
-        fetch(base + '/api/monthly-sales').then(r => r.json()),
-        fetch(base + '/api/healing-history').then(r => r.json()).catch(() => []),
+        fetch(BASE + '/api/monthly-sales').then(r => r.json()).catch(() => []),
+        fetch(BASE + '/api/healing-history').then(r => r.json()).catch(() => []),
       ])
       setProgress(100)
       setResult({ stdout: data.stdout, drift, monthly, healing })
@@ -112,7 +111,6 @@ export default function Upload() {
   const monthly = result?.monthly || []
   const healing = result?.healing || []
   const healMap = Object.fromEntries(healing.map(h => [h.month, h]))
-  const latest  = drift[drift.length - 1]
 
   const avgCurrentMAE  = drift.length ? drift.reduce((s, d) => s + (d.error_trend?.current_error  || 0), 0) / drift.length : 0
   const avgBaselineMAE = drift.length ? drift.reduce((s, d) => s + (d.error_trend?.baseline_error || 0), 0) / drift.length : 0
@@ -244,8 +242,8 @@ export default function Upload() {
               {/* ── KPI Summary ── */}
               <div className="kpi-grid" style={{ gridTemplateColumns: 'repeat(5,1fr)' }}>
                 <KPI label="Months Analysed"  value={drift.length} delta="Test set" />
-                <KPI label="Severe Months"    value={severeMonths} color="var(--red)"    delta={`${((severeMonths/drift.length)*100).toFixed(0)}% of months`} />
-                <KPI label="Mild Months"      value={mildMonths}   color="var(--orange)" delta={`${((mildMonths/drift.length)*100).toFixed(0)}% of months`} />
+                <KPI label="Severe Months"    value={severeMonths} color="var(--red)"    delta={drift.length ? `${((severeMonths/drift.length)*100).toFixed(0)}% of months` : '—'} />
+                <KPI label="Mild Months"      value={mildMonths}   color="var(--orange)" delta={drift.length ? `${((mildMonths/drift.length)*100).toFixed(0)}% of months` : '—'} />
                 <KPI label="Avg Test MAE"       value={Number(avgCurrentMAE.toFixed(0)).toLocaleString() + ' units'}  color="var(--red)"   delta="Test set" />
                 <KPI label="Baseline MAE"        value={Number(avgBaselineMAE.toFixed(0)).toLocaleString() + ' units'} color="var(--green)" delta="Trained model" />
               </div>
@@ -262,11 +260,11 @@ export default function Upload() {
                     </tr>
                   </thead>
                   <tbody>
-                    <StatRow label="MAE"            train={trainMetrics.MAE}   test={avgCurrentMAE}  />
-                    <StatRow label="Baseline MAE"   train={avgBaselineMAE}     test={avgCurrentMAE}  />
-                    <StatRow label="RMSE"           train={trainMetrics.RMSE}  test={null} />
-                    <StatRow label="MAPE"           train={trainMetrics.MAPE}  test={null} unit="" />
-                    <StatRow label="R²"             train={trainMetrics.R2}    test={null} />
+                    <StatRow label="MAE"          train={trainMetrics.MAE}  test={avgCurrentMAE} />
+                    <StatRow label="Baseline MAE" train={avgBaselineMAE}    test={avgCurrentMAE} />
+                    <StatRow label="RMSE"         train={trainMetrics.RMSE} test={null} />
+                    <StatRow label="MAPE"         train={trainMetrics.MAPE} test={null} unit="%" />
+                    <StatRow label="R²"           train={trainMetrics.R2}   test={null} />
                     <tr>
                       <td style={{ color: 'var(--text3)', fontWeight: 500, fontSize: 12 }}>Severe Drift Months</td>
                       <td className="mono" style={{ color: 'var(--green)', fontWeight: 600 }}>0</td>
