@@ -29,14 +29,18 @@ export default function Demand() {
     (monthly?.months || []).map((m, i) => ({ month: m, demand: monthly.demand[i] })),
   [monthly])
 
-  // ── Product demand — use real Product IDs from API, not array index ────────
+  // ── Product demand — parse numeric ID from "Product N" string ──────────────
   const productData = useMemo(() => {
     if (!prodData?.products?.length) return []
-    return prodData.products.map((p, i) => ({
-      id:     Number(p),                        // real product ID
-      name:   pName(Number(p), productNames),   // always a string
-      demand: prodData.demand[i] ?? 0,
-    })).sort((a, b) => b.demand - a.demand)
+    return prodData.products.map((p, i) => {
+      // API returns "Product 1", "Product 2" etc. — extract the numeric ID
+      const id = parseInt(String(p).replace(/\D/g, ''), 10)
+      return {
+        id:     isNaN(id) ? i + 1 : id,
+        name:   pName(isNaN(id) ? i + 1 : id, productNames) || String(p),
+        demand: prodData.demand[i] ?? 0,
+      }
+    }).sort((a, b) => b.demand - a.demand)
   }, [prodData, productNames])
 
   // ── Pie chart ─────────────────────────────────────────────────────────────
