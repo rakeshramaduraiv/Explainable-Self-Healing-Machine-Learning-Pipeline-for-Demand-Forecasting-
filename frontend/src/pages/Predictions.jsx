@@ -79,8 +79,8 @@ const PredRow = memo(({ r, i, highlight, onHover, onClick }) => {
 })
 
 export default function Predictions() {
-  const { data: months, loading: lm, error: em } = useFetch('/api/processed-months', { pollMs: 15_000 })
-  const { data: monthly }                         = useFetch('/api/monthly-sales',    { pollMs: 30_000 })
+  const { data: months, loading: lm, error: em } = useFetch('/api/processed-months', { pollMs: 60_000 })
+  const { data: monthly }                         = useFetch('/api/monthly-sales',    { pollMs: 120_000 })
   const { data: productNames }                     = useFetch('/api/product-names')
   const [selected, setSelected]   = useState(null)
   const [prodFilter, setProd]     = useState(null)

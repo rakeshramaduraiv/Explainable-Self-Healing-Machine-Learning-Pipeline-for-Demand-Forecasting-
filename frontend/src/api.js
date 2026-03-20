@@ -5,7 +5,7 @@ const BASE = import.meta.env.VITE_API_URL || ''
 // ── Cache + dedup ─────────────────────────────────────────────────────────────
 const inflight = new Map()
 export const memCache = new Map()   // exported so useFetch can read synchronously
-const MEM_TTL = 10_000
+const MEM_TTL = 60_000
 
 function dedupFetch(url, signal) {
   const hit   = memCache.get(url)

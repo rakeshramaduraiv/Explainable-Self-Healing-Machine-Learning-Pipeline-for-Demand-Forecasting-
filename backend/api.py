@@ -228,7 +228,7 @@ def feature_importances():
         fn = list(raw_fn) if raw_fn is not None else summary_fn[:len(fi)]
         result = {str(n): round(v, 6) for n, v in zip(fn, fi)}
         return {"importances": result, "feature_names": [str(n) for n in fn]}
-    return _cached("feature_importances", 300, _build)
+    return _cached("feature_importances", 600, _build)
 
 @app.get("/api/data-split")
 def data_split():
@@ -303,22 +303,22 @@ def datasets():
 
 @app.get("/api/demand-metrics")
 def demand_metrics():
-    try: return _cached("demand_metrics", 300, _build_demand_metrics)
+    try: return _cached("demand_metrics", 600, _build_demand_metrics)
     except Exception as e: raise HTTPException(404, f"No data available: {e}")
 
 @app.get("/api/demand-trend")
 def demand_trend():
-    try: return _cached("demand_trend", 300, _build_demand_trend)
+    try: return _cached("demand_trend", 600, _build_demand_trend)
     except Exception as e: raise HTTPException(404, f"No data available: {e}")
 
 @app.get("/api/monthly-demand")
 def monthly_demand():
-    try: return _cached("monthly_demand", 300, _build_monthly_demand)
+    try: return _cached("monthly_demand", 600, _build_monthly_demand)
     except Exception as e: raise HTTPException(404, f"No data available: {e}")
 
 @app.get("/api/store-demand")
 def store_demand():
-    try: return _cached("store_demand", 300, _build_store_demand)
+    try: return _cached("store_demand", 600, _build_store_demand)
     except Exception as e: raise HTTPException(404, f"No data available: {e}")
 
 @app.get("/api/product-demand")
@@ -328,7 +328,7 @@ def product_demand():
         df = a.get_product_demand_data()
         if df is None or df.empty: return {"products": [], "demand": []}
         return {"products": df["Product"].tolist(), "demand": df["Demand"].tolist()}
-    try: return _cached("product_demand", 300, _build)
+    try: return _cached("product_demand", 600, _build)
     except Exception as e: raise HTTPException(404, f"No data available: {e}")
 
 @app.get("/api/product-forecast")
@@ -355,7 +355,7 @@ def product_forecast():
         agg["name"] = agg["Product"].map(pnames).fillna(agg["Product"].apply(lambda x: f"Product {int(x)}"))
         agg["accuracy"] = (100 - agg["mape"]).clip(0, 100)
         return agg.round(2).to_dict(orient="records")
-    return _cached("product_forecast", 60, _build)
+    return _cached("product_forecast", 300, _build)
 
 @app.get("/api/product-monthly")
 def product_monthly():
@@ -377,11 +377,11 @@ def product_monthly():
         pnames = _get_product_names()
         agg["name"] = agg["Product"].map(pnames).fillna(agg["Product"].apply(lambda x: f"Product {int(x)}"))
         return agg.round(2).to_dict(orient="records")
-    return _cached("product_monthly", 60, _build)
+    return _cached("product_monthly", 300, _build)
 
 @app.get("/api/product-names")
 def product_names():
-    return _cached("product_names", 60, _get_product_names)
+    return _cached("product_names", 300, _get_product_names)
 
 @app.get("/api/detected-columns")
 def detected_columns():

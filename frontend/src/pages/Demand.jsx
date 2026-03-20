@@ -5,7 +5,7 @@ import {
   ComposedChart, Line, RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
 } from 'recharts'
 import { useFetch } from '../api.js'
-import { Spinner, ErrorBox, KPI, SectionCard, fmtD, CHART_STYLE } from '../ui.jsx'
+import { ErrorBox, KPI, SectionCard, fmtD, CHART_STYLE } from '../ui.jsx'
 
 const PALETTE = ['#3b82f6','#6366f1','#8b5cf6','#10b981','#f59e0b','#ef4444','#60a5fa','#34d399','#06b6d4','#a78bfa','#f472b6','#fb923c','#4ade80','#818cf8','#e879f9']
 
@@ -86,13 +86,12 @@ export default function Demand() {
       .map(d => ({ month: d.month, 'Test Set': Math.round(d.demand), Forecast: Math.round(d.predicted) }))
   }, [selectedProduct, prodMonthly])
 
-  const topProduct = productData[0]
-  const bottomProduct = productData[productData.length - 1]
-  const inspection = datasets?.inspection
-  const growth = metrics?.demand_growth_rate ?? 0
-
   if (em) return <ErrorBox msg={em} />
-  if (lm) return <Spinner />
+
+  const inspection    = datasets?.inspection
+  const growth        = metrics?.demand_growth_rate ?? 0
+  const topProduct    = productData[0]
+  const bottomProduct = productData[productData.length - 1]
 
   return (
     <>

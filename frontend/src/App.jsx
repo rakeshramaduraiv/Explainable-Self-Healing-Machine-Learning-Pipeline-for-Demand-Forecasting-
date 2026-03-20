@@ -21,6 +21,18 @@ const prefetchAll = () => [
   import('./pages/Predict.jsx'),
 ]
 
+// Pre-warm slow API endpoints so pages load from cache
+const prefetchAPIs = () => {
+  const BASE = import.meta.env.VITE_API_URL || ''
+  const warm = [
+    '/api/feature-importances', '/api/demand-metrics', '/api/monthly-demand',
+    '/api/product-demand',      '/api/product-forecast', '/api/product-monthly',
+    '/api/product-names',       '/api/processed-months', '/api/monthly-sales',
+    '/api/baseline',            '/api/drift',            '/api/healing-actions',
+  ]
+  warm.forEach(path => fetch(BASE + path).catch(() => {}))
+}
+
 const PAGES = [
   { id: 'overview',    label: 'Training Overview',          icon: '◉', group: 'Baseline vs Test Set' },
   { id: 'drift',       label: 'Drift Detection',            icon: '◈', group: 'Baseline vs Test Set' },
@@ -60,8 +72,13 @@ export default function App() {
   const navigate = useCallback(id => { startTransition(() => setPage(id)) }, [])
 
   useEffect(() => {
-    if ('requestIdleCallback' in window) requestIdleCallback(prefetchAll)
-    else setTimeout(prefetchAll, 800)
+    if ('requestIdleCallback' in window) {
+      requestIdleCallback(prefetchAll)
+      requestIdleCallback(prefetchAPIs)
+    } else {
+      setTimeout(prefetchAll, 800)
+      setTimeout(prefetchAPIs, 1200)
+    }
   }, [])
 
   useEffect(() => {

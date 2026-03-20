@@ -4,7 +4,7 @@ import {
   CartesianGrid, Cell, Treemap,
 } from 'recharts'
 import { useFetch } from '../api.js'
-import { Spinner, ErrorBox, KPI, SectionCard, CHART_STYLE } from '../ui.jsx'
+import { ErrorBox, KPI, SectionCard } from '../ui.jsx'
 
 const PALETTE = ['#2563eb','#7c3aed','#0891b2','#059669','#d97706','#dc2626','#6366f1','#10b981','#f59e0b','#ef4444']
 
@@ -112,24 +112,24 @@ export default function Features() {
   }, [monthly])
 
   if (es || ef) return <ErrorBox msg={es || ef} />
-  if (ls || lf) return <Spinner />
 
+  const loading  = ls || lf
   const totalImp = top10.reduce((s, d) => s + d.value, 0)
-  const topFeat = top10[0]
+  const topFeat  = top10[0]
 
   return (
     <>
       <div className="page-header">
         <div className="page-title">Feature Importance</div>
-        <div className="page-sub">{features.length} engineered features driving product demand predictions</div>
+        <div className="page-sub">{loading ? 'Loading…' : `${features.length} engineered features driving product demand predictions`}</div>
       </div>
 
       <div className="kpi-grid" style={{ gridTemplateColumns: 'repeat(5,1fr)' }}>
-        <KPI label="Total Features" value={features.length} delta="Engineered" />
-        <KPI label="Feature Groups" value={groupTotals.length} delta="Categories" />
-        <KPI label="Top Feature" value={topFeat?.name || '—'} delta={topFeat ? (topFeat.value * 100).toFixed(1) + '% importance' : ''} />
-        <KPI label="Top 10 Coverage" value={(totalImp * 100).toFixed(1) + '%'} delta="of total importance" />
-        <KPI label="Model Accuracy" value={liveAccuracy != null ? liveAccuracy + '%' : '—'} color="var(--green)" delta="Live · test set" />
+        <KPI label="Total Features"  value={loading ? '…' : features.length} delta="Engineered" />
+        <KPI label="Feature Groups"  value={loading ? '…' : groupTotals.length} delta="Categories" />
+        <KPI label="Top Feature"     value={loading ? '…' : (topFeat?.name || '—')} delta={topFeat ? (topFeat.value * 100).toFixed(1) + '% importance' : ''} />
+        <KPI label="Top 10 Coverage" value={loading ? '…' : (totalImp * 100).toFixed(1) + '%'} delta="of total importance" />
+        <KPI label="Model Accuracy"  value={liveAccuracy != null ? liveAccuracy + '%' : '—'} color="var(--green)" delta="Live · test set" />
       </div>
 
       {/* Group filter pills */}
@@ -163,7 +163,9 @@ export default function Features() {
       {/* Main Charts - Only 2 charts for simplicity */}
       <div className="grid-2" style={{ alignItems: 'start' }}>
         <SectionCard title={`Top ${chartData.length} Features — click to inspect`}>
-          <ResponsiveContainer width="100%" height={Math.max(300, chartData.length * 26)}>
+          {loading
+            ? <div className="skel" style={{ height: 300, borderRadius: 8 }} />
+            : <ResponsiveContainer width="100%" height={Math.max(300, chartData.length * 26)}>
             <BarChart data={chartData} layout="vertical" margin={{ top: 4, right: 40, bottom: 0, left: 140 }}>
               <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="var(--border)" />
               <XAxis type="number" tick={{ fontSize: 10 }} tickFormatter={v => (v * 100).toFixed(1) + '%'} />
@@ -181,7 +183,7 @@ export default function Features() {
                 ))}
               </Bar>
             </BarChart>
-          </ResponsiveContainer>
+          </ResponsiveContainer>}
 
           {selectedFeat && (
             <div style={{ marginTop: 12, padding: '10px 14px', background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: 12 }}>
@@ -196,7 +198,9 @@ export default function Features() {
         </SectionCard>
 
         <SectionCard title="Feature Group Share">
-          <ResponsiveContainer width="100%" height={300}>
+          {loading
+            ? <div className="skel" style={{ height: 300, borderRadius: 8 }} />
+            : <ResponsiveContainer width="100%" height={300}>
             <Treemap data={groupTotals} dataKey="value" nameKey="name" aspectRatio={4 / 3} content={<TreeContent />}>
               <Tooltip content={({ active, payload }) => {
                 if (!active || !payload?.length) return null
@@ -210,7 +214,7 @@ export default function Features() {
                 )
               }} />
             </Treemap>
-          </ResponsiveContainer>
+          </ResponsiveContainer>}
         </SectionCard>
       </div>
 
