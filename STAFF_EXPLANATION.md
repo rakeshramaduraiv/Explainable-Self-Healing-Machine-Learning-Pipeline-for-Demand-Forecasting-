@@ -2,10 +2,10 @@
 
 ## What Is This System?
 
-SH-DFS (Self-Healing Demand Forecasting System) is a machine learning platform that **predicts product demand** (units per product per week). It has two modes:
+SH-DFS (Self-Healing Demand Forecasting System) is a machine learning platform that **predicts product demand** (units per product per week). It has two distinct operational modes:
 
-1. **Training mode** — runs an 8-step pipeline on 2 years of historical data, trains a model, simulates 12 test months, detects drift, and applies self-healing
-2. **Prediction cycle** — after training, predicts the next month, accepts uploaded actuals, compares predictions vs reality, and repeats indefinitely
+1. **Full pipeline** (`python main.py`) — runs an 8-step pipeline on historical data, trains an XGBoost model from scratch, simulates 12 test months, detects drift, and applies self-healing. Runs once to set up the system.
+2. **Upload & Monitor** (frontend page) — scores any new CSV against the **already-trained model** without retraining. Produces full drift analysis + healing recommendations per month. Fast (seconds, not minutes).
 
 ---
 
@@ -17,77 +17,73 @@ SH-DFS (Self-Healing Demand Forecasting System) is a machine learning platform t
 - **50 stores** (`store_1`…`store_50`) × **50 products** (`item_1`…`item_50`) = 2,500 unique combinations
 - Each store-product pair has exactly **1,826 daily rows** — no missing values
 - Columns: `date`, `store_id`, `item_id`, `sales`, `price`, `promo`, `weekday`, `month`
-- Aggregated to weekly demand via `generate_data.py` before entering the pipeline
+- Aggregated to **weekly demand** via `generate_data.py` → ~237,250 weekly rows
+- The system auto-renames: `sales`→Demand, `item_id`→Product, `store_id`→Store, `date`→Date
 
-The system auto-renames: `sales`→Demand, `item_id`→Product, `store_id`→Store, `date`→Date.
+**Train/Test Split:**
+- Train: 2019–2022 (4 years, ~189,800 weekly rows)
+- Test: 2023 (1 year, ~47,450 weekly rows)
 
 ---
 
-## How It Works — Complete User Flow
+## Two Operational Modes
 
-### Step 1: Upload CSV (Upload & Monitor page)
+### Mode 1: Full Pipeline (`python main.py`)
 
-The user uploads a CSV with **3 required columns**:
-
-| Column | Type | Example |
-|--------|------|---------|
-| Date | DD-MM-YYYY | 05-01-2019 |
-| Product | str/int | item_1 … item_50 |
-| Demand | integer (units) | 41 |
-
-**Optional columns** (auto-detected and used as features):
-- Store (`store_1`…`store_50`), Price (8.02–99.99), Promo (0/1), Weekday (0–6), Month (1–12)
-- Any other numeric or text columns — treated as features automatically
-
-Missing required columns → file rejected with a clear error message.
-
-### Step 2: 8-Step Pipeline Runs Automatically
+Runs once. Takes 5–15 minutes on the full dataset.
 
 ```
 Step 1: Load & Inspect   → Read CSV, validate columns, compute data stats
-Step 2: Split            → Year 1 = Training, Year 2 = Testing (based on uploaded data date range)
-Step 3: Feature Eng.     → Generate 63 features from 4 columns (see below)
-Step 4: Train Model      → RF + GB + XGB → Gradient Boosting selected (best MAE)
-Step 5: Simulate Months  → Test month-by-month, detect drift, apply self-healing
+Step 2: Split            → 2019–2022 = Training, 2023 = Testing
+Step 3: Feature Eng.     → Generate 63–87+ features (see below)
+Step 4: Train Model      → XGBoost (primary) + Random Forest (for CI intervals)
+Step 5: Simulate Months  → Test month-by-month: predict → detect drift → heal
 Step 6: Summary          → Aggregate severity counts, healing stats
 Step 7: Save Results     → Logs, processed CSVs, model files
-Step 8: First Prediction → Predict first future month after the data range
+Step 8: First Prediction → Predict first future month (2024-01)
 ```
 
-Pipeline runs asynchronously in a thread executor with a 600-second timeout. Returns HTTP 504 if it exceeds the limit.
+Saves: `models/active_model.pkl`, `models/feature_engineer.pkl`, `models/baseline_model_rf.pkl`, all log files.
 
-### Step 3: Monthly Prediction Cycle (Predict Cycle page)
+### Mode 2: Upload & Monitor (frontend Upload page → `POST /api/upload-monitor`)
+
+Runs in seconds. No retraining.
 
 ```
-Model predicts Month N+1 demand (50 products × ~4 weeks)
+Load existing model (active_model.pkl) + feature engineer (feature_engineer.pkl)
         ↓
-User uploads ACTUAL Month N+1 data (Date + Product + Demand)
+Run feature engineering on uploaded CSV (fit=False — uses saved state)
         ↓
-System compares predictions vs actuals (MAE, MAPE, RMSE)
+Build baseline distributions from 50K-row sample of training data
         ↓
-System auto-predicts Month N+2
+For each month in uploaded data:
+  → Predict with existing model
+  → Run 5-method drift detection (KS, PSI, Wasserstein, JS, Error Trend)
+  → Assess healing action (no model.fit() — assessment only)
+  → Save predictions to processed/
         ↓
-User uploads next month actuals → System predicts following month → Repeat forever
+Return: drift reports + healing actions + summary
 ```
+
+**Why fast:** baseline uses 50K-row sample (not full 190K training rows), no model.fit() called, single timestamp for all output files.
 
 ---
 
-## Dynamic Feature Engineering — How 4 Columns Become 63 Features
+## Dynamic Feature Engineering — How Columns Become 63–87+ Features
 
-The user uploads 4 columns (Date, Store, Product, Demand). The system auto-generates **63 features** inside `feature_engineering.py`. The user never touches these.
+The user uploads 4–9 columns. The system auto-generates features inside `feature_engineering.py`. The user never touches these.
 
-### Feature Breakdown (63 features with Date + Store + Product + Demand)
+### Feature Breakdown
 
 | Group | Count | Source | What It Captures |
 |-------|-------|--------|-----------------|
-| **Temporal** | 18 | From Date | Year, Month, Week, Quarter, DayOfYear, sin/cos cycles, holiday proximity (weeks 6/47/51), Near_Holiday, Season |
-| **Lag (Sliding Window)** | 9 | From Demand history | Demand 1, 2, 3, 4, 8, 12, 26, 52 weeks ago per Product+Store; Lag_52_ratio |
-| **Rolling Stats** | 16 | From Demand history | Mean/Std/Max/Min over 4, 8, 12, 26 week windows (shift(1) to prevent leakage) |
-| **Momentum/Volatility** | 4 | Lag + Rolling | Momentum_4, Momentum_12, Volatility_4, Volatility_12 |
-| **Store Stats** | 8 | Store column | Store_Mean, Store_Median, Store_Std, Store_Max, Store_Min, Demand_vs_Store_Mean, Demand_vs_Store_Median, Store_CV |
-| **Product Stats** | 8 | Product column | Product_Mean, Product_Median, Product_Std, Product_Max, Product_Min, Demand_vs_Product_Mean, Demand_vs_Product_Median, Product_CV |
-
-With additional optional columns (Price, Promo, etc.), up to 19 more interaction features are added, reaching 87+ total.
+| **Temporal** | 18 | From Date | Year, Month, Week, Quarter, DayOfYear, sin/cos cycles, holiday flags, season flags |
+| **Lag (Sliding Window)** | 7 | From Demand history | Demand 1, 2, 3, 4, 6, 8, 12 weeks ago per Product+Store |
+| **Rolling Stats** | 20 | From Demand history | Mean/Std/Max/Min over 3, 4, 6, 8, 12 week windows (shift(1) to prevent leakage) |
+| **Momentum/Volatility** | 4 | Lag + Rolling | Momentum_3, Momentum_6, Volatility_4, Volatility_8 |
+| **Store Stats** | 4 | Store column | Store_Mean, Store_Std, Demand_vs_Store_Mean, Store_CV |
+| **Product Stats** | 4 | Product column | Product_Mean, Product_Std, Demand_vs_Product_Mean, Product_CV |
+| **Interactions** | 10+ | Numeric columns | Pairwise products of numeric cols (Price×Promo, Lag×Price, etc.) |
 
 ### Feature Count by Input
 
@@ -95,40 +91,39 @@ With additional optional columns (Price, Promo, etc.), up to 19 more interaction
 |-------------|-------------------|
 | Date + Product + Demand | ~48 |
 | + Store | ~56 |
-| + Store + Price + Promo + Weekday + Month | ~87 |
-| Current dataset (4 cols) | **63** |
+| + Store + Price + Promo | ~63 |
+| + Store + Price + Promo + Weekday + Month | ~87+ |
 
 ---
 
 ## Model Training
 
-- **Algorithms**: Random Forest (tuned), Gradient Boosting (fixed params), XGBoost (fixed params)
-- **Tuning**: RandomizedSearchCV with TimeSeriesSplit cross-validation (20 iterations)
-- **Selection**: Best model by MAE on training data → **Gradient Boosting won**
-- **Stacking**: When XGBoost available + ≥100 rows → StackingRegressor (RF+GB+XGB → Ridge meta-learner)
-- **Confidence Intervals**: 95% CI from Random Forest tree variance (±1.96 × std of tree predictions)
-- **Saved as**: `models/active_model.pkl`
+- **Primary model**: XGBoost (`tree_method='hist'`, `max_bin=256` — optimised for large datasets)
+- **CI model**: Random Forest (100 trees, `max_depth=8`) — saved separately as `baseline_model_rf.pkl`, used only for confidence intervals
+- **Tuning**: RandomizedSearchCV with TimeSeriesSplit (10 iterations × 2 folds = 20 fits on full dataset)
+- **Confidence Intervals**: 95% CI from RF tree variance — `CI = mean_pred ± 1.96 × std(tree_predictions)`
+- **Saved as**: `models/active_model.pkl` (XGBoost), `models/baseline_model_rf.pkl` (RF)
 
 ---
 
 ## Self-Healing — How It Works
 
-During Step 5 (Simulate Months), for each of the 12 test months:
+During Step 5 (Simulate Months in full pipeline) or during Upload & Monitor, for each month:
 
-### 1. Drift Detection (`drift_detector.py`) — 5 methods
+### 1. Drift Detection (`drift_detector.py`) — 5 methods, all features
 
 | Method | What It Measures |
 |--------|-----------------|
-| **KS Test** | Whether feature distributions shifted (threshold: 0.05/0.15/0.2) |
+| **KS Test** | Whether feature distributions shifted (dynamic thresholds per feature importance) |
 | **PSI** | Magnitude of distribution shift (threshold: 0.1/0.25) |
-| **Wasserstein Distance** | Earth mover's distance on top-10 features |
-| **JS Divergence** | Symmetric distribution difference (20 bins) |
+| **Wasserstein Distance** | Earth mover's distance — applied to **all features** (`top_n=None`) |
+| **JS Divergence** | Symmetric distribution difference — applied to **all features** (`top_n=None`) |
 | **Error Trend** | MAE increase % vs baseline (threshold: 10%) |
 
 ### 2. Feature-Importance Weighting
 
-- Top 20% importance features → thresholds × 0.7 (stricter)
-- Bottom 20% importance features → thresholds × 1.3 (relaxed)
+- Top 20% importance features → thresholds × 0.7 (stricter — these matter more)
+- Bottom 20% importance features → thresholds × 1.3 (relaxed — less impact)
 - Reduces false positives on low-impact features
 
 ### 3. Severity Classification
@@ -137,30 +132,36 @@ During Step 5 (Simulate Months), for each of the 12 test months:
 - **Mild**: >30% of features show mild drift
 - **None**: Otherwise
 
-### 4. Healing Action (`fine_tuner.py`)
+### 4. Healing Action
 
-| Severity | Action |
-|----------|--------|
-| None | Monitor only — no model change |
-| Mild / Severe | Fine-tune: add estimators using current month's data |
-| Fine-tune result < 5% improvement | **Rollback** to previous model version |
+| Mode | Severity | Action |
+|------|----------|--------|
+| Full pipeline | None | Monitor only |
+| Full pipeline | Mild/Severe | Fine-tune: add estimators, require ≥5% MAE improvement or rollback |
+| Upload & Monitor | None | Monitor only (no model.fit()) |
+| Upload & Monitor | Mild/Severe | Recommend fine-tune (assessment only, no actual refit) |
 
-Each fine-tuned model is saved as `models/model_v1_{timestamp}.pkl` with metadata JSON. Rollback restores the previous version atomically.
+In Upload & Monitor mode, healing actions are **recommendations** — the model is never modified. This is what makes it fast.
 
 ---
 
-## Sequential Predictor — Auto-Fill for Future Months
+## Sequential Predictor — Monthly Prediction Cycle
 
-When predicting a future month (e.g., 2018-01), optional columns like Temperature and CPI are not yet available. `sequential_predictor.py` handles this:
+After the full pipeline runs, the system enters a continuous cycle managed by `sequential_predictor.py`:
 
-1. Gets the **last row** of all existing data (last week of the training period)
-2. Reads last-known values for optional columns (Price, Promo, etc.)
-3. Creates **scaffold rows**: 4 weeks × 50 products = 200 rows for the next month
-4. Fills each scaffold row with those last-known values
-5. Sets Demand = NaN (what the model will predict)
-6. Runs full feature engineering on combined historical + scaffold data
-7. Lag/rolling features use **real historical demand** — only optional columns use last-known values
-8. Model predicts Demand for each scaffold row
+```
+Model predicts Month N+1 demand (50 products × ~4 weeks = ~200 rows)
+        ↓
+User uploads ACTUAL Month N+1 data (Date + Product + Demand)
+        ↓
+System compares predictions vs actuals (MAE, MAPE, RMSE)
+        ↓
+System auto-predicts Month N+2
+        ↓
+Repeat forever
+```
+
+**Auto-fill for future months:** When predicting a future month, optional columns (Price, Promo, etc.) are not yet available. The system fills them with the last known values from the most recent historical row, so lag/rolling features still use real historical demand.
 
 ---
 
@@ -169,16 +170,30 @@ When predicting a future month (e.g., 2018-01), optional columns like Temperatur
 | Component | Technology | File |
 |-----------|-----------|------|
 | API Server | FastAPI + GZip + CORS | `api.py` |
-| ML Models | scikit-learn, XGBoost | `model_trainer.py` |
+| Primary ML Model | XGBoost (`tree_method='hist'`) | `model_trainer.py` |
+| CI Model | Random Forest (100 trees) | `model_trainer.py` |
 | Feature Engineering | pandas, numpy, LabelEncoder | `feature_engineering.py` |
-| Drift Detection | scipy (KS, Wasserstein, JS) | `drift_detector.py` |
-| Self-Healing | Custom fine-tuner + rollback | `fine_tuner.py` |
+| Drift Detection | scipy (KS, Wasserstein, JS), all features | `drift_detector.py` |
+| Self-Healing | Fine-tuner + rollback (≥5% threshold) | `fine_tuner.py` |
 | Data Loading | pandas with alias auto-rename | `data_loader.py` |
+| Full Pipeline | 8-step Phase1Pipeline | `pipeline.py` |
+| Monitor Pipeline | `run_monitor_pipeline()` — no retraining | `main.py` |
 | Prediction Cycle | Sequential monthly predictor | `sequential_predictor.py` |
-| Demand Analysis | Aggregation + metrics | `demand_analyzer.py` |
 | Caching | In-memory dict with TTL per endpoint | `api.py` |
-| Async Upload | `asyncio.run_in_executor` + 600s timeout | `api.py` |
-| NaN Sanitizer | Recursive `_clean()` before JSON | `api.py` |
+| Async Upload | `asyncio.run_in_executor` | `api.py` |
+
+### Key API Endpoints
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/api/upload-monitor` | POST | Upload CSV → score against existing model → drift analysis (fast, no retrain) |
+| `/api/upload-predict` | POST | Upload CSV → run full pipeline (slow, retrains model) |
+| `/api/seq/predict-next` | POST | Predict next month |
+| `/api/seq/upload-actuals` | POST | Upload actuals → compare → predict next |
+| `/api/drift` | GET | Drift history per month |
+| `/api/healing-history` | GET | Healing actions per month |
+| `/api/predictions/{month}` | GET | Test set predictions for a month |
+| `/api/feature-importances` | GET | Model feature importances |
 
 ### Backend Cache TTLs
 
@@ -199,12 +214,10 @@ When predicting a future month (e.g., 2018-01), optional columns like Temperatur
 |-----------|-----------|
 | Framework | React 18 + Vite |
 | Charts | Recharts (bar, line, area, composed, radar, treemap, pie) |
-| State | useState, useMemo, useCallback, useEffect, useTransition |
-| API Layer | `useFetch` hook: dedup, 60s memory cache, stale-while-revalidate, polling |
-| Real-time | `usePredictions` hook: polls `/api/predictions-meta` every 12s for file changes |
+| API Layer | `useFetch` hook: dedup, 15s memory cache, stale-while-revalidate, polling |
+| Real-time | `usePredictions` hook: polls `/api/predictions-meta` every 12s |
 | Lazy Loading | React.lazy + Suspense for all 10 pages |
-| API Pre-warming | `requestIdleCallback` fires 12 slow endpoints on idle startup |
-| Styling | CSS variables, responsive grid |
+| API Pre-warming | `requestIdleCallback` fires slow endpoints on idle startup |
 
 ---
 
@@ -212,95 +225,29 @@ When predicting a future month (e.g., 2018-01), optional columns like Temperatur
 
 ### Group 1: Baseline vs Test Set
 
-**1. Training Overview** (`Overview.jsx`)
-- KPIs: R², MAE, RMSE, MAPE, Accuracy, Severe Drift count
-- Charts: MAE trend bar, drifted features per month, test set vs predicted area, monthly MAE
-- Healing summary: total actions, fine-tuned, rollbacks, avg improvement
+**1. Training Overview** — R², MAE, RMSE, MAPE KPIs; MAE trend; drifted features per month; test set vs predicted area chart; healing summary
 
-**2. Drift Detection** (`Drift.jsx`)
-- Interactive month/severity filter
-- Charts: Error increase % per month (color-coded), drifted feature count stacked bar
-- Full drift table: every test month with KS, PSI, Wasserstein, severity, error increase %
+**2. Drift Detection** — Error increase % per month (color-coded); drifted feature count stacked bar; full drift table with KS/PSI/Wasserstein/severity/error increase
 
-**3. Baseline Performance** (`Performance.jsx`)
-- KPIs: R², MAE, RMSE, MAPE, WMAPE
-- Charts: MAE trend with brush, error increase % with mild threshold reference line
-- Metrics glossary: explains R², MAE, RMSE, MAPE, WMAPE, KS, PSI, Wasserstein, JS
+**3. Baseline Performance** — MAE/RMSE/MAPE/R² KPIs; MAE trend with brush; error increase % with threshold reference lines; metrics glossary
 
 ### Group 2: Analysis
 
-**4. Feature Importance** (`Features.jsx`)
-- KPIs: total features (63), feature groups, top feature, top-20 coverage %, model accuracy
-- Group filter pills: Lag, Rolling, Temporal, Product Stats, Interaction, Raw Inputs
-- Charts: top-20 horizontal bar, feature group treemap, group importance bar, radial chart
-- Per-group feature cards with click-to-inspect
+**4. Feature Importance** — Top-20 horizontal bar; feature group treemap; group filter pills; radial chart; per-group feature cards
 
-**5. Forecasting** (`StoreStats.jsx`)
-- KPIs: forecast accuracy, MAE, MAPE, product count, test months, best product
-- Product filter pills: click to filter all charts
-- Charts: monthly forecast vs test set (area+line), accuracy by product bar, MAE by product, radar
-- Detail table: every product with avg demand, avg forecast, MAE, MAPE, accuracy, quality badge
+**5. Forecasting** — Monthly forecast vs test set; accuracy by product bar; MAE by product; radar chart; product detail table
 
-**6. Predictions Explorer** (`Predictions.jsx`)
-- Month selector: click any test month
-- Product filter pills: cross-filter by product
-- Charts: test set vs predicted with 95% CI band + brush (150 rows), product demand summary bar, monthly avg area, absolute error bar
-- Detail table: 100 rows with test set, predicted, CI lower/upper, abs error, error %, quality badge
-- Live: polls `/api/predictions-meta` every 12s, refreshes when file changes
+**6. Predictions Explorer** — Test set vs predicted with 95% CI band + brush; product demand summary; absolute error bar; detail table with quality badges
 
-**7. Demand Insights** (`Demand.jsx`)
-- KPIs: avg weekly demand, growth rate, peak month, top product, total demand
-- Product filter pills: click to see individual product monthly trend
-- Charts: avg demand vs forecast bar, demand share pie (no legend — hover for details), monthly aggregation bar, normalized radar (Demand % + Accuracy %)
-- Heatmap: Product × Month demand matrix with color intensity
-- Key insights cards: demand trend, highest/lowest demand product, dataset stats
-- Polls all endpoints every 120s
-
-**8. Datasets** (`Datasets.jsx`)
-- KPIs: train rows, test rows, cutoff date, stores, batches
-- Reference dataset info: source, total records, date range, train/test split
-- Drift severity summary: severe/mild/none counts
-- Monitored batches table: every month with records, test set, predicted, MAE, error ratio, severity
+**7. Demand Insights** — Avg weekly demand, growth rate, peak month KPIs; demand vs forecast bar; demand share pie; monthly aggregation; product×month heatmap
 
 ### Group 3: Data
 
-**9. Upload & Monitor** (`Upload.jsx`)
-- Drag-and-drop or click to browse CSV
-- Async pipeline progress with real-time status
-- Expected CSV format table (required + optional columns)
-- Post-pipeline: KPIs, metric comparison, MAE trend, error increase, drifted features, test set vs predicted
+**8. Datasets** — Train/test split info; drift severity summary; monitored batches table
 
-**10. Predict Cycle** (`Predict.jsx`)
-- Status KPIs: data range, products, last data month, last prediction, status
-- Visual 6-step workflow timeline
-- Upload actuals: drag-and-drop CSV
-- Comparison: MAE, MAPE, actual vs predicted bar chart
-- Next prediction result: product-level prediction summary
-- Accuracy history: MAE + MAPE trend across all uploaded months
-- Saved predictions browser: browse all saved predictions with product-level bar chart
+**9. Upload & Monitor** — Drag-and-drop CSV upload; monitor mode (no retraining); drift analysis results per month; healing actions; MAE trend; error increase chart
 
----
-
-## Real-Time Data Flow
-
-```
-User uploads CSV → Pipeline runs (async, 600s timeout) → Results saved to logs/ and processed/
-                                                                    ↓
-                                                        Backend API reads from disk
-                                                        Cache TTL: 30–600s per endpoint
-                                                        Cache busted after every upload
-                                                                    ↓
-                                                        Frontend polls every 30–120s
-                                                        Memory cache TTL: 60s
-                                                        Stale-while-revalidate pattern
-                                                                    ↓
-                                                        All dashboards update automatically
-```
-
-- **Backend cache**: In-memory dict with TTL per endpoint; `_bust()` clears all caches after upload
-- **Frontend cache**: `memCache` Map with 60s TTL; dedup fetch prevents duplicate in-flight requests
-- **Polling**: `useFetch` hook with `pollMs` (30s for processed-months, 60s for monthly-sales, 120s for demand/forecast endpoints)
-- **Predictions**: `usePredictions` hook polls `/api/predictions-meta` every 12s; only re-fetches when file mtime changes
+**10. Predict Cycle** — Sequential prediction workflow; upload actuals; comparison charts; accuracy history; saved predictions browser
 
 ---
 
@@ -310,13 +257,18 @@ User uploads CSV → Pipeline runs (async, 600s timeout) → Results saved to lo
 |--------|-------|
 | Dataset | Retail Sales Forecasting (2019–2023) |
 | Source rows | 4,565,000 daily |
+| Weekly rows (pipeline input) | ~237,250 |
 | Stores | 50 (`store_1`…`store_50`) |
 | Products | 50 (`item_1`…`item_50`) |
 | Store-Product combos | 2,500 |
+| Train years | 2019–2022 |
+| Test year | 2023 |
 | Features generated | 63–87+ |
-| Model | Gradient Boosting |
+| Primary model | XGBoost |
+| CI model | Random Forest (100 trees) |
 | Training R² | ~1.0 (near-perfect fit) |
 | Training MAPE | < 1% |
-| Test Months | 12 (Year 2) |
-| First Prediction | Year 3 Month 1 |
-| Sequential Predictions | Ongoing monthly cycle |
+| Test Months | 12 (2023) |
+| First Prediction | 2024-01 |
+| Upload & Monitor speed | 15–60 seconds |
+| Full pipeline speed | 5–15 minutes |

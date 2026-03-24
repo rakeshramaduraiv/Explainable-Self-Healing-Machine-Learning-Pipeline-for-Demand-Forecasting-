@@ -83,11 +83,11 @@ export default function Upload() {
     const BASE = import.meta.env.VITE_API_URL || ''
     setRunning(true); setError(null); setResult(null); setProgress(15)
     try {
-      const r = await API.uploadPredict(file)
+      const r = await API.uploadMonitor(file)
       setProgress(65)
       if (!r.ok) {
         const data = await r.json().catch(() => ({}))
-        throw new Error(data.detail || data.message || `Pipeline failed (HTTP ${r.status})`)
+        throw new Error(data.detail || data.message || `Monitor failed (HTTP ${r.status})`)
       }
       const data = await r.json()
       setProgress(85)
@@ -97,9 +97,9 @@ export default function Upload() {
         fetch(BASE + '/api/healing-history').then(r => r.ok ? r.json() : []).catch(() => []),
       ])
       setProgress(100)
-      setResult({ stdout: data.stdout, drift, monthly, healing })
+      setResult({ summary: data.summary, drift, monthly, healing })
       setTab('results')
-      toast.success('Pipeline complete — drift analysis ready')
+      toast.success('Monitor complete — drift analysis ready')
     } catch (e) {
       setError(e.message)
       toast.error(e.message)
@@ -164,7 +164,7 @@ export default function Upload() {
     <>
       <div className="page-header">
         <div className="page-title">Upload & Monitor</div>
-        <div className="page-sub">Upload new CSV data — pipeline runs automatically and evaluates baseline vs test set</div>
+        <div className="page-sub">Upload new CSV data — scored against existing model, full drift analysis per month, no retraining</div>
       </div>
 
       <div className="tabs">
@@ -200,8 +200,8 @@ export default function Upload() {
             <div style={{ marginTop: 14 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, color: 'var(--text3)', marginBottom: 6 }}>
                 <span style={{ fontWeight: 600 }}>
-                  {progress < 30 ? '⚡ Fast feature engineering...' : 
-                   progress < 65 ? '⚡ Optimized model training...' : 
+                  {progress < 30 ? 'Running feature engineering...' :
+                   progress < 65 ? 'Scoring against existing model...' :
                    progress < 90 ? 'Fetching drift results...' : 'Finalising...'}
                 </span>
                 <span>{progress}%</span>
@@ -211,7 +211,7 @@ export default function Upload() {
               </div>
               {progress < 65 && (
                 <div style={{ fontSize: 10, color: 'var(--text3)', marginTop: 4 }}>
-                  ⚡ Speed optimizations: Reduced features, faster hyperparameter tuning, optimized CV
+                  Monitor mode: scoring against existing trained model — no retraining
                 </div>
               )}
             </div>
@@ -222,7 +222,7 @@ export default function Upload() {
           {file && (
             <div style={{ marginTop: 16, display: 'flex', gap: 10 }}>
               <button className="btn btn-primary" onClick={run} disabled={running}>
-                {running ? 'Running Pipeline…' : 'Run Pipeline'}
+                {running ? 'Monitoring…' : 'Run Monitor'}
               </button>
               <button className="btn btn-outline" onClick={() => { setFile(null); setError(null) }} disabled={running}>Clear</button>
             </div>
@@ -255,8 +255,7 @@ export default function Upload() {
               <strong>Column aliases work:</strong> Sales→Demand, Item→Product, etc. Supports DD-MM-YYYY, YYYY-MM-DD, MM/DD/YYYY date formats.
             </div>
             <div className="alert alert-g" style={{ marginTop: 8, fontSize: 11 }}>
-              <strong>⚡ EXTREME SPEED:</strong> No hyperparameter tuning, 10 RF trees, ~10 features only, 
-              auto-sampling &gt;50K rows, simplified confidence intervals, 20min timeout
+              <strong>Monitor mode:</strong> Scores your data against the existing trained model. No retraining — full dataset used for drift detection.
             </div>
           </SectionCard>
         </>
@@ -275,7 +274,7 @@ export default function Upload() {
                 <KPI label="Severe Months"    value={stats.severeMonths} color="var(--red)"    delta={drift.length ? `${((stats.severeMonths/drift.length)*100).toFixed(0)}% of months` : '—'} />
                 <KPI label="Mild Months"      value={stats.mildMonths}   color="var(--orange)" delta={drift.length ? `${((stats.mildMonths/drift.length)*100).toFixed(0)}% of months` : '—'} />
                 <KPI label="Avg Test MAE"     value={Number(stats.avgCurrentMAE.toFixed(0)).toLocaleString() + ' units'}  color="var(--red)"   delta="Test set" />
-                <KPI label="Training Speed"   value="⚡ Optimized" color="var(--green)" delta="Fast mode" />
+                <KPI label="Healing Actions"  value={healing.filter(h => h.action !== 'monitor').length} color="var(--purple)" delta="fine-tune / rollback" />
               </div>
 
               {/* ── Metric Comparison Table ── */}

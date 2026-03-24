@@ -133,6 +133,10 @@ export const API = {
     const fd = new FormData(); fd.append('file', file)
     return fetch(BASE + '/api/upload-predict', { method: 'POST', body: fd })
   },
+  uploadMonitor:   file => {
+    const fd = new FormData(); fd.append('file', file)
+    return fetch(BASE + '/api/upload-monitor', { method: 'POST', body: fd })
+  },
   // Sequential prediction cycle
   seqStatus:       () => fetch(BASE + '/api/seq/status').then(r => r.json()),
   seqPredictNext:  () => fetch(BASE + '/api/seq/predict-next', { method: 'POST' }).then(r => r.json()),

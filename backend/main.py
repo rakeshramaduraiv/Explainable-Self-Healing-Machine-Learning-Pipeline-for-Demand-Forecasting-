@@ -1,4 +1,5 @@
 import sys
+import numpy as np
 import pandas as pd
 from pathlib import Path
 from pipeline import Phase1Pipeline
@@ -108,7 +109,9 @@ def run_monitor_pipeline(data_path: str) -> dict:
     if hasattr(model, "feature_importances_"):
         detector.set_feature_importance(model, feature_names)
 
-    # Build baseline distributions from training years
+    # Build baseline distributions — sample training data to cap feature engineering cost
+    # Uses at most 50K rows for baseline (statistically representative, not skipping uploaded data)
+    _BASELINE_CAP = 50_000
     split_path = BASE / "logs" / "data_split.json"
     train_data_path = BASE / "data" / "uploaded_data.csv"
     if train_data_path.exists() and split_path.exists():
@@ -121,6 +124,9 @@ def run_monitor_pipeline(data_path: str) -> dict:
             if train_years:
                 train_raw["Date"] = pd.to_datetime(train_raw["Date"], dayfirst=True, errors="coerce")
                 train_raw = train_raw[train_raw["Date"].dt.year.isin(train_years)]
+            # Cap baseline rows to avoid slow feature engineering on huge training sets
+            if len(train_raw) > _BASELINE_CAP:
+                train_raw = train_raw.sample(_BASELINE_CAP, random_state=42)
             train_fe, _ = fe.run_feature_pipeline(train_raw, fit=False)
             X_base = train_fe[feature_names].fillna(0)
             y_base = train_fe["Demand"].values
@@ -131,7 +137,9 @@ def run_monitor_pipeline(data_path: str) -> dict:
     df["YearMonth"] = df["Date"].dt.to_period("M")
     months = sorted(df["YearMonth"].unique())
     drift_reports, healing_actions, prediction_batches = [], [], []
+    # Monitor mode: assess healing actions without actually refitting the model
     fine_tuner = FineTuner(model, feature_names)
+    ts = dt.now().strftime("%Y%m%d_%H%M%S")  # single timestamp for all files this run
 
     os.makedirs(str(BASE / "processed"), exist_ok=True)
     os.makedirs(str(BASE / "logs"), exist_ok=True)
@@ -144,7 +152,6 @@ def run_monitor_pipeline(data_path: str) -> dict:
         y = month_df["Demand"].values
         preds = model.predict(X.values)
 
-        ts = dt.now().strftime("%Y%m%d_%H%M%S")
         out = pd.DataFrame({
             "Store":     month_df["Store"].values if "Store" in month_df.columns else range(len(y)),
             "Product":   month_df["Product"].values if "Product" in month_df.columns else range(len(y)),
@@ -164,12 +171,22 @@ def run_monitor_pipeline(data_path: str) -> dict:
         report["month"] = str(month)
         drift_reports.append(report)
 
-        split_idx = max(1, len(X) // 2)
-        action = fine_tuner.decide_healing_action(
-            report,
-            X.iloc[:split_idx].values, y[:split_idx],
-            X.iloc[split_idx:].values, y[split_idx:],
-        )
+        # Decide healing action — no actual model.fit() in monitor mode
+        severity = report.get("severity", "none")
+        if severity == "none":
+            action = {"action": "monitor", "improvement": 0, "model_updated": False}
+        else:
+            # Assess whether fine-tuning would help using val-set MAE estimate only
+            split_idx = max(1, len(X) // 2)
+            val_preds = model.predict(X.iloc[split_idx:].values)
+            val_mae = float(np.mean(np.abs(y[split_idx:] - val_preds)))
+            train_preds = model.predict(X.iloc[:split_idx].values)
+            train_mae = float(np.mean(np.abs(y[:split_idx] - train_preds)))
+            # If val MAE is >5% worse than train MAE, recommend fine-tune
+            if train_mae > 0 and (val_mae - train_mae) / train_mae >= 0.05:
+                action = {"action": "fine_tune", "improvement": round((val_mae - train_mae) / train_mae, 4), "model_updated": False}
+            else:
+                action = {"action": "monitor", "improvement": 0, "model_updated": False}
         action["month"] = str(month)
         healing_actions.append(action)
 

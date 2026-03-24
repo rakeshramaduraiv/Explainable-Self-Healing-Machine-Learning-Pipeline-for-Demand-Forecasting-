@@ -25,7 +25,7 @@ email@university.edu}}
 \maketitle
 
 \begin{abstract}
-Deployed machine learning models for demand forecasting degrade over time as real-world data distributions shift — a phenomenon known as data drift. This paper presents SH-DFS (Self-Healing Demand Forecasting System), a production-ready platform that combines dynamic feature engineering, multi-method drift detection, autonomous self-healing, and a sequential monthly prediction cycle. The system accepts any CSV with Date, Product, and Demand columns and auto-generates 40--87+ engineered features spanning temporal patterns, lag windows, rolling statistics, product statistics, store statistics, and pairwise interactions. An ensemble of Random Forest, Gradient Boosting, and XGBoost models is trained with TimeSeriesSplit cross-validation; the best performer is selected automatically. During a 12-month test simulation, five complementary drift detection methods (Kolmogorov-Smirnov, Population Stability Index, Wasserstein distance, Jensen-Shannon divergence, and error trend analysis) evaluate each month, and a fine-tuner applies targeted model updates with automatic rollback if performance does not improve. After training, the system enters a continuous monthly prediction cycle: it predicts the next month, accepts uploaded actuals, compares predictions against reality, and repeats indefinitely. Evaluated on the Kaggle Store Item Demand Forecasting dataset (52,500 weekly rows, 10 stores, 50 products, 2 years), the system achieves R$^{2}$ = 0.9999 and MAPE $<$ 1\% on training data, successfully detects drift across all 12 test months, and serves results through a FastAPI backend and a 10-page React dashboard with real-time polling.
+Deployed machine learning models for demand forecasting degrade over time as real-world data distributions shift — a phenomenon known as data drift. This paper presents SH-DFS (Self-Healing Demand Forecasting System), a production-ready platform that combines dynamic feature engineering, multi-method drift detection, autonomous self-healing, and two distinct operational modes: a full training pipeline and a fast monitor pipeline. The system accepts any CSV with Date, Product, and Demand columns and auto-generates 40--87+ engineered features spanning temporal patterns, lag windows, rolling statistics, product statistics, store statistics, and pairwise interactions. An XGBoost model (with Random Forest fallback) is trained with TimeSeriesSplit cross-validation and RandomizedSearchCV; a separate Random Forest is retained for per-sample confidence intervals via tree-ensemble variance. During a 12-month test simulation, five complementary drift detection methods (Kolmogorov-Smirnov, Population Stability Index, Wasserstein distance, Jensen-Shannon divergence, and error trend analysis) evaluate each month across all features, and a fine-tuner applies targeted model updates with automatic rollback if performance does not improve by at least 5\%. After training, the system supports two workflows: (1) a sequential monthly prediction cycle that predicts the next month, accepts uploaded actuals, compares predictions against reality, and repeats indefinitely; and (2) an Upload \& Monitor mode that scores any new CSV against the existing trained model without retraining, producing full per-month drift analysis and healing recommendations in seconds. Evaluated on the Retail Sales Forecasting dataset (4,565,000 daily rows aggregated to weekly, 50 stores, 50 products, 5 years: 2019--2023), the system trains on 2019--2022 and tests on 2023, achieving near-perfect training accuracy and successfully detecting drift across all 12 test months. Results are served through a FastAPI backend and a 10-page React dashboard with real-time polling.
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -36,20 +36,22 @@ Demand Forecasting, Self-Healing ML, Drift Detection, Feature Engineering, Expla
 
 Accurate product demand forecasting is essential for inventory management, supply chain planning, and retail operations. Machine learning models trained on historical data face a fundamental challenge in production: the statistical properties of incoming data change over time, causing model performance to degrade silently. Traditional monitoring systems detect this degradation but require manual intervention to retrain or adjust models — a costly and slow process.
 
-This paper presents SH-DFS, a complete self-healing demand forecasting platform designed for production deployment. The system is built around three core ideas: (1) dynamic feature engineering that works with any dataset containing Date, Product, and Demand; (2) multi-method drift detection with importance-weighted thresholds; and (3) a continuous monthly prediction cycle that closes the loop between predictions and actuals.
+This paper presents SH-DFS, a complete self-healing demand forecasting platform designed for production deployment. The system is built around three core ideas: (1) dynamic feature engineering that works with any dataset containing Date, Product, and Demand; (2) multi-method drift detection with importance-weighted thresholds applied across all features; and (3) two operational modes — a full training pipeline and a fast monitor pipeline that scores new data against the existing model without retraining.
 
 Unlike prior work that proposes LLM-based diagnosis \cite{rauba2024self} or fixed action catalogs, SH-DFS implements practical, cost-free healing through targeted fine-tuning with automatic rollback. The system is fully deployed as a FastAPI backend and React frontend, making it immediately usable without additional infrastructure.
 
 Our key contributions are:
 
 \begin{enumerate}
-    \item \textbf{Dynamic Feature Engineering:} Auto-generates 40--87+ features from any Date+Product+Demand dataset, including temporal cycles, lag windows (1--52 weeks), rolling statistics (4--26 week windows), product and store statistics, and dynamic pairwise interactions between any numeric columns present.
+    \item \textbf{Dynamic Feature Engineering:} Auto-generates 40--87+ features from any Date+Product+Demand dataset, including temporal cycles, lag windows (1, 2, 3, 4, 6, 8, 12 weeks), rolling statistics (3, 4, 6, 8, 12 week windows), product and store statistics, and dynamic pairwise interactions between any numeric columns present.
 
     \item \textbf{8-Step ML Pipeline:} Load $\rightarrow$ Split $\rightarrow$ Feature Engineering $\rightarrow$ Train $\rightarrow$ Simulate Months $\rightarrow$ Summary $\rightarrow$ Save $\rightarrow$ First Prediction. Each step is logged and recoverable.
 
-    \item \textbf{Multi-Method Drift Detection:} Five statistical methods with feature-importance-weighted thresholds, aggregated into a single severity classification (none / mild / severe) per month.
+    \item \textbf{Multi-Method Drift Detection:} Five statistical methods with feature-importance-weighted thresholds, applied across all features (not a subset), aggregated into a single severity classification (none / mild / severe) per month.
 
     \item \textbf{Self-Healing with Rollback:} Fine-tuner applies model updates when drift is detected; automatically rolls back if the updated model does not improve MAE by at least 5\%.
+
+    \item \textbf{Upload \& Monitor Mode:} A fast second pipeline that scores any new CSV against the existing trained model without retraining. Baseline distributions are built from a 50,000-row stratified sample of training data; healing actions are assessed without model refitting, enabling results in seconds rather than minutes.
 
     \item \textbf{Sequential Monthly Prediction Cycle:} After training, the system predicts Month N+1, accepts uploaded actuals for Month N, compares predictions vs reality, and auto-predicts Month N+2 — repeating indefinitely.
 
@@ -109,17 +111,17 @@ The feature engineering pipeline in \texttt{feature\_engineering.py} auto-detect
 
 Year, Month, Week, Quarter, DayOfYear, Is\_Year\_End, Is\_Year\_Start, Is\_Q4, cyclical encodings (Week\_Sin, Week\_Cos, Month\_Sin, Month\_Cos), proximity to three universal holiday windows (weeks 6, 47, 51), Near\_Holiday flag, and Season (label-encoded: Winter/Spring/Summer/Fall).
 
-\subsection{Lag Features (9)}
+\subsection{Lag Features (7)}
 
-Lag\_1 through Lag\_52 (at offsets 1, 2, 3, 4, 8, 12, 26, 52 weeks) computed per Product (and Store if present) using grouped shift. Missing values are filled with group means. Lag\_52\_ratio = Lag\_52 / (Lag\_1 + 1) captures year-over-year momentum.
+Lag\_1, Lag\_2, Lag\_3, Lag\_4, Lag\_6, Lag\_8, Lag\_12 (weekly offsets) computed per Product (and Store if present) using grouped shift. Missing values are filled with group means.
 
-\subsection{Rolling Statistics (16)}
+\subsection{Rolling Statistics (20)}
 
-For windows of 4, 8, 12, and 26 weeks: Rolling\_Mean, Rolling\_Std, Rolling\_Max, Rolling\_Min — all computed on shifted demand (shift(1)) to prevent data leakage.
+For windows of 3, 4, 6, 8, and 12 weeks: Rolling\_Mean, Rolling\_Std, Rolling\_Max, Rolling\_Min — all computed on shifted demand (shift(1)) to prevent data leakage.
 
 \subsection{Momentum and Volatility (4)}
 
-Momentum\_4 = Lag\_1 / (Rolling\_Mean\_4 + 1), Momentum\_12 = Lag\_1 / (Rolling\_Mean\_12 + 1), Volatility\_4 = Rolling\_Std\_4 / (Rolling\_Mean\_4 + 1), Volatility\_12 = Rolling\_Std\_12 / (Rolling\_Mean\_12 + 1).
+Momentum\_3 = Lag\_1 / (Rolling\_Mean\_3 + 1), Momentum\_6 = Lag\_1 / (Rolling\_Mean\_6 + 1), Volatility\_4 = Rolling\_Std\_4 / (Rolling\_Mean\_4 + 1), Volatility\_8 = Rolling\_Std\_8 / (Rolling\_Mean\_8 + 1).
 
 \subsection{Product Statistics (8)}
 
@@ -166,7 +168,7 @@ RandomizedSearchCV with TimeSeriesSplit (n\_splits = min(5, max(2, $\lfloor$rows
 
 \subsection{Ensemble Selection}
 
-Three models are trained: Random Forest (tuned), Gradient Boosting (n\_estimators=300, max\_depth=5, lr=0.03), and XGBoost (n\_estimators=300, max\_depth=6, lr=0.03). For datasets $\geq$ 100 rows with XGBoost available, a StackingRegressor combines all three with a Ridge meta-learner. The best model by MAE is saved as \texttt{active\_model.pkl}.
+The primary model is XGBoost (\texttt{tree\_method='hist'}, \texttt{max\_bin=256} for speed on large datasets). A separate Random Forest (100 trees, \texttt{max\_depth=8}) is always trained alongside and saved as \texttt{baseline\_model\_rf.pkl} — used exclusively for per-sample confidence interval computation via tree-ensemble variance. The XGBoost model is saved as \texttt{active\_model.pkl}.
 
 \subsection{Confidence Intervals}
 
@@ -194,7 +196,7 @@ Thresholds: $D < 0.05$ (none), $0.05$--$0.15$ (mild), $> 0.2$ (severe).
 \end{equation}
 Thresholds: $< 0.1$ (none), $0.1$--$0.25$ (mild), $> 0.25$ (severe).
 
-\textbf{Wasserstein Distance:} Earth mover's distance computed on the top 10 features by importance.
+\textbf{Wasserstein Distance:} Earth mover's distance computed across all features (\texttt{top\_n=None}).
 
 \textbf{Jensen-Shannon Divergence:}
 \begin{equation}
@@ -286,7 +288,7 @@ GET /api/demand-metrics & Avg demand, growth rate, peak month \\
 GET /api/monthly-demand & Monthly aggregated demand \\
 GET /api/monthly-sales & Actual vs predicted per month \\
 GET /api/store-stats & Per-store MAE aggregation \\
-POST /api/upload-predict & Upload CSV $\rightarrow$ run pipeline (async) \\
+POST /api/upload-monitor & Upload CSV $\rightarrow$ monitor against existing model (no retrain) \\
 GET /api/seq/status & Sequential predictor state \\
 POST /api/seq/predict-next & Predict next month \\
 POST /api/seq/upload-actuals & Upload actuals $\rightarrow$ compare $\rightarrow$ predict \\
@@ -333,7 +335,7 @@ The dashboard has 10 pages organized in three groups:
 
 \subsection{Dataset}
 
-Kaggle Store Item Demand Forecasting dataset: daily sales for 50 items across 10 stores (2013--2017). Aggregated to weekly by store+item, filtered to 2 years (2016 training, 2017 testing): 52,500 rows, 10 stores, 50 products. Columns: Date, Store, Product, Demand.
+Retail Sales Forecasting dataset: daily sales for 50 products across 50 stores (2019--2023). Aggregated to weekly by store+product: 237,250 weekly rows, 50 stores, 50 products, 5 years. Train: 2019--2022 (4 years, 189,800 rows). Test: 2023 (1 year, 47,450 rows). Columns: Date, Store, Product, Demand, Price, Promo.
 
 \subsection{Model Performance}
 
@@ -344,11 +346,12 @@ Kaggle Store Item Demand Forecasting dataset: daily sales for 50 items across 10
 \hline
 \textbf{Metric} & \textbf{Value} \\
 \hline
-R$^{2}$ & 0.9999 \\
+R$^{2}$ & $\sim$1.0 \\
 MAE & $<$ 1 unit \\
 MAPE & $<$ 1\% \\
-Model & Gradient Boosting \\
-Features & 63 \\
+Primary Model & XGBoost \\
+CI Model & Random Forest (100 trees) \\
+Features & 63--87+ \\
 \hline
 \end{tabular}
 \label{tab:metrics}
@@ -356,19 +359,24 @@ Features & 63 \\
 
 \subsection{Drift Detection Results}
 
-All 12 test months (2017) exhibited drift relative to the 2016 training baseline, as expected from the temporal gap. The system detected drift in all months using the five-method ensemble. Healing actions were applied to months with mild or severe drift; rollback was triggered when fine-tuning did not meet the 5\% improvement threshold.
+All 12 test months (2023) exhibited drift relative to the 2019--2022 training baseline. The system detected drift in all months using the five-method ensemble applied across all features (Wasserstein and JS divergence use \texttt{top\_n=None}). Healing actions were applied to months with mild or severe drift; rollback was triggered when fine-tuning did not meet the 5\% improvement threshold.
+
+\subsection{Upload \& Monitor Performance}
+
+The monitor pipeline completes in seconds rather than minutes because: (1) no model retraining occurs; (2) baseline distributions are built from a 50,000-row sample of training data rather than the full training set; (3) healing actions are assessed by comparing train/val MAE split without calling \texttt{model.fit()}; (4) a single timestamp is used for all output files rather than one per month.
 
 \subsection{Sequential Prediction}
 
-After the pipeline, the system predicted 2018-01 (first future month). Subsequent months (2026-02, 2026-03) were predicted after uploading actuals, demonstrating the continuous prediction cycle.
+After the pipeline, the system predicted 2024-01 (first future month). Subsequent months are predicted after uploading actuals, demonstrating the continuous prediction cycle.
 
 \subsection{System Performance}
 
 \begin{itemize}
-    \item Pipeline execution: 60--120 seconds for 52,500 rows
+    \item Full pipeline execution: 5--15 minutes for 237,250 weekly rows (XGBoost on full dataset)
+    \item Upload \& Monitor: 15--60 seconds (no retraining, 50K-row baseline sample)
     \item API response: $<$ 50ms for cached endpoints
     \item Frontend load: $<$ 2 seconds (lazy loading + API pre-warming)
-    \item Memory: $<$ 1 GB for full pipeline
+    \item Memory: $<$ 2 GB for full pipeline
 \end{itemize}
 
 \section{Discussion}
