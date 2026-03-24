@@ -398,6 +398,73 @@ def product_monthly():
 def product_names():
     return _cached("product_names", 300, _get_product_names)
 
+@app.get("/api/store-names")
+def store_names():
+    def _build():
+        data_file = DATA / "uploaded_data.csv"
+        if not data_file.exists():
+            return {}
+        try:
+            df = pd.read_csv(data_file, encoding="utf-8-sig", usecols=["Store"])
+            stores = sorted(df["Store"].dropna().unique())
+            return {str(int(float(s))): f"Store {int(float(s))}" for s in stores}
+        except Exception:
+            return {}
+    return _cached("store_names", 300, _build)
+
+@app.get("/api/store-forecast")
+def store_forecast():
+    """Per-store, per-product forecast accuracy across all test months."""
+    def _build():
+        frames = []
+        for f in sorted(PROCESSED.glob("predictions_*.csv")):
+            try:
+                df = pd.read_csv(f)
+                if {"Store", "Product", "Demand", "Predicted"}.issubset(df.columns):
+                    frames.append(df)
+            except Exception:
+                pass
+        if not frames:
+            return []
+        df = pd.concat(frames, ignore_index=True)
+        df["abs_err"] = (df["Demand"] - df["Predicted"]).abs()
+        df["err_pct"] = df["abs_err"] / (df["Demand"].abs() + 1e-9) * 100
+        agg = df.groupby(["Store", "Product"]).agg(
+            avg_demand=("Demand", "mean"),
+            avg_predicted=("Predicted", "mean"),
+            mae=("abs_err", "mean"),
+            mape=("err_pct", "mean"),
+            count=("Demand", "count"),
+        ).reset_index()
+        pnames = _get_product_names()
+        agg["name"] = agg["Product"].map(pnames).fillna(agg["Product"].apply(lambda x: f"Product {int(x)}"))
+        agg["accuracy"] = (100 - agg["mape"]).clip(0, 100)
+        return agg.round(2).to_dict(orient="records")
+    return _cached("store_forecast", 300, _build)
+
+@app.get("/api/store-monthly")
+def store_monthly():
+    """Monthly forecast vs actual per store (aggregated across products)."""
+    def _build():
+        frames = []
+        for f in sorted(PROCESSED.glob("predictions_*.csv")):
+            try:
+                df = pd.read_csv(f)
+                if {"Store", "Demand", "Predicted", "Date"}.issubset(df.columns):
+                    df["month"] = pd.to_datetime(df["Date"]).dt.to_period("M").astype(str)
+                    frames.append(df)
+            except Exception:
+                pass
+        if not frames:
+            return []
+        df = pd.concat(frames, ignore_index=True)
+        agg = df.groupby(["month", "Store"]).agg(
+            demand=("Demand", "mean"),
+            predicted=("Predicted", "mean"),
+        ).reset_index()
+        return agg.round(2).to_dict(orient="records")
+    return _cached("store_monthly", 300, _build)
+
 @app.get("/api/detected-columns")
 def detected_columns():
     """Return what columns the system detected in the uploaded data."""
