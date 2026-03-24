@@ -125,19 +125,17 @@ class ModelTrainer:
         return self.metrics[split]
 
     def predict_with_confidence(self, X, confidence=0.95):
-        # EXTREME SPEED: Skip confidence intervals for small datasets
-        rf = getattr(self, "_rf", self.model)
+        rf = getattr(self, "_rf", None)
         X_arr = X.values if hasattr(X, "values") else X
-        
-        # Use main model prediction as mean
         mean_pred = self.model.predict(X_arr)
-        
-        # Simple confidence intervals (no tree ensemble for speed)
-        std_pred = np.std(mean_pred) * 0.1  # Simple approximation
-        z = 1.96  # 95% confidence
+        if rf is not None and hasattr(rf, "estimators_"):
+            tree_preds = np.array([t.predict(X_arr) for t in rf.estimators_])
+            std_pred = np.std(tree_preds, axis=0)
+        else:
+            std_pred = np.abs(mean_pred) * 0.1
+        z = 1.96
         lower = np.maximum(mean_pred - z * std_pred, 0)
         upper = mean_pred + z * std_pred
-        
         return mean_pred, lower, upper
 
     def evaluate_with_intervals(self, X, y):

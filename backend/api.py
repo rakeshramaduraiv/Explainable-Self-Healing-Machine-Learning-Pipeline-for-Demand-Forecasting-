@@ -157,7 +157,7 @@ CORS_ORIGINS = os.environ.get("CORS_ORIGINS", "*").split(",")
 
 app = FastAPI(title="SH-DFS API", version="2.0.0", lifespan=lifespan)
 app.add_middleware(GZipMiddleware, minimum_size=500)
-app.add_middleware(CORSMiddleware, allow_origins=CORS_ORIGINS, allow_methods=["GET", "POST"], allow_headers=["*"])
+app.add_middleware(CORSMiddleware, allow_origins=CORS_ORIGINS, allow_credentials=True, allow_methods=["GET", "POST"], allow_headers=["*"])
 
 # ── Cache-Control header on all GET responses ─────────────────────────────────
 @app.middleware("http")
@@ -282,7 +282,7 @@ def predictions(month: str):
                 df[col] = (df["Abs_Error"] / (df["Demand"].abs() + 1e-9) * 100).round(2)
             else:
                 df[col] = None
-    return df.head(500).to_dict(orient="records")
+    return df.to_dict(orient="records")
 
 @app.get("/api/alerts")
 def alerts():
@@ -432,6 +432,38 @@ def dataset_summary():
         }
     return _cached("dataset_summary", 120, _build)
 
+@app.post("/api/upload-monitor")
+async def upload_monitor(file: UploadFile = File(...)):
+    """Upload CSV → score against existing model → full drift analysis + healing actions. No retraining."""
+    if not file.filename or not file.filename.lower().endswith(".csv"):
+        raise HTTPException(400, "Only .csv files are accepted")
+    if not (BASE / "models" / "active_model.pkl").exists():
+        raise HTTPException(422, "No trained model found. Run the full pipeline first via main.py.")
+    content = await file.read()
+    if len(content) > 50 * 1024 * 1024:
+        raise HTTPException(413, "File too large (max 50 MB)")
+    safe_name = Path(file.filename).name
+    dest = UPLOAD / safe_name
+    UPLOAD.mkdir(exist_ok=True)
+    with open(dest, "wb") as f: f.write(content)
+    try:
+        import io
+        clean_df = pd.read_csv(io.BytesIO(content), encoding="utf-8-sig")
+        clean_df.columns = clean_df.columns.str.strip()
+        clean_df.to_csv(dest, index=False)
+    except Exception:
+        pass
+    import asyncio
+    loop = asyncio.get_event_loop()
+    try:
+        from main import run_monitor_pipeline
+        summary = await loop.run_in_executor(None, lambda: run_monitor_pipeline(str(dest)))
+    except Exception as e:
+        raise HTTPException(422, str(e))
+    _bust()
+    return {"status": "ok", "summary": summary}
+
+
 @app.post("/api/upload-predict")
 async def upload_predict(file: UploadFile = File(...)):
     if not file.filename or not file.filename.lower().endswith(".csv"):
@@ -463,7 +495,7 @@ async def upload_predict(file: UploadFile = File(...)):
             timeout=1220  # Increased to 20+ minutes
         )
     except asyncio.TimeoutError:
-        raise HTTPException(504, "Pipeline timed out after 20 minutes — dataset too large. Try sampling your data to <50K rows.")
+        raise HTTPException(504, "Pipeline timed out after 20 minutes.")
     if result.returncode != 0:
         combined = (result.stdout + "\n" + result.stderr)[-3000:]
         error_line = ""

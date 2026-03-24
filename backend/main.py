@@ -78,11 +78,144 @@ def _clear_stale_logs():
     log.info("Cleared stale logs from previous run")
 
 
+def run_monitor_pipeline(data_path: str) -> dict:
+    """Score uploaded data against the existing model — no retraining."""
+    import json, joblib
+    from feature_engineering import FeatureEngineer
+    from drift_detector import DriftDetector
+    from fine_tuner import FineTuner
+    from data_loader import DataLoader
+    from datetime import datetime as dt
+    import os
+
+    model_path = BASE / "models" / "active_model.pkl"
+    fe_path    = BASE / "models" / "feature_engineer.pkl"
+    if not model_path.exists():
+        raise FileNotFoundError("No trained model found. Run the full pipeline first.")
+    if not fe_path.exists():
+        raise FileNotFoundError("No feature engineer found. Run the full pipeline first.")
+
+    model = joblib.load(str(model_path))
+    fe = FeatureEngineer()
+    fe.load_state(str(fe_path))
+    feature_names = fe.feature_names
+
+    loader = DataLoader(data_path)
+    loader.load_data()
+    df, _ = fe.run_feature_pipeline(loader.df, fit=False)
+
+    detector = DriftDetector()
+    if hasattr(model, "feature_importances_"):
+        detector.set_feature_importance(model, feature_names)
+
+    # Build baseline distributions from training years
+    split_path = BASE / "logs" / "data_split.json"
+    train_data_path = BASE / "data" / "uploaded_data.csv"
+    if train_data_path.exists() and split_path.exists():
+        try:
+            with open(split_path) as f:
+                split_info = json.load(f)
+            train_years = split_info.get("train_years", [])
+            train_raw = pd.read_csv(train_data_path)
+            train_raw.columns = train_raw.columns.str.strip()
+            if train_years:
+                train_raw["Date"] = pd.to_datetime(train_raw["Date"], dayfirst=True, errors="coerce")
+                train_raw = train_raw[train_raw["Date"].dt.year.isin(train_years)]
+            train_fe, _ = fe.run_feature_pipeline(train_raw, fit=False)
+            X_base = train_fe[feature_names].fillna(0)
+            y_base = train_fe["Demand"].values
+            detector.set_baseline(X_base, errors=(y_base - model.predict(X_base.values)))
+        except Exception as e:
+            log.warning(f"Could not set baseline distributions: {e}")
+
+    df["YearMonth"] = df["Date"].dt.to_period("M")
+    months = sorted(df["YearMonth"].unique())
+    drift_reports, healing_actions, prediction_batches = [], [], []
+    fine_tuner = FineTuner(model, feature_names)
+
+    os.makedirs(str(BASE / "processed"), exist_ok=True)
+    os.makedirs(str(BASE / "logs"), exist_ok=True)
+
+    for month in months:
+        month_df = df[df["YearMonth"] == month].copy()
+        if len(month_df) < 2:
+            continue
+        X = month_df[feature_names].fillna(0)
+        y = month_df["Demand"].values
+        preds = model.predict(X.values)
+
+        ts = dt.now().strftime("%Y%m%d_%H%M%S")
+        out = pd.DataFrame({
+            "Store":     month_df["Store"].values if "Store" in month_df.columns else range(len(y)),
+            "Product":   month_df["Product"].values if "Product" in month_df.columns else range(len(y)),
+            "Date":      month_df["Date"].dt.strftime("%Y-%m-%d").values,
+            "Demand":    y,
+            "Predicted": preds.round(2),
+        })
+        out.to_csv(str(BASE / "processed" / f"predictions_{month}_{ts}.csv"), index=False)
+
+        prediction_batches.append({
+            "month": str(month), "count": len(y),
+            "mean_pred": round(float(preds.mean()), 2),
+            "mean_actual": round(float(y.mean()), 2),
+        })
+
+        report = detector.comprehensive_detection(X, y - preds)
+        report["month"] = str(month)
+        drift_reports.append(report)
+
+        split_idx = max(1, len(X) // 2)
+        action = fine_tuner.decide_healing_action(
+            report,
+            X.iloc[:split_idx].values, y[:split_idx],
+            X.iloc[split_idx:].values, y[split_idx:],
+        )
+        action["month"] = str(month)
+        healing_actions.append(action)
+
+    with open(str(BASE / "logs" / "prediction_batches.json"), "w") as f:
+        json.dump(prediction_batches, f, indent=2)
+    with open(str(BASE / "logs" / "drift_history.json"), "w") as f:
+        json.dump(drift_reports, f, indent=2)
+    with open(str(BASE / "logs" / "healing_history.json"), "w") as f:
+        json.dump(healing_actions, f, indent=2)
+
+    severities = [r["severity"] for r in drift_reports]
+    final_severity = "severe" if "severe" in severities else ("mild" if "mild" in severities else "none")
+    healing_stats = {
+        "total_actions": len(healing_actions),
+        "monitor_only":  sum(1 for a in healing_actions if a["action"] == "monitor"),
+        "fine_tuned":    sum(1 for a in healing_actions if a["action"] == "fine_tune"),
+        "rollbacks":     sum(1 for a in healing_actions if a["action"] == "rollback"),
+    }
+    summary = {
+        "final_severity": final_severity,
+        "months_monitored": len(drift_reports),
+        "healing_stats": healing_stats,
+        "recommendation": (
+            "Severe drift detected — fine-tuning applied" if final_severity == "severe" else
+            "Mild drift detected — fine-tuning applied"   if final_severity == "mild"   else
+            "No drift detected — model is stable"
+        ),
+    }
+    with open(str(BASE / "logs" / "phase1_summary.json"), "w") as f:
+        json.dump(summary, f, indent=2)
+
+    if any(a.get("model_updated") for a in healing_actions):
+        fine_tuner.save_healed_model()
+        log.info("Healed model saved")
+
+    return summary
+
+
 def main():
     try:
-        # Always prepare from real CSVs — no synthetic fallback
         _clear_stale_logs()
-        prepare_real_data()
+        # Use uploaded file if it exists; only fall back to retail_sales.csv otherwise
+        if DATA_OUT.exists():
+            log.info(f"Using uploaded data: {DATA_OUT}")
+        else:
+            prepare_real_data()
         summary = Phase1Pipeline().run_phase1()
         log.info(f"Final Drift Severity: {summary['final_severity'].upper()}")
         log.info(f"Recommendation: {summary['recommendation']}")

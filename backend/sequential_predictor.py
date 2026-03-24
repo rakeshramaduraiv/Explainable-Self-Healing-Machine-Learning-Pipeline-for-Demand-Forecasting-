@@ -134,8 +134,6 @@ class SequentialPredictor:
         is_future = df["Demand"].isna()
         df.loc[is_future, "Demand"] = 0
 
-        # ULTRA SPEED: Skip complex feature engineering for uploads
-        log.info("⚡ ULTRA SPEED: Using minimal feature engineering for faster processing")
         df, feat_cols = self.engineer.run_feature_pipeline(df, fit=False)
         feat_cols = self.feature_names if self.feature_names else feat_cols
 
@@ -313,11 +311,7 @@ class SequentialPredictor:
             available = list(df.columns)
             raise ValueError(f"Missing required columns: {missing}. Available columns: {available}. The model needs Date, Product, and Demand to work properly.")
 
-        # ULTRA SPEED: Sample large uploads
-        if len(df) > 10000:
-            log.warning(f"⚡ ULTRA SPEED: Sampling {len(df)} rows to 10K for faster processing")
-            df = df.sample(10000, random_state=42).reset_index(drop=True)
-            log.info(f"Sampled to {len(df)} rows for ultra speed processing")
+        log.info(f"Processing full upload: {len(df)} rows")
 
         try:
             df["Date"] = pd.to_datetime(df["Date"], dayfirst=True, errors='coerce')
@@ -352,8 +346,23 @@ class SequentialPredictor:
         save_df["Date"] = save_df["Date"].dt.strftime("%d-%m-%Y")
         save_df.to_csv(actual_path, index=False)
 
-        # ULTRA SPEED: Skip auto-fill for faster processing
-        log.info("⚡ ULTRA SPEED: Skipping auto-fill for faster processing")
+        # Auto-fill missing feature columns from last known values in base data
+        base_path_check = DATA / "uploaded_data.csv"
+        if base_path_check.exists():
+            try:
+                existing_base = self._safe_read_csv(base_path_check)
+                existing_base["Date"] = pd.to_datetime(existing_base["Date"], dayfirst=True)
+                last_known = existing_base.sort_values("Date").iloc[-1]
+                for col in existing_base.columns:
+                    if col not in df.columns and col not in ("Date", "Demand", "Store", "Product"):
+                        val = last_known.get(col)
+                        if val is not None and not (isinstance(val, float) and np.isnan(val)):
+                            df[col] = val
+                        else:
+                            df[col] = 0
+                log.info(f"Auto-filled missing feature columns from last known values")
+            except Exception as e:
+                log.warning(f"Auto-fill skipped: {e}")
 
         # Compare with predictions if they exist
         comparison = None
@@ -401,7 +410,7 @@ class SequentialPredictor:
                     json.dump(comparison, f, indent=2)
                 self._update_comparisons_log(comparison)
 
-        # ULTRA SPEED: Simplified data append
+        # Append actuals to base data
         base_path = DATA / "uploaded_data.csv"
         if base_path.exists():
             existing = self._safe_read_csv(base_path)
@@ -421,11 +430,8 @@ class SequentialPredictor:
         self.state["last_upload_month"] = upload_month
         self._save_state()
 
-        # ULTRA SPEED: Fast next prediction
-        log.info("⚡ ULTRA SPEED: Generating next prediction...")
         next_prediction = self.predict_next_month(data_through_month=upload_month)
-
-        log.info(f"⚡ ULTRA SPEED: Processed actuals for {upload_month}, predicted {next_prediction['prediction_month']}")
+        log.info(f"Processed actuals for {upload_month}, predicted {next_prediction['prediction_month']}")
 
         return {
             "status": "success",

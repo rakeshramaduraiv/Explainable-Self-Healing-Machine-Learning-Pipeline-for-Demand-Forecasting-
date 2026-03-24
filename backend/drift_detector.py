@@ -96,9 +96,9 @@ class DriftDetector:
         return float(abs(np.sum((c_pct - b_pct) * np.log(c_pct / b_pct))))
 
     # ── Improvement 5: Additional drift methods ───────────────────────────────
-    def wasserstein_drift(self, X_current, top_n=10):
+    def wasserstein_drift(self, X_current, top_n=None):
         results = {}
-        cols = list(self.baseline_distributions.keys())[:top_n]
+        cols = list(self.baseline_distributions.keys()) if top_n is None else list(self.baseline_distributions.keys())[:top_n]
         for col in cols:
             if col not in X_current.columns:
                 continue
@@ -109,9 +109,9 @@ class DriftDetector:
             results[col] = {"wasserstein": round(dist, 4)}
         return results
 
-    def js_divergence_drift(self, X_current, top_n=10, bins=20):
+    def js_divergence_drift(self, X_current, top_n=None, bins=20):
         results = {}
-        cols = list(self.baseline_distributions.keys())[:top_n]
+        cols = list(self.baseline_distributions.keys()) if top_n is None else list(self.baseline_distributions.keys())[:top_n]
         for col in cols:
             if col not in X_current.columns:
                 continue

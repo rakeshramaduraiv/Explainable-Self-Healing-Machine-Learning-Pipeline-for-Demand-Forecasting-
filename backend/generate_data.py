@@ -7,9 +7,8 @@ Files used:
   sample_submission  — 45,000 rows  | id, sales                | filled after prediction
 
 Pipeline data (data/uploaded_data.csv):
-  Uses train.csv years 2016+2017 aggregated to weekly demand.
-  2016 → Year 1 (train model)
-  2017 → Year 2 (test simulation + drift detection)
+  Uses ALL years from train.csv aggregated to weekly demand.
+  All years except last → training. Last year → test simulation + drift detection.
 
 Submission data (data/submission_input.csv):
   Uses test.csv (2018) — fed to model after training for final predictions.
@@ -47,11 +46,11 @@ def prepare_pipeline():
     weekly = _weekly(df)
     weekly["year"] = weekly["week"].dt.year
 
-    # Use last 2 full years: 2016 (train) + 2017 (test simulation)
+    # Use last 2 full years for train+test simulation (last year = test, rest = train)
     years = sorted(weekly["year"].unique())
-    use = years[-2:]
+    use = years  # use ALL available years
     weekly = weekly[weekly["year"].isin(use)].copy()
-    print(f"  Using years: {use[0]} (baseline training) + {use[1]} (test simulation)")
+    print(f"  Using all years: {use[0]} – {use[-1]} (last year = test simulation, rest = training)")
 
     out = pd.DataFrame({
         "Date":    weekly["week"].dt.strftime("%d-%m-%Y"),
