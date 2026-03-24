@@ -82,7 +82,9 @@ export default function Predictions() {
   const { data: months, loading: lm, error: em } = useFetch('/api/processed-months', { pollMs: 30_000 })
   const { data: monthly }                         = useFetch('/api/monthly-sales',    { pollMs: 60_000 })
   const { data: productNames }                     = useFetch('/api/product-names')
+  const { data: storeNames }                       = useFetch('/api/store-names')
   const [selected, setSelected]   = useState(null)
+  const [storeFilter, setStore]   = useState(null)
   const [prodFilter, setProd]     = useState(null)
   const [highlight, setHighlight] = useState(null)
   const prevNewest = useRef(null)
@@ -103,11 +105,18 @@ export default function Predictions() {
     (preds || []).filter(r => (r.Demand ?? r.actual) != null && r.Predicted != null),
   [preds])
 
-  const products = useMemo(() => [...new Set(allRows.map(r => r.Product).filter(Boolean))].sort((a, b) => a - b), [allRows])
+  const stores = useMemo(() => [...new Set(allRows.map(r => r.Store).filter(v => v != null))].sort((a, b) => a - b), [allRows])
+  const products = useMemo(() => {
+    const base = storeFilter != null ? allRows.filter(r => r.Store === storeFilter) : allRows
+    return [...new Set(base.map(r => r.Product).filter(Boolean))].sort((a, b) => a - b)
+  }, [allRows, storeFilter])
 
-  const rows = useMemo(() =>
-    prodFilter != null ? allRows.filter(r => r.Product === prodFilter) : allRows,
-  [allRows, prodFilter])
+  const rows = useMemo(() => {
+    let r = allRows
+    if (storeFilter != null) r = r.filter(d => d.Store === storeFilter)
+    if (prodFilter  != null) r = r.filter(d => d.Product === prodFilter)
+    return r
+  }, [allRows, storeFilter, prodFilter])
 
   const chartData = useMemo(() => rows.slice(0, 150).map((r, i) => ({
     idx:       i + 1,
@@ -193,17 +202,35 @@ export default function Predictions() {
       </div>
 
       {/* Month selector */}
-      <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 20 }}>
+      <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 12 }}>
         {(months || []).map(m => (
-          <MonthBtn key={m} m={m} selected={activeMonth === m} onClick={() => { setSelected(m); setProd(null) }} />
+          <MonthBtn key={m} m={m} selected={activeMonth === m} onClick={() => { setSelected(m); setStore(null); setProd(null) }} />
         ))}
       </div>
+
+      {/* Store filter */}
+      {stores.length > 0 && (
+        <div style={{ display: 'flex', gap: 5, flexWrap: 'wrap', marginBottom: 12, alignItems: 'center', background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 8, padding: '8px 12px' }}>
+          <span style={{ fontSize: 10, fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '1.2px', marginRight: 4 }}>Store</span>
+          <button className={`btn ${storeFilter == null ? 'btn-primary' : 'btn-outline'}`}
+            style={{ padding: '3px 10px', fontSize: 11 }}
+            onClick={() => { setStore(null); setProd(null) }}>All</button>
+          {stores.map(s => (
+            <button key={s}
+              className={`btn ${storeFilter === s ? 'btn-primary' : 'btn-outline'}`}
+              style={{ padding: '3px 10px', fontSize: 11 }}
+              onClick={() => { setStore(prev => prev === s ? null : s); setProd(null) }}>
+              {storeNames?.[String(s)] || `Store ${s}`}
+            </button>
+          ))}
+        </div>
+      )}
 
       {lp ? <SkeletonCard rows={5} /> : ep ? <ErrorBox msg={ep} /> : (
         <>
           <div className="kpi-grid" style={{ gridTemplateColumns: 'repeat(6,1fr)' }}>
             <KPI label="Month"  value={activeMonth} />
-            <KPI label="Rows"   value={rows.length} delta={prodFilter ? pName(prodFilter, productNames) : 'All products'} />
+            <KPI label="Rows"   value={rows.length} delta={storeFilter != null ? `Store ${storeFilter}` : prodFilter ? pName(prodFilter, productNames) : 'All'} />
             <KPI label="MAE"    value={stats.mae  ? Math.round(stats.mae) + ' units'  : '—'} color="var(--orange)" />
             <KPI label="RMSE"   value={stats.rmse ? Math.round(stats.rmse) + ' units' : '—'} color="var(--red)" />
             <KPI label="MAPE"   value={stats.mape != null ? stats.mape.toFixed(2) + '%' : '—'}

@@ -9,34 +9,61 @@ import { ErrorBox, KPI, SectionCard, fmtD, CHART_STYLE } from '../ui.jsx'
 
 const PALETTE = ['#3b82f6','#6366f1','#8b5cf6','#10b981','#f59e0b','#ef4444','#60a5fa','#34d399','#06b6d4','#a78bfa','#f472b6','#fb923c','#4ade80','#818cf8','#e879f9']
 
-// Parse numeric ID from either a number or "Product N" string
 const toId = p => {
   if (typeof p === 'number') return p
   const n = parseInt(String(p).replace(/\D/g, ''), 10)
   return isNaN(n) ? p : n
 }
-// Always returns a string label — productNames keys are strings after JSON parse
 const pName = (id, names) => names?.[String(id)] || `Product ${id}`
 
 const Skel = ({ h }) => <div className="skel" style={{ height: h, borderRadius: 8 }} />
 
 export default function Demand() {
-  const { data: metrics, error: em }       = useFetch('/api/demand-metrics',  { pollMs: 120_000 })
+  const { data: metrics, error: em }        = useFetch('/api/demand-metrics',  { pollMs: 120_000 })
   const { data: monthly,  loading: lmo }    = useFetch('/api/monthly-demand',   { pollMs: 120_000 })
   const { data: prodData, loading: lpd }    = useFetch('/api/product-demand',   { pollMs: 120_000 })
   const { data: prodForecast, loading: lpf }= useFetch('/api/product-forecast', { pollMs: 120_000 })
   const { data: prodMonthly }               = useFetch('/api/product-monthly',  { pollMs: 120_000 })
   const { data: datasets }                  = useFetch('/api/datasets',          { pollMs: 120_000 })
   const { data: productNames }              = useFetch('/api/product-names',     { pollMs: 300_000 })
+  const { data: storeForecast }             = useFetch('/api/store-forecast',    { pollMs: 300_000 })
+  const { data: storeMonthly }              = useFetch('/api/store-monthly',     { pollMs: 300_000 })
+  const { data: storeNames }                = useFetch('/api/store-names',       { pollMs: 300_000 })
+
   const [selectedProduct, setProduct] = useState(null)
+  const [selectedStore,   setStore]   = useState(null)
   const toggleProduct = useCallback(id => setProduct(prev => prev === id ? null : id), [])
+  const toggleStore   = useCallback(id => { setStore(prev => prev === id ? null : id); setProduct(null) }, [])
 
-  // ── Monthly demand bar chart data ─────────────────────────────────────────
-  const monthlyData = useMemo(() =>
-    (monthly?.months || []).map((m, i) => ({ month: m, demand: monthly.demand[i] })),
-  [monthly])
+  // All unique stores
+  const stores = useMemo(() => {
+    if (!storeForecast?.length) return []
+    return [...new Set(storeForecast.map(d => d.Store))].sort((a, b) => a - b)
+  }, [storeForecast])
 
-  // ── Product demand — strip "Product " prefix from demand_analyzer strings ──
+  // Active forecast — store-filtered or global
+  const activeForecast = useMemo(() => {
+    if (selectedStore == null || !storeForecast?.length) return prodForecast || []
+    const rows = storeForecast.filter(d => d.Store === selectedStore)
+    const byProduct = {}
+    rows.forEach(d => {
+      if (!byProduct[d.Product]) byProduct[d.Product] = { ...d }
+    })
+    return Object.values(byProduct)
+  }, [selectedStore, storeForecast, prodForecast])
+
+  // Monthly chart — store-filtered or global
+  const monthlyData = useMemo(() => {
+    if (selectedStore != null && storeMonthly?.length) {
+      return storeMonthly
+        .filter(d => d.Store === selectedStore)
+        .sort((a, b) => a.month.localeCompare(b.month))
+        .map(d => ({ month: d.month, demand: Math.round(d.demand) }))
+    }
+    return (monthly?.months || []).map((m, i) => ({ month: m, demand: monthly.demand[i] }))
+  }, [selectedStore, storeMonthly, monthly])
+
+  // Product demand (global — /api/product-demand doesn't have store breakdown)
   const productData = useMemo(() => {
     if (!prodData?.products?.length) return []
     return prodData.products.map((p, i) => {
@@ -45,24 +72,21 @@ export default function Demand() {
     }).sort((a, b) => b.demand - a.demand)
   }, [prodData, productNames])
 
-  // ── Pie chart ─────────────────────────────────────────────────────────────
+  // Pie chart
   const pieData = useMemo(() => {
     const total = productData.reduce((s, d) => s + d.demand, 0) || 1
     return productData.map((d, i) => ({
-      name:  d.name,
-      id:    d.id,
-      value: d.demand,
-      pct:   +((d.demand / total) * 100).toFixed(1),
-      fill:  PALETTE[i % PALETTE.length],
+      name: d.name, id: d.id, value: d.demand,
+      pct: +((d.demand / total) * 100).toFixed(1),
+      fill: PALETTE[i % PALETTE.length],
     }))
   }, [productData])
 
-  // ── Demand vs Forecast bar chart ──────────────────────────────────────────
+  // Demand vs Forecast — uses activeForecast (store-filtered if store selected)
   const demandVsForecast = useMemo(() => {
-    if (!prodForecast?.length) return []
-    return prodForecast
-      .slice()
-      .sort((a, b) => b.avg_demand - a.avg_demand)
+    if (!activeForecast?.length) return []
+    return activeForecast
+      .slice().sort((a, b) => b.avg_demand - a.avg_demand)
       .map((d, i) => ({
         name:           d.name || pName(d.Product, productNames),
         Product:        d.Product,
@@ -71,9 +95,21 @@ export default function Demand() {
         Accuracy:       Math.round(d.accuracy      ?? 0),
         fill:           PALETTE[i % PALETTE.length],
       }))
-  }, [prodForecast, productNames])
+  }, [activeForecast, productNames])
 
-  // ── Heatmap — include productNames in deps so names render correctly ───────
+  // Radar — uses activeForecast
+  const radarData = useMemo(() => {
+    if (!activeForecast?.length) return []
+    const sorted    = activeForecast.slice(0, 10).sort((a, b) => b.avg_demand - a.avg_demand)
+    const maxDemand = Math.max(...sorted.map(d => d.avg_demand), 1)
+    return sorted.map(d => ({
+      name:     d.name || pName(d.Product, productNames),
+      Demand:   +((d.avg_demand / maxDemand) * 100).toFixed(1),
+      Accuracy: Math.round(d.accuracy ?? 0),
+    }))
+  }, [activeForecast, productNames])
+
+  // Heatmap
   const heatmapData = useMemo(() => {
     if (!prodMonthly?.length) return { months: [], products: [], grid: [] }
     const months = [...new Set(prodMonthly.map(d => d.month))].sort()
@@ -86,45 +122,36 @@ export default function Demand() {
     return { months, products: prods, grid }
   }, [prodMonthly, productNames])
 
-  // ── Radar — normalize Demand to 0-100 so both axes are comparable ─────────
-  const radarData = useMemo(() => {
-    if (!prodForecast?.length) return []
-    const sorted    = prodForecast.slice(0, 10).sort((a, b) => b.avg_demand - a.avg_demand)
-    const maxDemand = Math.max(...sorted.map(d => d.avg_demand), 1)
-    return sorted.map(d => ({
-      name:     d.name || pName(d.Product, productNames),
-      Demand:   +((d.avg_demand / maxDemand) * 100).toFixed(1),
-      Accuracy: Math.round(d.accuracy ?? 0),
-    }))
-  }, [prodForecast, productNames])
-
-  // ── Selected product monthly trend ────────────────────────────────────────
+  // Selected product monthly trend
   const selectedTrend = useMemo(() => {
     if (selectedProduct == null || !prodMonthly?.length) return []
     return prodMonthly
       .filter(d => Number(d.Product) === Number(selectedProduct))
       .sort((a, b) => String(a.month).localeCompare(String(b.month)))
       .map(d => ({
-        month:      d.month,
-        Actual:     d.demand    != null ? Math.round(d.demand)    : null,
-        Forecast:   d.predicted != null ? Math.round(d.predicted) : null,
+        month:    d.month,
+        Actual:   d.demand    != null ? Math.round(d.demand)    : null,
+        Forecast: d.predicted != null ? Math.round(d.predicted) : null,
       }))
   }, [selectedProduct, prodMonthly])
 
   if (em) return <ErrorBox msg={em} />
 
-  const lp            = lpd || lpf
-  const inspection    = datasets?.inspection
-  const growth        = metrics?.demand_growth_rate ?? 0
-  const topProduct    = productData[0]
+  const lp         = lpd || lpf
+  const inspection = datasets?.inspection
+  const growth     = metrics?.demand_growth_rate ?? 0
+  const topProduct = productData[0]
   const bottomProduct = productData[productData.length - 1]
+  const storeLabel = selectedStore != null
+    ? (storeNames?.[String(selectedStore)] || `Store ${selectedStore}`)
+    : 'All Stores'
 
   return (
     <>
       <div className="page-header">
         <div className="page-title">Demand Insights</div>
         <div className="page-sub">
-          {inspection?.products ?? productData.length ?? '—'} products · demand patterns, distribution and seasonality
+          {inspection?.stores ?? stores.length ?? '—'} stores · {inspection?.products ?? productData.length ?? '—'} products · {storeLabel}
         </div>
       </div>
 
@@ -137,9 +164,27 @@ export default function Demand() {
         <KPI label="Peak Month"   value={metrics?.peak_demand_month ?? '—'} color="var(--green)" />
         <KPI label="Top Product"  value={topProduct?.name ?? '—'} color="var(--blue)"
           delta={topProduct ? fmtD(topProduct.demand) + ' total units' : ''} />
-        <KPI label="Products"     value={inspection?.products ?? productData.length ?? '—'} />
+        <KPI label="Stores"       value={inspection?.stores ?? stores.length ?? '—'} delta={storeLabel} />
         <KPI label="Total Demand" value={metrics ? Math.round(metrics.total_demand ?? 0).toLocaleString() + ' units' : '—'} />
       </div>
+
+      {/* Store selector */}
+      {stores.length > 0 && (
+        <div style={{ display: 'flex', gap: 5, flexWrap: 'wrap', marginBottom: 12, alignItems: 'center', background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 8, padding: '8px 12px' }}>
+          <span style={{ fontSize: 10, fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '1.2px', marginRight: 4 }}>Store</span>
+          <button className={`btn ${selectedStore == null ? 'btn-primary' : 'btn-outline'}`}
+            style={{ padding: '3px 10px', fontSize: 11 }}
+            onClick={() => { setStore(null); setProduct(null) }}>All</button>
+          {stores.map(s => (
+            <button key={s}
+              className={`btn ${selectedStore === s ? 'btn-primary' : 'btn-outline'}`}
+              style={{ padding: '3px 10px', fontSize: 11 }}
+              onClick={() => toggleStore(s)}>
+              {storeNames?.[String(s)] || `Store ${s}`}
+            </button>
+          ))}
+        </div>
+      )}
 
       {/* Product filter pills */}
       {productData.length > 0 && (
@@ -183,7 +228,7 @@ export default function Demand() {
 
       <div className="grid-2">
         {/* Avg Demand vs Forecast */}
-        <SectionCard title="Avg Demand vs Forecast by Product">
+        <SectionCard title={`Avg Demand vs Forecast by Product — ${storeLabel}`}>
           {lp ? <Skel h={350} /> : demandVsForecast.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '48px 0', color: 'var(--text3)', fontSize: 13 }}>No forecast data available</div>
           ) : (
@@ -211,8 +256,7 @@ export default function Demand() {
               <PieChart>
                 <Pie data={pieData} dataKey="value" nameKey="name" cx="50%" cy="50%"
                   outerRadius={100} innerRadius={45} paddingAngle={1} strokeWidth={2} stroke="#fff"
-                  onClick={d => toggleProduct(d.id)}
-                  style={{ cursor: 'pointer' }}>
+                  onClick={d => toggleProduct(d.id)} style={{ cursor: 'pointer' }}>
                   {pieData.map((d, i) => (
                     <Cell key={i} fill={d.fill}
                       opacity={selectedProduct != null && selectedProduct !== d.id ? 0.35 : 1} />
@@ -236,7 +280,7 @@ export default function Demand() {
 
       <div className="grid-2">
         {/* Monthly Demand */}
-        <SectionCard title="Monthly Demand Aggregation">
+        <SectionCard title={`Monthly Demand — ${storeLabel}`}>
           {lmo ? <Skel h={230} /> : monthlyData.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '48px 0', color: 'var(--text3)', fontSize: 13 }}>No monthly data available</div>
           ) : (
@@ -254,8 +298,8 @@ export default function Demand() {
           )}
         </SectionCard>
 
-        {/* Radar — both axes now 0-100 */}
-        <SectionCard title="Product Demand & Accuracy Profile (normalized)">
+        {/* Radar */}
+        <SectionCard title={`Product Demand & Accuracy Profile — ${storeLabel}`}>
           {!radarData.length ? <Skel h={260} /> : (
             <ResponsiveContainer width="100%" height={260}>
               <RadarChart data={radarData} cx="50%" cy="50%" outerRadius={95}>
@@ -342,7 +386,7 @@ export default function Demand() {
           <div style={{ padding: '14px 18px', borderRadius: 8, border: '1px solid var(--border)', background: 'var(--card2)' }}>
             <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '1.2px', marginBottom: 6 }}>Dataset</div>
             <div style={{ fontSize: 18, fontWeight: 700, color: 'var(--text)' }}>{inspection?.rows?.toLocaleString() ?? '—'} rows</div>
-            <div style={{ fontSize: 12, color: 'var(--text2)', marginTop: 4 }}>{inspection?.products ?? productData.length} products</div>
+            <div style={{ fontSize: 12, color: 'var(--text2)', marginTop: 4 }}>{inspection?.stores ?? stores.length} stores · {inspection?.products ?? productData.length} products</div>
           </div>
         </div>
       </SectionCard>
