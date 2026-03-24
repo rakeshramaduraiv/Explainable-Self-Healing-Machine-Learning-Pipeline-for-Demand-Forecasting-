@@ -23,9 +23,16 @@ const DriftRow = memo(({ d, isActive, isSelected, onClick }) => (
   </tr>
 ))
 
+const PILL = { padding: '3px 10px', borderRadius: 12, fontSize: 12, cursor: 'pointer', border: '1px solid var(--border)', background: 'var(--bg2)', color: 'var(--text2)', whiteSpace: 'nowrap' }
+const PILL_ON = { ...PILL, background: 'var(--accent)', color: '#fff', border: '1px solid var(--accent)' }
+
 export default function Drift() {
   const { data: drift, loading, error } = useFetch('/api/drift', { pollMs: 15000 })
+  const { data: storeDrift } = useFetch('/api/store-drift')
+  const { data: storeNames } = useFetch('/api/store-names')
   const slicer = useSlicerStore()
+
+  const [storeFilter, setStoreFilter] = useState(null)
 
   const months = useMemo(() => (drift || []).map(d => d.month), [drift])
 
@@ -50,6 +57,30 @@ export default function Drift() {
   const featureData = useMemo(() => (drift || []).map(d => ({
     month: d.month, Severe: d.severe_features || 0, Mild: d.mild_features || 0,
   })), [drift])
+
+  // Per-store MAE chart data — filtered by selected store
+  const storeMaeData = useMemo(() => {
+    if (!storeDrift) return []
+    const rows = storeFilter
+      ? storeDrift.filter(r => String(r.Store) === String(storeFilter))
+      : storeDrift
+    // aggregate by month across all stores (or single store)
+    const byMonth = {}
+    rows.forEach(r => {
+      if (!byMonth[r.month]) byMonth[r.month] = { month: r.month, mae: 0, n: 0 }
+      byMonth[r.month].mae += r.mae
+      byMonth[r.month].n   += 1
+    })
+    return Object.values(byMonth)
+      .map(r => ({ month: r.month, MAE: +(r.mae / r.n).toFixed(2) }))
+      .sort((a, b) => a.month.localeCompare(b.month))
+  }, [storeDrift, storeFilter])
+
+  // Store pill list
+  const storeList = useMemo(() => {
+    if (!storeNames) return []
+    return Object.entries(storeNames).sort((a, b) => +a[0] - +b[0])
+  }, [storeNames])
 
   const avgIncrease = filtered.length
     ? (filtered.reduce((s, d) => s + (d.error_trend?.error_increase || 0), 0) / filtered.length * 100).toFixed(0) + '%'
@@ -101,7 +132,7 @@ export default function Drift() {
           <ResponsiveContainer width="100%" height={230} debounce={200}>
             <BarChart data={featureData} margin={{ top: 4, right: 8, bottom: 0, left: 8 }} onClick={onBarClick}>
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="month" tick={{ fontSize: 10 }} tickFormatter={v => v.replace('-', '-')} />
+              <XAxis dataKey="month" tick={{ fontSize: 10 }} />
               <YAxis tick={{ fontSize: 10 }} />
               <Tooltip {...CHART_STYLE} />
               <Legend />
@@ -115,6 +146,38 @@ export default function Drift() {
           </ResponsiveContainer>
         </SectionCard>
       </div>
+
+      {/* Per-Store MAE section */}
+      {storeDrift && storeDrift.length > 0 && (
+        <SectionCard title="Per-Store MAE by Month">
+          {/* Store pills */}
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 12 }}>
+            <span
+              style={storeFilter === null ? PILL_ON : PILL}
+              onClick={() => setStoreFilter(null)}
+            >All Stores</span>
+            {storeList.map(([id, label]) => (
+              <span
+                key={id}
+                style={storeFilter === id ? PILL_ON : PILL}
+                onClick={() => setStoreFilter(storeFilter === id ? null : id)}
+              >{label}</span>
+            ))}
+          </div>
+          <ResponsiveContainer width="100%" height={230} debounce={200}>
+            <BarChart data={storeMaeData} margin={{ top: 4, right: 8, bottom: 0, left: 8 }}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="month" tick={{ fontSize: 10 }} />
+              <YAxis tick={{ fontSize: 10 }} />
+              <Tooltip {...CHART_STYLE} formatter={v => [v.toFixed(2), 'MAE']} />
+              <Bar dataKey="MAE" fill="var(--accent)" radius={[4, 4, 0, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
+          <div style={{ fontSize: 11, color: 'var(--text3)', marginTop: 6 }}>
+            {storeFilter ? `Showing MAE for ${storeNames?.[storeFilter] || 'Store ' + storeFilter}` : 'Avg MAE across all 50 stores per month — select a store pill to filter'}
+          </div>
+        </SectionCard>
+      )}
 
       <SectionCard title="Drift History — Baseline vs Test Set">
         <div style={{ overflowX: 'auto' }}>

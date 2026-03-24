@@ -465,6 +465,33 @@ def store_monthly():
         return agg.round(2).to_dict(orient="records")
     return _cached("store_monthly", 300, _build)
 
+@app.get("/api/store-drift")
+def store_drift():
+    """Per-store MAE per test month from processed prediction CSVs."""
+    def _build():
+        frames = []
+        for f in sorted(PROCESSED.glob("predictions_*.csv")):
+            try:
+                df = pd.read_csv(f)
+                if {"Store", "Demand", "Predicted", "Date"}.issubset(df.columns):
+                    df["month"] = pd.to_datetime(df["Date"]).dt.to_period("M").astype(str)
+                    df["abs_err"] = (df["Demand"] - df["Predicted"]).abs()
+                    frames.append(df[["Store", "month", "abs_err", "Demand", "Predicted"]])
+            except Exception:
+                pass
+        if not frames:
+            return []
+        df = pd.concat(frames, ignore_index=True)
+        agg = df.groupby(["Store", "month"]).agg(
+            mae=("abs_err", "mean"),
+            avg_demand=("Demand", "mean"),
+            avg_predicted=("Predicted", "mean"),
+            count=("Demand", "count"),
+        ).reset_index()
+        agg["error_pct"] = (agg["mae"] / (agg["avg_demand"].abs() + 1e-9) * 100).round(2)
+        return agg.round(2).to_dict(orient="records")
+    return _cached("store_drift", 300, _build)
+
 @app.get("/api/detected-columns")
 def detected_columns():
     """Return what columns the system detected in the uploaded data."""
