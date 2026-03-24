@@ -5,10 +5,10 @@ import { Spinner, ErrorBox, KPI, SectionCard, fmtD, CHART_STYLE } from '../ui.js
 import { SlicerPanel, useSlicerStore, slicerActions } from '../slicer.jsx'
 
 export default function Performance() {
-  const { data: baseline, loading: lb, error: eb } = useFetch('/api/baseline',      { pollMs: 120000 })
-  const { data: drift,    loading: ld, error: ed } = useFetch('/api/drift',          { pollMs: 60000 })
-  const { data: summary,  loading: ls, error: es } = useFetch('/api/summary',        { pollMs: 120000 })
-  const { data: monthly }                          = useFetch('/api/monthly-sales',  { pollMs: 60000 })
+  const { data: baseline, loading: lb, error: eb } = useFetch('/api/baseline',      { pollMs: 15000 })
+  const { data: drift,    loading: ld, error: ed } = useFetch('/api/drift',          { pollMs: 15000 })
+  const { data: summary,  loading: ls, error: es } = useFetch('/api/summary',        { pollMs: 15000 })
+  const { data: testMetrics }                      = useFetch('/api/test-metrics',   { pollMs: 15000 })
   const slicer = useSlicerStore()
 
   const months = useMemo(() => (drift || []).map(d => d.month), [drift])
@@ -21,34 +21,21 @@ export default function Performance() {
 
   const m = baseline?.train || summary?.train_metrics || {}
   const loading = (lb && !baseline) || (ld && !drift) || (ls && !summary)
+  const live = testMetrics?.mae != null ? testMetrics : null
 
-  // Real-time KPIs from test set monthly data
-  const live = useMemo(() => {
-    if (!monthly?.length) return null
-    const valid = monthly.filter(d => d.actual != null && d.predicted != null)
-    if (!valid.length) return null
-    const actuals = valid.map(d => d.actual)
-    const preds   = valid.map(d => d.predicted)
-    const mae     = valid.reduce((s, d) => s + Math.abs(d.actual - d.predicted), 0) / valid.length
-    const rmse    = Math.sqrt(valid.reduce((s, d) => s + (d.actual - d.predicted) ** 2, 0) / valid.length)
-    const mape    = valid.reduce((s, d) => s + (d.actual ? Math.abs(d.actual - d.predicted) / Math.abs(d.actual) * 100 : 0), 0) / valid.length
-    const wmape   = valid.reduce((s, d) => s + Math.abs(d.actual - d.predicted), 0) / valid.reduce((s, d) => s + Math.abs(d.actual), 0) * 100
-    const meanA   = actuals.reduce((s, v) => s + v, 0) / actuals.length
-    const ssTot   = actuals.reduce((s, v) => s + (v - meanA) ** 2, 0)
-    const ssRes   = actuals.reduce((s, v, i) => s + (v - preds[i]) ** 2, 0)
-    const r2      = ssTot > 0 ? (1 - ssRes / ssTot) * 100 : 100
-    return { r2: Math.round(r2), mae: Math.round(mae), rmse: Math.round(rmse), mape: Math.round(mape), wmape: Math.round(wmape) }
-  }, [monthly])
-
+  // MAE trend: baseline_error vs current_error (raw units, e.g. 1.44 vs 6.56)
   const maeTrend = useMemo(() => filtered.map(d => ({
     month:          d.month,
     'Test MAE':     d.error_trend?.current_error  ?? null,
     'Baseline MAE': d.error_trend?.baseline_error ?? null,
   })), [filtered])
 
+  // Error increase %: error_increase is a ratio (e.g. 3.55 = 355% increase)
   const errorPct = useMemo(() => filtered.map(d => ({
     month:     d.month,
-    'Error %': d.error_trend?.error_increase ? +(d.error_trend.error_increase * 100).toFixed(1) : 0,
+    'Error %': d.error_trend?.error_increase != null
+      ? +(d.error_trend.error_increase * 100).toFixed(1)
+      : 0,
   })), [filtered])
 
   const onLineClick = e => { if (e?.activeLabel) slicerActions.toggleMonth(e.activeLabel) }
@@ -65,50 +52,56 @@ export default function Performance() {
     <>
       <div className="page-header">
         <div className="page-title">Baseline Performance</div>
-        <div className="page-sub">{m.model || 'Ensemble'} model — baseline metrics vs {drift?.length} test set months</div>
+        <div className="page-sub">{m.model || 'Ultra-Fast Ensemble'} model — baseline metrics vs {drift?.length} test set months</div>
       </div>
 
       <SlicerPanel months={months} slicer={slicer} />
 
+      {/* Technical note */}
+      <div className="alert alert-g" style={{ marginBottom: 16, fontSize: 11 }}>
+        <strong>⚡ Training Optimizations:</strong> 2-fold CV (vs 5), 2 hyperparameter iterations (vs 10), 
+        30 RF trees (vs 100), XGBoost hist method, minimal validation splits for 5x faster training
+      </div>
+
       <div className="kpi-grid">
         {loading ? Array.from({length:5}).map((_,i)=><div key={i} className="kpi"><div className="skel" style={{height:60}}/></div>) : <>
-        <KPI label="R²"    value={(live?.r2 ?? (m.R2 != null ? Math.round(m.R2) : null)) != null ? (live?.r2 ?? Math.round(m.R2)) + '%' : '—'} delta={live ? 'Live · test set' : 'Baseline'} />
-        <KPI label="MAE"   value={(live?.mae ?? (m.MAE != null ? Math.round(m.MAE) : null)) != null ? (live?.mae ?? Math.round(m.MAE)).toLocaleString() + ' units' : '—'} delta={live ? 'Live · test set' : 'Baseline'} />
-        <KPI label="RMSE"  value={(live?.rmse ?? (m.RMSE != null ? Math.round(m.RMSE) : null)) != null ? (live?.rmse ?? Math.round(m.RMSE)).toLocaleString() + ' units' : '—'} delta={live ? 'Live · test set' : 'Baseline'} />
-        <KPI label="MAPE"  value={(live?.mape ?? (m.MAPE != null ? Math.round(m.MAPE) : null)) != null ? (live?.mape ?? Math.round(m.MAPE)) + '%' : '—'} delta={live ? 'Live · test set' : 'Baseline'} />
-        <KPI label="WMAPE" value={(live?.wmape ?? (m.WMAPE != null ? Math.round(m.WMAPE) : null)) != null ? (live?.wmape ?? Math.round(m.WMAPE)) + '%' : '—'} delta={live ? 'Live · test set' : 'Baseline'} />
+        <KPI label="R² (Test 2023)"   value={live?.r2   != null ? live.r2.toFixed(1)   + '%' : (m.R2   != null ? Math.round(m.R2)   + '%' : '—')} delta={live?.n_rows ? `${live.n_rows.toLocaleString()} rows` : 'Train baseline'} />
+        <KPI label="MAE (Test 2023)"  value={live?.mae  != null ? live.mae.toFixed(2)  + ' u' : (m.MAE  != null ? Math.round(m.MAE)  + ' u' : '—')} delta={live ? 'Live · test rows' : 'Baseline'} />
+        <KPI label="RMSE (Test 2023)" value={live?.rmse != null ? live.rmse.toFixed(2) + ' u' : (m.RMSE != null ? Math.round(m.RMSE) + ' u' : '—')} delta={live ? 'Live · test rows' : 'Baseline'} />
+        <KPI label="MAPE (Test 2023)" value={live?.mape != null ? live.mape.toFixed(2) + '%'  : (m.MAPE != null ? Math.round(m.MAPE) + '%'  : '—')} delta={live ? 'Live · test rows' : 'Baseline'} />
+        <KPI label="WMAPE"            value={live?.wmape != null ? live.wmape.toFixed(2) + '%' : (m.WMAPE != null ? Math.round(m.WMAPE) + '%' : '—')} delta={live ? 'Live · test rows' : 'Baseline'} />
         </>}
       </div>
 
-      <SectionCard title="MAE Trend — Baseline vs Test Set (click point to filter)">
+      <SectionCard title="Monthly MAE — Test Set 2023 (units)">
         {loading ? <div className="skel" style={{height:270}}/> :
         <ResponsiveContainer width="100%" height={270}>
-          <LineChart data={maeTrend} margin={{ top: 4, right: 16, bottom: 24, left: 0 }} onClick={onLineClick}>
+          <LineChart data={maeTrend} margin={{ top: 4, right: 16, bottom: 24, left: 8 }} onClick={onLineClick}>
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="month" tick={{ fontSize: 10 }} />
-            <YAxis tick={{ fontSize: 10 }} tickFormatter={v => (v / 1000).toFixed(0) + 'K'} />
-            <Tooltip {...CHART_STYLE} formatter={v => [Number(v).toLocaleString() + ' units']} />
+            <XAxis dataKey="month" tick={{ fontSize: 10 }} tickFormatter={v => v.replace('-', '-')} />
+            <YAxis tick={{ fontSize: 10 }} tickFormatter={v => v.toFixed(2)} domain={[0, 'auto']} />
+            <Tooltip {...CHART_STYLE} formatter={(v, name) => [Number(v).toFixed(2) + ' units', name]} />
             <Legend />
             <Line type="monotone" dataKey="Baseline MAE" stroke="var(--green)" strokeWidth={2} dot={false} strokeDasharray="5 3" />
             <Line type="monotone" dataKey="Test MAE"     stroke="var(--red)"   strokeWidth={2}
-              dot={({ cx, cy, payload }) => <circle key={cx + cy} cx={cx} cy={cy} {...dotProps(payload, slicer)} />} />
+              dot={({ cx, cy, payload }) => <circle key={cx+cy} cx={cx} cy={cy} {...dotProps(payload, slicer)} />} />
             <Brush dataKey="month" height={22} stroke="var(--border2)" fill="var(--card2)" travellerWidth={6} />
           </LineChart>
         </ResponsiveContainer>}
       </SectionCard>
 
-      <SectionCard title="Error Increase % — Test Set vs Baseline (click point to filter)">
+      <SectionCard title="Error Increase % — Test Set vs Baseline (2023)">
         {loading ? <div className="skel" style={{height:230}}/> :
         <ResponsiveContainer width="100%" height={230}>
-          <LineChart data={errorPct} margin={{ top: 4, right: 16, bottom: 0, left: 0 }} onClick={onLineClick}>
+          <LineChart data={errorPct} margin={{ top: 4, right: 16, bottom: 0, left: 8 }} onClick={onLineClick}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="month" tick={{ fontSize: 10 }} />
-            <YAxis tick={{ fontSize: 10 }} tickFormatter={v => v + '%'} />
-            <Tooltip {...CHART_STYLE} formatter={v => [v + '%', 'Error Increase']} />
+            <YAxis tick={{ fontSize: 10 }} tickFormatter={v => v.toFixed(0) + '%'} domain={[0, 'auto']} />
+            <Tooltip {...CHART_STYLE} formatter={(v, name) => [v.toFixed(1) + '%', name]} />
             <ReferenceLine y={10} stroke="var(--orange)" strokeDasharray="4 2"
-              label={{ value: 'Mild threshold', fill: 'var(--orange)', fontSize: 10, position: 'insideTopRight' }} />
+              label={{ value: 'Mild threshold (10%)', fill: 'var(--orange)', fontSize: 10, position: 'insideTopRight' }} />
             <Line type="monotone" dataKey="Error %" stroke="var(--red)" strokeWidth={2}
-              dot={({ cx, cy, payload }) => <circle key={cx + cy} cx={cx} cy={cy} {...dotProps(payload, slicer)} />} />
+              dot={({ cx, cy, payload }) => <circle key={cx+cy} cx={cx} cy={cy} {...dotProps(payload, slicer)} />} />
           </LineChart>
         </ResponsiveContainer>}
       </SectionCard>

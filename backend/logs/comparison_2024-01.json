@@ -1,0 +1,43 @@
+{
+  "month": "2024-01",
+  "mae": 146.16,
+  "rmse": 149.42,
+  "mape": 68.07,
+  "products": [
+    {
+      "Product": 1,
+      "Actual": 203.0,
+      "Predicted": 56.68,
+      "Error": 146.32,
+      "Error_Pct": 72.08
+    },
+    {
+      "Product": 2,
+      "Actual": 205.0,
+      "Predicted": 64.06,
+      "Error": 140.94,
+      "Error_Pct": 68.75
+    },
+    {
+      "Product": 3,
+      "Actual": 154.0,
+      "Predicted": 56.66,
+      "Error": 97.34,
+      "Error_Pct": 63.21
+    },
+    {
+      "Product": 4,
+      "Actual": 270.0,
+      "Predicted": 75.19,
+      "Error": 194.81,
+      "Error_Pct": 72.15
+    },
+    {
+      "Product": 5,
+      "Actual": 236.0,
+      "Predicted": 84.59,
+      "Error": 151.41,
+      "Error_Pct": 64.16
+    }
+  ]
+}

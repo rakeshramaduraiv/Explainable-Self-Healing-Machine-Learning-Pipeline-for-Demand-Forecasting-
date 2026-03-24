@@ -18,13 +18,13 @@ const DriftRow = memo(({ d, isActive, isSelected, onClick }) => (
     <td className="mono">{fmtD(d.error_trend?.baseline_error)}</td>
     <td className="mono">{fmtD(d.error_trend?.current_error)}</td>
     <td className="mono" style={{ color: 'var(--red)', fontWeight: 600 }}>
-      +{((d.error_trend?.error_increase || 0) * 100).toFixed(0)}%
+      +{((d.error_trend?.error_increase || 0) * 100).toFixed(1)}%
     </td>
   </tr>
 ))
 
 export default function Drift() {
-  const { data: drift, loading, error } = useFetch('/api/drift', { pollMs: 60000 })
+  const { data: drift, loading, error } = useFetch('/api/drift', { pollMs: 15000 })
   const slicer = useSlicerStore()
 
   const months = useMemo(() => (drift || []).map(d => d.month), [drift])
@@ -76,13 +76,13 @@ export default function Drift() {
       </div>
 
       <div className="grid-2">
-        <SectionCard title="Error Increase vs Baseline (%) — click bar to filter">
+        <SectionCard title="Error Increase % vs Baseline — Test Set 2023">
           <ResponsiveContainer width="100%" height={230} debounce={200}>
-            <BarChart data={errorData} margin={{ top: 4, right: 8, bottom: 0, left: 0 }} onClick={onBarClick}>
+            <BarChart data={errorData} margin={{ top: 4, right: 8, bottom: 0, left: 8 }} onClick={onBarClick}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="month" tick={{ fontSize: 10 }} />
-              <YAxis tick={{ fontSize: 10 }} tickFormatter={v => v + '%'} />
-              <Tooltip {...CHART_STYLE} formatter={v => [v + '%', 'Error Increase']} />
+              <YAxis tick={{ fontSize: 10 }} tickFormatter={v => v.toFixed(0) + '%'} domain={[0, 'auto']} />
+              <Tooltip {...CHART_STYLE} formatter={(v, name) => [v.toFixed(1) + '%', 'Error Increase vs Baseline']} />
               <Bar dataKey="Increase" radius={[4, 4, 0, 0]}>
                 {errorData.map((d, i) => (
                   <Cell key={i}
@@ -97,11 +97,11 @@ export default function Drift() {
           </ResponsiveContainer>
         </SectionCard>
 
-        <SectionCard title="Drifted Feature Count per Test Month — click bar to filter">
+        <SectionCard title="Drifted Features per Test Month (2023)">
           <ResponsiveContainer width="100%" height={230} debounce={200}>
-            <BarChart data={featureData} margin={{ top: 4, right: 8, bottom: 0, left: 0 }} onClick={onBarClick}>
+            <BarChart data={featureData} margin={{ top: 4, right: 8, bottom: 0, left: 8 }} onClick={onBarClick}>
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="month" tick={{ fontSize: 10 }} />
+              <XAxis dataKey="month" tick={{ fontSize: 10 }} tickFormatter={v => v.replace('-', '-')} />
               <YAxis tick={{ fontSize: 10 }} />
               <Tooltip {...CHART_STYLE} />
               <Legend />

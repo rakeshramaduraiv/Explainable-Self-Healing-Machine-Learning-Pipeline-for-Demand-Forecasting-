@@ -4,13 +4,37 @@ ML platform that predicts **product demand (units)** using self-healing capabili
 
 ## Dataset
 
-**Store Item Demand Forecasting Dataset** (Kaggle)
-- **URL:** https://www.kaggle.com/datasets/dhrubangtalukdar/store-item-demand-forecasting-dataset
-- 5 years of daily sales data (2013–2017), 50 items, 10 stores
-- Columns: `date`, `store`, `item`, `sales`
-- ~913,000 rows → converted to weekly product demand (~1,560 rows for 2 years, 15 products)
+**Retail Sales Forecasting Dataset** (`retail_sales.csv`)
+- **4,565,000 rows** of daily sales data — 5 years (2019-01-01 to 2023-12-31)
+- **50 stores** (`store_1` … `store_50`) × **50 products** (`item_1` … `item_50`) = **2,500 unique store-product combinations**
+- Each combination has exactly **1,826 daily rows** (365 days × 5 years)
+- **No missing values** across all 8 columns
 
-The system auto-renames: `sales`→Demand, `item`→Product, `store`→Store, `date`→Date.
+| Column | Type | Range / Values | Description |
+|--------|------|----------------|-------------|
+| `date` | str | 2019-01-01 → 2023-12-31 | Daily date (YYYY-MM-DD) |
+| `store_id` | str | `store_1` … `store_50` | Store identifier |
+| `item_id` | str | `item_1` … `item_50` | Product identifier |
+| `sales` | int | 0 – 139 (mean: 29.3) | Units sold per day |
+| `price` | float | 8.02 – 99.99 (mean: 54.0) | Item price |
+| `promo` | int | 0 or 1 | Promotion flag (10% of rows are promo=1) |
+| `weekday` | int | 0 (Mon) – 6 (Sun) | Day of week |
+| `month` | int | 1 – 12 | Month number |
+
+### Key Dataset Insights
+
+| Insight | Value |
+|---------|-------|
+| Promo effect | Avg sales **41.9** (promo=1) vs **27.9** (promo=0) — **+50% uplift** |
+| Peak weekday | Tuesday & Wednesday (avg ~35 units) |
+| Lowest weekday | Saturday (avg ~24 units) |
+| Peak month | March–April (avg ~37 units) |
+| Lowest month | September–October (avg ~21 units) |
+| Promo rate | 10% of all rows have active promotion |
+
+The system auto-renames: `sales`→Demand, `item_id`→Product, `store_id`→Store, `date`→Date.
+
+Raw daily data is aggregated to **weekly product demand** via `generate_data.py` before entering the pipeline.
 
 ## System Flow
 
@@ -34,11 +58,11 @@ The system auto-renames: `sales`→Demand, `item`→Product, `store`→Store, `d
 ## Quick Start
 
 ```bash
-# 1. Download train.csv from Kaggle (link above) into backend/
+# 1. Place retail_sales.csv into backend/
 cd backend
 
-# 2. Convert Kaggle data → pipeline format
-python generate_data.py train.csv
+# 2. Convert retail_sales.csv → pipeline format
+python generate_data.py retail_sales.csv
 
 # 3. Run the ML pipeline
 pip install -r requirements.txt
@@ -62,19 +86,18 @@ npm run dev
 | Column | Type | Description |
 |--------|------|-------------|
 | `Date` | str | Week date (DD-MM-YYYY) |
-| `Product` | int | Product identifier (1, 2, 3...) |
-| `Demand` | int | **Target: units demanded per product** |
+| `Product` | str/int | Product identifier (`item_1` … `item_50`) |
+| `Demand` | int | **Target: units demanded per product per week** |
 
 ### Optional Columns (auto-detected as features)
 
 | Column | Type | Description |
 |--------|------|-------------|
-| `Store` | int | Store identifier |
-| `Holiday_Flag` | int | 1 if holiday week, 0 otherwise |
-| `Temperature` | float | Regional temperature |
-| `Fuel_Price` | float | Regional fuel price |
-| `CPI` | float | Consumer Price Index |
-| `Unemployment` | float | Regional unemployment rate |
+| `Store` | str/int | Store identifier (`store_1` … `store_50`) |
+| `Price` | float | Item price (8.02–99.99) |
+| `Promo` | int | 1 if promotion active, 0 otherwise |
+| `Weekday` | int | Day of week (0–6) |
+| `Month` | int | Month number (1–12) |
 | *Any other columns* | numeric/text | Auto-detected as features |
 
 ## Dynamic Feature Engineering
@@ -88,14 +111,14 @@ The system auto-generates **40–87+ features** from any dataset:
 | Rolling stats | 18 | Always (mean/std/max/min windows) |
 | Product stats | 8 | If Product column exists |
 | Store stats | 8 | If Store column exists |
-| Interactions | 10+ | Dynamic pairwise from numeric columns |
+| Interactions | 10+ | Dynamic pairwise from numeric columns (Price × Promo, etc.) |
 | Momentum/Volatility | 4 | Always |
 
 **Minimum input:** Date + Product + Demand → 40+ features generated
 
 ## What the Model Predicts
 
-**Input:** Product, Date, historical demand patterns, engineered features
+**Input:** Product, Date, Price, Promo, historical demand patterns, engineered features
 
 **Output:** `Predicted_Demand` — number of units expected to be demanded for each Product in the next month
 
@@ -114,7 +137,8 @@ The system auto-generates **40–87+ features** from any dataset:
 
 ```
 backend/
-├── generate_data.py          # Kaggle dataset converter (or synthetic fallback)
+├── retail_sales.csv          # Source dataset (4.56M rows, 50 stores × 50 items, 5 years)
+├── generate_data.py          # retail_sales.csv converter → weekly pipeline format
 ├── data_loader.py            # Dynamic CSV loader (Date+Product+Demand required)
 ├── pipeline.py               # 8-step ML pipeline
 ├── feature_engineering.py    # Dynamic feature engine (40-87+ features)

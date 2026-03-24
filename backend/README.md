@@ -2,6 +2,15 @@
 
 FastAPI backend for the Self-Healing Demand Forecasting System.
 
+## Dataset
+
+**Retail Sales Forecasting Dataset** (`retail_sales.csv`)
+- **4,565,000 rows** — 5 years daily (2019-01-01 to 2023-12-31)
+- **50 stores** (`store_1`…`store_50`) × **50 products** (`item_1`…`item_50`) = 2,500 combinations
+- Columns: `date`, `store_id`, `item_id`, `sales` (0–139), `price` (8.02–99.99), `promo` (0/1), `weekday` (0–6), `month` (1–12)
+- No missing values; each store-product pair has exactly 1,826 daily rows
+- Run `python generate_data.py retail_sales.csv` to convert to weekly pipeline format
+
 ## Structure
 
 ```

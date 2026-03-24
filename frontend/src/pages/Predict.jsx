@@ -4,7 +4,7 @@ import {
   LineChart, Line, Legend, Cell, AreaChart, Area, ComposedChart, ReferenceLine,
 } from 'recharts'
 import { API, useFetch } from '../api.js'
-import { KPI, SectionCard, Spinner, ErrorBox, toast, Badge } from '../ui.jsx'
+import { KPI, SectionCard, Spinner, ErrorBox, toast, Badge, SevBadge } from '../ui.jsx'
 
 const pName = (id, names) => names?.[id] || `Product ${id}`
 
@@ -102,6 +102,7 @@ export default function Predict() {
   const [result, setResult] = useState(null)
   const [selectedPred, setSelectedPred] = useState(null)
   const [predData, setPredData] = useState(null)
+  const [driftData, setDriftData] = useState(null)
   const [drag, setDrag] = useState(false)
   const inputRef = useRef()
   const { data: productNames } = useFetch('/api/product-names')
@@ -123,7 +124,18 @@ export default function Predict() {
     }
   }, [])
 
-  useEffect(() => { loadStatus() }, [loadStatus])
+  // Load drift analysis
+  const loadDriftAnalysis = useCallback(async () => {
+    try {
+      const drift = await API.seqDriftAnalysis()
+      setDriftData(drift)
+    } catch (e) {
+      console.warn('Drift analysis not available:', e.message)
+      setDriftData(null)
+    }
+  }, [])
+
+  useEffect(() => { loadStatus(); loadDriftAnalysis() }, [loadStatus, loadDriftAnalysis])
 
   // Load prediction data
   useEffect(() => {
@@ -167,6 +179,7 @@ export default function Predict() {
       setFile(null)
       toast.success(`Uploaded ${r.uploaded_month} → Predicted ${r.next_prediction?.prediction_month}`)
       loadStatus()
+      loadDriftAnalysis() // Refresh drift analysis after upload
     } catch (e) {
       setError(e.message)
       toast.error(e.message)
@@ -195,6 +208,19 @@ export default function Predict() {
       MAPE: c.mape,
     })) || [],
   [status])
+
+  // Drift chart data
+  const driftChartData = useMemo(() => {
+    if (!driftData?.monthly_data?.length) return []
+    return driftData.monthly_data.map(d => ({
+      month: d.month,
+      MAE: d.mae,
+      'Error Increase %': d.error_increase_pct,
+      severity: d.severity,
+    }))
+  }, [driftData])
+
+  const sevColor = s => s === 'severe' ? '#dc2626' : s === 'mild' ? '#d97706' : '#059669'
 
   const predChartData = useMemo(() => {
     if (!predData?.predictions?.length) return []
@@ -307,6 +333,36 @@ export default function Predict() {
       </SectionCard>
 
       <div className="grid-2" style={{ marginTop: 20 }}>
+        {/* Drift Analysis Section */}
+        {driftData && driftData.status === 'success' && (
+          <SectionCard title="🔍 Drift Analysis">
+            <div className="kpi-grid" style={{ gridTemplateColumns: 'repeat(2, 1fr)', marginBottom: 16 }}>
+              <KPI label="Overall Severity" value={<SevBadge severity={driftData.overall_severity} />} />
+              <KPI label="Avg Error Increase" value={`${driftData.avg_error_increase_pct}%`} color={driftData.avg_error_increase_pct > 50 ? 'var(--red)' : driftData.avg_error_increase_pct > 10 ? 'var(--orange)' : 'var(--green)'} />
+            </div>
+            <div className="alert alert-b" style={{ marginBottom: 12, fontSize: 11 }}>
+              <strong>Recommendation:</strong> {driftData.recommendation}
+            </div>
+            {driftChartData.length > 0 && (
+              <ResponsiveContainer width="100%" height={180}>
+                <BarChart data={driftChartData} margin={{ top: 8, right: 8, bottom: 0, left: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
+                  <XAxis dataKey="month" tick={{ fontSize: 10 }} />
+                  <YAxis tick={{ fontSize: 10 }} tickFormatter={v => v + '%'} />
+                  <Tooltip content={<ChartTooltip />} />
+                  <ReferenceLine y={10} stroke="#d97706" strokeDasharray="4 2" />
+                  <ReferenceLine y={50} stroke="#dc2626" strokeDasharray="4 2" />
+                  <Bar dataKey="Error Increase %" radius={[4, 4, 0, 0]}>
+                    {driftChartData.map((d, i) => (
+                      <Cell key={i} fill={sevColor(d.severity)} />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            )}
+          </SectionCard>
+        )}
+
         {/* Upload Section */}
         <SectionCard title="📤 Upload Monthly Actuals">
           <div
@@ -358,9 +414,9 @@ export default function Predict() {
             </div>
             <div style={{ fontFamily: 'var(--mono)', fontSize: 10, color: 'var(--text2)', lineHeight: 1.6, whiteSpace: 'pre-wrap' }}>
 Date,Product,Demand
-02-01-2026,1,280
-02-01-2026,2,510
-02-01-2026,3,720
+02-01-2024,item_1,280
+02-01-2024,item_2,510
+02-01-2024,item_3,720
             </div>
           </div>
         </SectionCard>
@@ -385,6 +441,13 @@ Date,Product,Demand
                   <Bar dataKey="Predicted" fill={COLORS.predicted} radius={[4, 4, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
+              {result.comparison && result.drift_analysis && (
+                <div className="alert alert-b" style={{ marginTop: 12, fontSize: 12 }}>
+                  <strong>Drift Analysis:</strong> {result.drift_analysis.severity_label} detected. 
+                  Current MAE: {result.drift_analysis.current_mae}, Baseline: {result.drift_analysis.baseline_mae} 
+                  ({result.drift_analysis.error_increase_pct > 0 ? '+' : ''}{result.drift_analysis.error_increase_pct}% change)
+                </div>
+              )}
             </>
           ) : (
             <div style={{ textAlign: 'center', padding: '60px 20px', color: 'var(--text3)' }}>
@@ -420,6 +483,66 @@ Date,Product,Demand
               ))}
             </div>
           )}
+        </SectionCard>
+      )}
+
+      {/* Detailed Drift Analysis */}
+      {driftData && driftData.status === 'success' && driftData.monthly_data?.length > 0 && (
+        <SectionCard title="📈 Monthly Drift Details" style={{ marginTop: 20 }}>
+          <div className="kpi-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', marginBottom: 16 }}>
+            <KPI label="Baseline MAE" value={`${driftData.baseline_mae} units`} color="var(--green)" />
+            <KPI label="Months Analyzed" value={driftData.monthly_data?.length || 0} />
+            <KPI label="Severe Months" value={driftData.monthly_data.filter(d => d.severity === 'severe').length} color="var(--red)" />
+            <KPI label="Mild Months" value={driftData.monthly_data.filter(d => d.severity === 'mild').length} color="var(--orange)" />
+          </div>
+          
+          <div style={{ display: 'flex', gap: 20, marginBottom: 20 }}>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text2)', marginBottom: 8 }}>MAE Trend Over Time</div>
+              <ResponsiveContainer width="100%" height={200}>
+                <LineChart data={driftChartData} margin={{ top: 8, right: 8, bottom: 0, left: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
+                  <XAxis dataKey="month" tick={{ fontSize: 10 }} />
+                  <YAxis tick={{ fontSize: 10 }} />
+                  <Tooltip content={<ChartTooltip />} />
+                  <ReferenceLine y={driftData.baseline_mae} stroke="#10b981" strokeDasharray="4 2" 
+                    label={{ value: 'Baseline', fontSize: 10, fill: '#10b981', position: 'insideTopRight' }} />
+                  <Line type="monotone" dataKey="MAE" stroke="#dc2626" strokeWidth={2} dot={{ r: 3 }} />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+
+          <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text2)', marginBottom: 8 }}>Monthly Drift Summary</div>
+          <div style={{ overflowX: 'auto' }}>
+            <table className="tbl" style={{ fontSize: 12 }}>
+              <thead>
+                <tr>
+                  <th>Month</th>
+                  <th>MAE</th>
+                  <th>MAPE</th>
+                  <th>Error Increase</th>
+                  <th>Severity</th>
+                </tr>
+              </thead>
+              <tbody>
+                {driftData.monthly_data.map(d => (
+                  <tr key={d.month}>
+                    <td className="mono" style={{ fontWeight: 600 }}>{d.month}</td>
+                    <td className="mono" style={{ color: 'var(--red)' }}>{d.mae}</td>
+                    <td className="mono" style={{ color: 'var(--orange)' }}>{d.mape}%</td>
+                    <td className="mono" style={{ 
+                      color: d.error_increase_pct > 50 ? 'var(--red)' : d.error_increase_pct > 10 ? 'var(--orange)' : 'var(--green)',
+                      fontWeight: 600 
+                    }}>
+                      {d.error_increase_pct > 0 ? '+' : ''}{d.error_increase_pct}%
+                    </td>
+                    <td><SevBadge severity={d.severity} /></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </SectionCard>
       )}
 

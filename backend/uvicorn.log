@@ -1,0 +1,572 @@
+INFO:     Will watch for changes in these directories: ['c:\\Users\\balan\\OneDrive\\Desktop\\caps\\backend']
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     Started reloader process [13552] using WatchFiles
+INFO:     Started server process [22112]
+INFO:     Waiting for application startup.
+2026-03-23 17:58:26 | INFO     | demand_analyzer | Loaded 652500 rows for demand analysis
+2026-03-23 17:58:26 | INFO     | demand_analyzer | Demand metrics calculated: avg=204
+2026-03-23 17:58:27 | INFO     | demand_analyzer | Loaded 652500 rows for demand analysis
+2026-03-23 17:58:27 | INFO     | demand_analyzer | Loaded 652500 rows for demand analysis
+2026-03-23 17:58:28 | INFO     | demand_analyzer | Loaded 652500 rows for demand analysis
+INFO:     Application startup complete.
+INFO:     127.0.0.1:61060 - "GET /api/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59712 - "GET /api/baseline HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52930 - "GET /api/drift HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60244 - "GET /api/healing-actions HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:55501 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60241 - "GET /api/monthly-sales HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60242 - "GET /api/datasets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55499 - "GET /api/test-metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55493 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61172 - "GET /api/healing-actions HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:62213 - "GET /api/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49311 - "GET /api/baseline HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53591 - "GET /api/monthly-sales HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53590 - "GET /api/drift HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50076 - "GET /api/healing-actions HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50074 - "GET /api/datasets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62266 - "GET /api/test-metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63773 - "GET /api/healing-actions HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:63772 - "GET /api/datasets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63775 - "GET /api/test-metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49983 - "GET /api/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49984 - "GET /api/baseline HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62310 - "GET /api/monthly-sales HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62308 - "GET /api/drift HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52927 - "GET /api/healing-actions HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:62918 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62916 - "GET /api/datasets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52751 - "GET /api/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52752 - "GET /api/baseline HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59689 - "GET /api/drift HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59691 - "GET /api/monthly-sales HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49783 - "GET /api/healing-actions HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:57127 - "GET /api/datasets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49785 - "GET /api/test-metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62332 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56953 - "GET /api/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56954 - "GET /api/baseline HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56956 - "GET /api/drift HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63151 - "GET /api/monthly-sales HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58198 - "GET /api/healing-actions HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:58880 - "GET /api/datasets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58199 - "GET /api/test-metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49889 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52689 - "GET /api/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50616 - "GET /api/baseline HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54891 - "GET /api/drift HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61416 - "GET /api/healing-actions HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:61411 - "GET /api/monthly-sales HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61415 - "GET /api/datasets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61417 - "GET /api/test-metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53054 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52283 - "GET /api/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59399 - "GET /api/baseline HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59401 - "GET /api/drift HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57976 - "GET /api/monthly-sales HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52924 - "GET /api/healing-actions HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:52922 - "GET /api/datasets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49682 - "GET /api/test-metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57143 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49681 - "GET /api/test-metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49318 - "GET /api/monthly-sales HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55798 - "GET /api/drift HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55800 - "GET /api/baseline HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53311 - "GET /api/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52222 - "GET /api/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59571 - "GET /api/baseline HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61900 - "GET /api/drift HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54640 - "GET /api/monthly-sales HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59787 - "GET /api/healing-actions HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50566 - "GET /api/datasets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50362 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59789 - "GET /api/test-metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59941 - "GET /api/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55783 - "GET /api/baseline HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62471 - "GET /api/drift HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62473 - "GET /api/monthly-sales HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59160 - "GET /api/datasets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65191 - "GET /api/healing-actions HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:60068 - "GET /api/test-metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59845 - "GET /api/healing-actions HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64196 - "GET /api/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58384 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58382 - "GET /api/datasets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64532 - "GET /api/baseline HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59244 - "GET /api/drift HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59246 - "GET /api/monthly-sales HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53079 - "GET /api/healing-actions HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:53081 - "GET /api/test-metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62397 - "GET /api/healing-actions HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64404 - "GET /api/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52634 - "GET /api/baseline HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54513 - "GET /api/drift HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54515 - "GET /api/monthly-sales HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62485 - "GET /api/datasets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50110 - "GET /api/healing-actions HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50112 - "GET /api/test-metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58468 - "GET /api/healing-actions HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:58470 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62151 - "GET /api/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51165 - "GET /api/baseline HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54919 - "GET /api/drift HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54921 - "GET /api/monthly-sales HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58573 - "GET /api/healing-actions HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:58572 - "GET /api/datasets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58574 - "GET /api/test-metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58575 - "GET /api/test-metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58226 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49175 - "GET /api/datasets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63240 - "GET /api/healing-actions HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:63241 - "GET /api/test-metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53011 - "GET /api/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56918 - "GET /api/baseline HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54332 - "GET /api/drift HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54334 - "GET /api/monthly-sales HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61073 - "GET /api/healing-actions HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:56605 - "GET /api/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64793 - "GET /api/healing-actions HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64791 - "GET /api/datasets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54598 - "GET /api/test-metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60439 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64973 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51690 - "GET /api/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51691 - "GET /api/datasets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56223 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56227 - "GET /api/baseline HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56228 - "GET /api/drift HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56226 - "GET /api/monthly-sales HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61810 - "GET /api/healing-actions HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:52175 - "GET /api/processed-months HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52174 - "GET /api/product-names HTTP/1.1" 200 OK
+2026-03-23 18:08:34 | INFO     | demand_analyzer | Loaded 652500 rows for demand analysis
+INFO:     127.0.0.1:56225 - "GET /api/product-demand HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52477 - "GET /api/healing-actions HTTP/1.1" 404 Not Found
+2026-03-23 18:08:35 | INFO     | demand_analyzer | Loaded 652500 rows for demand analysis
+2026-03-23 18:08:35 | INFO     | demand_analyzer | Demand metrics calculated: avg=204
+INFO:     127.0.0.1:62626 - "GET /api/demand-metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57198 - "GET /api/product-monthly HTTP/1.1" 200 OK
+2026-03-23 18:08:35 | INFO     | demand_analyzer | Loaded 652500 rows for demand analysis
+INFO:     127.0.0.1:57196 - "GET /api/monthly-demand HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54784 - "GET /api/product-forecast HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56224 - "GET /api/feature-importances HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56188 - "GET /api/feature-importances HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56346 - "GET /api/healing-actions HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:56344 - "GET /api/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56348 - "GET /api/drift HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56350 - "GET /api/baseline HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56345 - "GET /api/datasets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49157 - "GET /api/monthly-sales HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56347 - "GET /api/test-metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52427 - "GET /api/healing-actions HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:54472 - "GET /api/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54473 - "GET /api/baseline HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54474 - "GET /api/drift HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54475 - "GET /api/monthly-sales HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54479 - "GET /api/healing-actions HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:54478 - "GET /api/datasets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53577 - "GET /api/test-metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55799 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56969 - "GET /api/healing-actions HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:62563 - "GET /api/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58314 - "GET /api/baseline HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52133 - "GET /api/healing-actions HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51896 - "GET /api/drift HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51897 - "GET /api/monthly-sales HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52134 - "GET /api/datasets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52136 - "GET /api/test-metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56917 - "GET /api/healing-actions HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64069 - "GET /api/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64070 - "GET /api/baseline HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64072 - "GET /api/monthly-sales HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64076 - "GET /api/healing-actions HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64071 - "GET /api/drift HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64075 - "GET /api/datasets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52470 - "GET /api/test-metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64577 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51346 - "GET /api/healing-actions HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:59381 - "GET /api/drift HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59483 - "GET /api/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59485 - "GET /api/datasets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56442 - "GET /api/drift HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52586 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52587 - "GET /api/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52588 - "GET /api/datasets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50062 - "GET /api/drift HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53462 - "GET /api/baseline HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53463 - "GET /api/drift HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53464 - "GET /api/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53465 - "GET /api/test-metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53738 - "GET /api/datasets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52710 - "GET /api/baseline HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52711 - "GET /api/drift HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52712 - "GET /api/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52713 - "GET /api/test-metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55416 - "GET /api/monthly-sales HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57998 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58000 - "GET /api/datasets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57814 - "GET /api/monthly-sales HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57817 - "GET /api/drift HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50879 - "GET /api/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50881 - "GET /api/datasets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63979 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63980 - "GET /api/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63981 - "GET /api/datasets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61606 - "GET /api/drift HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61605 - "GET /api/monthly-sales HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50979 - "GET /api/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50980 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50982 - "GET /api/datasets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55113 - "GET /api/monthly-demand HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55115 - "GET /api/feature-importances HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55117 - "GET /api/product-demand HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55116 - "GET /api/demand-metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63118 - "GET /api/processed-months HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49334 - "GET /api/baseline HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49335 - "GET /api/monthly-sales HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56423 - "GET /api/drift HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50400 - "GET /api/healing-actions HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50826 - "GET /api/healing-actions HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50401 - "GET /api/test-metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59998 - "GET /api/product-names HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55118 - "GET /api/product-forecast HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59996 - "GET /api/product-monthly HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55311 - "GET /api/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55313 - "GET /api/monthly-sales HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55312 - "GET /api/feature-importances HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60148 - "GET /api/product-forecast HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60151 - "GET /api/product-monthly HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60152 - "GET /api/drift HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57700 - "GET /api/datasets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59388 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59389 - "GET /api/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59391 - "GET /api/datasets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50610 - "GET /api/product-names HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50608 - "GET /api/processed-months HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50609 - "GET /api/monthly-sales HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61686 - "GET /api/demand-metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61688 - "GET /api/product-demand HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61687 - "GET /api/monthly-demand HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61690 - "GET /api/product-monthly HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61689 - "GET /api/product-forecast HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50220 - "GET /api/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50221 - "GET /api/datasets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56406 - "GET /api/datasets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59403 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59404 - "GET /api/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50470 - "GET /api/baseline HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51319 - "GET /api/product-names HTTP/1.1" 200 OK
+2026-03-23 18:16:24 | INFO     | sequential_predictor | Loaded model with 66 features
+2026-03-23 18:16:24 | INFO     | sequential_predictor | Loaded feature engineer state
+INFO:     127.0.0.1:51321 - "GET /api/seq/status HTTP/1.1" 200 OK
+2026-03-23 18:16:25 | INFO     | sequential_predictor | Loaded model with 66 features
+2026-03-23 18:16:25 | INFO     | sequential_predictor | Loaded feature engineer state
+INFO:     127.0.0.1:56847 - "GET /api/seq/prediction/2026-03 HTTP/1.1" 200 OK
+2026-03-23 18:16:34 | INFO     | sequential_predictor | Loaded model with 66 features
+2026-03-23 18:16:34 | INFO     | sequential_predictor | Loaded feature engineer state
+INFO:     127.0.0.1:62647 - "GET /api/seq/prediction/2026-02 HTTP/1.1" 200 OK
+2026-03-23 18:16:35 | INFO     | sequential_predictor | Loaded model with 66 features
+2026-03-23 18:16:35 | INFO     | sequential_predictor | Loaded feature engineer state
+INFO:     127.0.0.1:61288 - "GET /api/seq/prediction/2024-02 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52719 - "GET /api/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52720 - "GET /api/datasets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60366 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60367 - "GET /api/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60368 - "GET /api/datasets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52450 - "GET /api/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52451 - "GET /api/datasets HTTP/1.1" 200 OK
+WARNING:  WatchFiles detected changes in '_info.py'. Reloading...
+INFO:     127.0.0.1:54821 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53090 - "GET /api/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53091 - "GET /api/datasets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64302 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62835 - "GET /api/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55353 - "GET /api/datasets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54203 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54003 - "GET /api/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54005 - "GET /api/datasets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63241 - "GET /api/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62784 - "GET /api/datasets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56605 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50559 - "GET /api/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54718 - "GET /api/datasets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61415 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49194 - "GET /api/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54664 - "GET /api/datasets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62977 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55268 - "GET /api/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55270 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55269 - "GET /api/datasets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65185 - "GET /api/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65186 - "GET /api/datasets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53265 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54097 - "GET /api/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64114 - "GET /api/datasets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50603 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52426 - "GET /api/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52427 - "GET /api/datasets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52294 - "GET /api/baseline HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63507 - "GET /api/monthly-sales HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63508 - "GET /api/processed-months HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64965 - "GET /api/product-names HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55281 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54951 - "GET /api/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50598 - "GET /api/datasets HTTP/1.1" 200 OK
+2026-03-23 18:27:13 | INFO     | demand_analyzer | Loaded 652500 rows for demand analysis
+2026-03-23 18:27:13 | INFO     | demand_analyzer | Loaded 652500 rows for demand analysis
+2026-03-23 18:27:14 | INFO     | demand_analyzer | Loaded 652500 rows for demand analysis
+2026-03-23 18:27:14 | INFO     | demand_analyzer | Demand metrics calculated: avg=204
+INFO:     127.0.0.1:64963 - "GET /api/product-forecast HTTP/1.1" 200 OK
+2026-03-23 18:27:17 | INFO     | demand_analyzer | Loaded 652500 rows for demand analysis
+INFO:     127.0.0.1:59335 - "GET /api/baseline HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59336 - "GET /api/drift HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49686 - "GET /api/healing-actions HTTP/1.1" 404 Not Found
+2026-03-23 18:27:17 | INFO     | demand_analyzer | Loaded 652500 rows for demand analysis
+INFO:     127.0.0.1:49685 - "GET /api/monthly-sales HTTP/1.1" 200 OK
+2026-03-23 18:27:18 | INFO     | demand_analyzer | Loaded 652500 rows for demand analysis
+2026-03-23 18:27:18 | INFO     | demand_analyzer | Demand metrics calculated: avg=204
+INFO:     127.0.0.1:49687 - "GET /api/test-metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63280 - "GET /api/baseline HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63284 - "GET /api/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63283 - "GET /api/drift HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57883 - "GET /api/datasets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53477 - "GET /api/monthly-sales HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53476 - "GET /api/feature-importances HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61060 - "GET /api/product-monthly HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61062 - "GET /api/product-forecast HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60825 - "GET /api/processed-months HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60827 - "GET /api/product-names HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53135 - "GET /api/demand-metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53136 - "GET /api/monthly-demand HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53139 - "GET /api/product-demand HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53140 - "GET /api/datasets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53836 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53837 - "GET /api/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59321 - "GET /api/datasets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56253 - "GET /api/baseline HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63604 - "GET /api/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63606 - "GET /api/datasets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59454 - "GET /api/healing-status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54386 - "GET /api/healing-status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53843 - "GET /api/healing-status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63077 - "GET /api/healing-status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54583 - "GET /api/healing-status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57270 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57271 - "GET /api/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57272 - "GET /api/datasets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54674 - "GET /api/healing-status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63191 - "GET /api/healing-status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60867 - "GET /api/healing-status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60554 - "GET /api/healing-status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64091 - "GET /api/healing-status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57147 - "GET /api/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49194 - "GET /api/datasets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53163 - "GET /api/healing-status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63201 - "GET /api/healing-status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50998 - "GET /api/healing-status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64693 - "GET /api/healing-status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49807 - "GET /api/healing-status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51763 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57485 - "GET /api/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57487 - "GET /api/datasets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58819 - "GET /api/healing-status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64182 - "GET /api/healing-status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64080 - "GET /api/healing-status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49887 - "GET /api/healing-status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52824 - "GET /api/healing-status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64129 - "GET /api/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64130 - "GET /api/datasets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64047 - "GET /api/healing-status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56166 - "GET /api/healing-status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64173 - "GET /api/healing-status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53440 - "GET /api/healing-status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51195 - "GET /api/healing-status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54475 - "GET /api/product-names HTTP/1.1" 200 OK
+2026-03-23 18:31:05 | INFO     | sequential_predictor | Loaded model with 0 features
+2026-03-23 18:31:05 | INFO     | sequential_predictor | Loaded feature engineer state
+INFO:     127.0.0.1:54476 - "GET /api/seq/status HTTP/1.1" 200 OK
+2026-03-23 18:31:05 | INFO     | sequential_predictor | Loaded model with 0 features
+2026-03-23 18:31:05 | INFO     | sequential_predictor | Loaded feature engineer state
+INFO:     127.0.0.1:63255 - "GET /api/seq/prediction/2026-03 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50064 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50065 - "GET /api/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50066 - "GET /api/datasets HTTP/1.1" 200 OK
+2026-03-23 18:31:14 | INFO     | sequential_predictor | Loaded model with 0 features
+2026-03-23 18:31:14 | INFO     | sequential_predictor | Loaded feature engineer state
+2026-03-23 18:31:14 | INFO     | sequential_predictor | Auto-filled 'Store' = 1
+2026-03-23 18:31:17 | INFO     | feature_engineering | Feature pipeline: 63 features from 220 rows
+INFO:     127.0.0.1:52019 - "POST /api/seq/upload-actuals HTTP/1.1" 422 Unprocessable Content
+INFO:     127.0.0.1:56880 - "GET /api/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56882 - "GET /api/datasets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58017 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58652 - "GET /api/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50564 - "GET /api/datasets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56403 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56408 - "GET /api/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56409 - "GET /api/drift HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56410 - "GET /api/monthly-sales HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56411 - "GET /api/datasets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54818 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53417 - "GET /api/product-forecast HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63501 - "GET /api/product-monthly HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63502 - "GET /api/feature-importances HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63503 - "GET /api/demand-metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58209 - "GET /api/monthly-demand HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58210 - "GET /api/product-demand HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58217 - "GET /api/healing-actions HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:58218 - "GET /api/processed-months HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58216 - "GET /api/baseline HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58212 - "GET /api/product-names HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63411 - "GET /api/healing-actions HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51373 - "GET /api/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51374 - "GET /api/test-metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51379 - "GET /api/healing-actions HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51380 - "GET /api/drift HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51381 - "GET /api/monthly-sales HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51382 - "GET /api/datasets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51420 - "GET /api/baseline HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64337 - "GET /api/healing-actions HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:57957 - "GET /api/healing-actions HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:57952 - "GET /api/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57953 - "GET /api/baseline HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57954 - "GET /api/drift HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57955 - "GET /api/monthly-sales HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57956 - "GET /api/datasets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59035 - "GET /api/test-metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58386 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58389 - "GET /api/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58390 - "GET /api/datasets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53335 - "GET /api/healing-actions HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:53332 - "GET /api/baseline HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53333 - "GET /api/drift HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53334 - "GET /api/monthly-sales HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53336 - "GET /api/test-metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51384 - "GET /api/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61291 - "GET /api/baseline HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52662 - "GET /api/drift HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52170 - "GET /api/monthly-sales HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58825 - "GET /api/datasets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49829 - "GET /api/healing-actions HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:56244 - "GET /api/test-metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51415 - "GET /api/healing-actions HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:65311 - "GET /api/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58767 - "GET /api/baseline HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58769 - "GET /api/drift HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50736 - "GET /api/monthly-sales HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50738 - "GET /api/datasets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50407 - "GET /api/healing-actions HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:63329 - "GET /api/test-metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58341 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57228 - "GET /api/healing-actions HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:54666 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54666 - "GET /api/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49977 - "GET /api/baseline HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49977 - "GET /api/drift HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49977 - "GET /api/monthly-sales HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49977 - "GET /api/healing-actions HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:54666 - "GET /api/datasets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54666 - "GET /api/test-metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54666 - "GET /api/feature-importances HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54666 - "GET /api/demand-metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54666 - "GET /api/monthly-demand HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49977 - "GET /api/product-demand HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55093 - "GET /api/product-forecast HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57542 - "GET /api/product-monthly HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57542 - "GET /api/product-names HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55093 - "GET /api/processed-months HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55093 - "GET /api/healing-actions HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:55093 - "GET /api/healing-actions HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51063 - "GET /api/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51063 - "GET /api/baseline HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51063 - "GET /api/drift HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51063 - "GET /api/monthly-sales HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51063 - "GET /api/datasets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51063 - "GET /api/healing-actions HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51063 - "GET /api/test-metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58560 - "GET /api/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58560 - "GET /api/datasets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58560 - "GET /api/baseline HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54751 - "GET /api/drift HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54751 - "GET /api/monthly-sales HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54751 - "GET /api/healing-actions HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:54751 - "GET /api/test-metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60948 - "GET /api/healing-actions HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:60948 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50986 - "GET /api/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50986 - "GET /api/baseline HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50986 - "GET /api/drift HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50986 - "GET /api/monthly-sales HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50986 - "GET /api/datasets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50986 - "GET /api/healing-actions HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50986 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62691 - "GET /api/product-forecast HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55960 - "GET /api/product-monthly HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55960 - "GET /api/processed-months HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55960 - "GET /api/monthly-sales HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55960 - "GET /api/baseline HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55960 - "GET /api/drift HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55960 - "GET /api/healing-actions HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:55960 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55960 - "GET /api/healing-actions HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:59647 - "GET /api/feature-importances HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62691 - "GET /api/product-names HTTP/1.1" 200 OK
+2026-03-23 18:39:38 | INFO     | demand_analyzer | Loaded 652500 rows for demand analysis
+2026-03-23 18:39:38 | INFO     | demand_analyzer | Loaded 652500 rows for demand analysis
+2026-03-23 18:39:38 | INFO     | demand_analyzer | Loaded 652500 rows for demand analysis
+INFO:     127.0.0.1:60117 - "GET /api/monthly-demand HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57767 - "GET /api/product-demand HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57767 - "GET /api/product-names HTTP/1.1" 200 OK
+2026-03-23 18:39:38 | INFO     | demand_analyzer | Demand metrics calculated: avg=204
+INFO:     127.0.0.1:54839 - "GET /api/demand-metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54839 - "GET /api/monthly-demand HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54839 - "GET /api/product-demand HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57767 - "GET /api/demand-metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58217 - "GET /api/healing-actions HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50473 - "GET /api/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50599 - "GET /api/baseline HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58596 - "GET /api/drift HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54648 - "GET /api/monthly-sales HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65393 - "GET /api/datasets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58217 - "GET /api/test-metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58653 - "GET /api/healing-actions HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:56286 - "GET /api/healing-actions HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:56049 - "GET /api/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56049 - "GET /api/baseline HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56049 - "GET /api/drift HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56049 - "GET /api/monthly-sales HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56049 - "GET /api/datasets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56049 - "GET /api/healing-actions HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:56049 - "GET /api/test-metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55333 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49402 - "GET /api/healing-actions HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:55333 - "GET /api/datasets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51297 - "GET /api/test-metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53716 - "GET /api/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53716 - "GET /api/baseline HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53716 - "GET /api/drift HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53716 - "GET /api/monthly-sales HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53716 - "GET /api/healing-actions HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:57743 - "GET /api/datasets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57743 - "GET /api/healing-actions HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:57743 - "GET /api/test-metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59846 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59846 - "GET /api/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59846 - "GET /api/datasets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53101 - "GET /api/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56146 - "GET /api/datasets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51418 - "GET /api/baseline HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51418 - "GET /api/drift HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51418 - "GET /api/monthly-sales HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51418 - "GET /api/healing-actions HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51418 - "GET /api/test-metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51759 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51759 - "GET /api/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58347 - "GET /api/datasets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55703 - "GET /api/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58895 - "GET /api/baseline HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55539 - "GET /api/drift HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55703 - "GET /api/monthly-sales HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55539 - "GET /api/healing-actions HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:58895 - "GET /api/datasets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55703 - "GET /api/test-metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53330 - "GET /api/health HTTP/1.1" 200 OK

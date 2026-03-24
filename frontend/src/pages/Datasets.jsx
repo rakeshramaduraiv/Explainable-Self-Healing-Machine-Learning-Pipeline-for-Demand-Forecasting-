@@ -15,7 +15,7 @@ const BatchRow = memo(({ b }) => (
 ))
 
 export default function Datasets() {
-  const { data, loading, error, reload } = useFetch('/api/datasets')
+  const { data, loading, error, reload } = useFetch('/api/datasets', { pollMs: 15000 })
 
   if (error) return <ErrorBox msg={error} onRetry={reload} />
 
@@ -38,9 +38,9 @@ export default function Datasets() {
       </div>
 
       <div className="kpi-grid" style={{ gridTemplateColumns: 'repeat(5,1fr)' }}>
-        <KPI label="Train Rows"    value={loading ? '…' : (split.train_rows || 0).toLocaleString()} />
-        <KPI label="Test Rows"     value={loading ? '…' : (split.test_rows  || 0).toLocaleString()} />
-        <KPI label="Train / Test"  value={loading ? '…' : (split.train_year && split.test_year ? `${split.train_year} / ${split.test_year}` : '—')} />
+        <KPI label="Train Rows"    value={loading ? '…' : (split.train_rows || 0).toLocaleString()} delta={split.train_years ? split.train_years.join('–') : ''} />
+        <KPI label="Test Rows"     value={loading ? '…' : (split.test_rows  || 0).toLocaleString()} delta={split.test_year ? `Year ${split.test_year}` : ''} />
+        <KPI label="Train / Test"  value={loading ? '…' : (split.train_years?.length ? `${split.train_years[0]}–${split.train_years[split.train_years.length-1]} / ${split.test_year}` : '—')} />
         <KPI label="Products"      value={loading ? '…' : (insp.products || 0)} />
         <KPI label="Batches"       value={loading ? '…' : batches.length} delta={`${sevCounts.severe || 0} severe`} color={sevCounts.severe ? 'var(--red)' : undefined} />
       </div>
@@ -50,12 +50,13 @@ export default function Datasets() {
           <table className="tbl">
             <tbody>
               {[
-                ['Source',          'Product Demand Dataset'],
+                ['Source',          'Retail Sales Dataset (2019–2023)'],
                 ['Total Records',   (insp.rows || 0).toLocaleString() + ' rows'],
                 ['Date Range',      `${dr[0]?.slice(0, 10)} → ${dr[1]?.slice(0, 10)}`],
+                ['Train Period',    split.train_start && split.train_end ? `${split.train_start} → ${split.train_end}` : '—'],
                 ['Train Rows',      (split.train_rows || 0).toLocaleString()],
+                ['Test Period',     split.test_start  && split.test_end  ? `${split.test_start} → ${split.test_end}`  : '—'],
                 ['Test Rows',       (split.test_rows  || 0).toLocaleString()],
-                ['Train / Test Year', split.train_year && split.test_year ? `${split.train_year} / ${split.test_year}` : '—'],
                 ['Missing Values',  insp.missing_values ?? 0],
               ].map(([k, v]) => (
                 <tr key={k}>

@@ -1,11 +1,18 @@
 import { useEffect, useState, useCallback, useRef } from 'react'
 
-const BASE = import.meta.env.VITE_API_URL || ''
+const BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000'
 
 // ── Cache + dedup ─────────────────────────────────────────────────────────────
 const inflight = new Map()
 export const memCache = new Map()   // exported so useFetch can read synchronously
-const MEM_TTL = 60_000
+const MEM_TTL = 15_000
+
+// Bust cache when tab regains focus so data is always fresh on return
+if (typeof document !== 'undefined') {
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') memCache.clear()
+  })
+}
 
 function dedupFetch(url, signal) {
   const hit   = memCache.get(url)
@@ -135,4 +142,5 @@ export const API = {
   },
   seqPrediction:   month => fetch(BASE + `/api/seq/prediction/${month}`).then(r => r.json()),
   seqComparison:   month => fetch(BASE + `/api/seq/comparison/${month}`).then(r => r.json()),
+  seqDriftAnalysis: () => fetch(BASE + '/api/seq/drift-analysis').then(r => r.json()),
 }

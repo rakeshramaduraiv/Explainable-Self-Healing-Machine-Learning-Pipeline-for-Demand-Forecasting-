@@ -44,6 +44,9 @@ class DataLoader:
         self.df = pd.read_csv(self.filepath, encoding="utf-8-sig")
         self.df.columns = self.df.columns.str.strip().str.replace('\ufeff', '')
 
+        # NO SAMPLING: Use full dataset for training
+        log.info(f"Using full dataset: {len(self.df)} rows for complete model training")
+
         # Auto-rename known aliases
         rename_map = {}
         for col in self.df.columns:
@@ -144,41 +147,53 @@ class DataLoader:
         return info
 
     def split_by_year(self):
+        """Train: all years except last full year. Test: last full year only.
+        A year is 'full' if it has >= 10 months of data.
+        """
         years = sorted(self.df["Date"].dt.year.unique())
         if len(years) < 2:
             raise ValueError(
-                f"Need at least 2 years of data. Found only: {years}. "
-                f"Upload 24 months of data (e.g., 2024 + 2025)."
+                f"Need at least 2 years of data. Found only: {years}."
             )
 
-        train_year = years[0]
-        test_year = years[1]
+        # Find last year with >= 10 months (skip partial overflow years)
+        months_per_year = self.df.groupby(self.df["Date"].dt.year)["Date"].apply(
+            lambda s: s.dt.month.nunique()
+        )
+        full_years = [y for y in years if months_per_year.get(y, 0) >= 10]
+        if len(full_years) < 2:
+            full_years = years  # fallback: use all years
 
-        train_df = self.df[self.df["Date"].dt.year == train_year].copy()
-        test_df = self.df[self.df["Date"].dt.year == test_year].copy()
+        test_year   = full_years[-1]
+        train_years = [y for y in years if y < test_year]
+
+        train_df = self.df[self.df["Date"].dt.year.isin(train_years)].copy()
+        test_df  = self.df[self.df["Date"].dt.year == test_year].copy()
 
         if len(train_df) == 0:
-            raise ValueError(f"No data for training year {train_year}")
+            raise ValueError(f"No data for training years {train_years}")
         if len(test_df) == 0:
-            raise ValueError(f"No data for testing year {test_year}")
-
-        train_months = train_df["Date"].dt.month.nunique()
-        test_months = test_df["Date"].dt.month.nunique()
+            raise ValueError(f"No data for test year {test_year}")
 
         split_info = {
-            "train_year": int(train_year),
-            "test_year": int(test_year),
-            "train_rows": int(len(train_df)),
-            "test_rows": int(len(test_df)),
-            "train_months": int(train_months),
-            "test_months": int(test_months),
+            "train_years":  [int(y) for y in train_years],
+            "test_year":    int(test_year),
+            "train_year":   int(train_years[0]),
+            "train_start":  str(train_df["Date"].min().date()),
+            "train_end":    str(train_df["Date"].max().date()),
+            "test_start":   str(test_df["Date"].min().date()),
+            "test_end":     str(test_df["Date"].max().date()),
+            "train_rows":   int(len(train_df)),
+            "test_rows":    int(len(test_df)),
+            "train_months": int(train_df["Date"].dt.to_period("M").nunique()),
+            "test_months":  int(test_df["Date"].dt.to_period("M").nunique()),
         }
         os.makedirs("logs", exist_ok=True)
         with open("logs/data_split.json", "w") as f:
             json.dump(split_info, f, indent=2)
 
-        log.info(f"Train: {train_year} ({len(train_df)} rows, {train_months} months)")
-        log.info(f"Test:  {test_year} ({len(test_df)} rows, {test_months} months)")
+        log.info(f"Train: {train_years} ({len(train_df):,} rows, {split_info['train_months']} months)")
+        log.info(f"Test:  {test_year} ({len(test_df):,} rows, {split_info['test_months']} months)")
 
         return train_df, test_df
 

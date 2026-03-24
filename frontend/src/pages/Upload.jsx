@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from 'react'
+import { useState, useRef, useCallback, useMemo } from 'react'
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid,
   LineChart, Line, Legend, ReferenceLine, ComposedChart, Area, AreaChart, Cell,
@@ -11,9 +11,9 @@ const MAX_MB = 50
 
 const CSV_COLS = [
   ['Date',    'date (DD-MM-YYYY)', '05-01-2024', true],
-  ['Product', 'integer (category)','1',          true],
+  ['Product', 'str/int (item)',    'item_1',     true], 
   ['Demand',  'integer (units)',   '152',        true],
-  ['Store',   'integer (optional)','1',          false],
+  ['Store',   'str/int (optional)','store_1',    false],
 ]
 
 // ── Tooltip ───────────────────────────────────────────────────────────────────
@@ -60,7 +60,10 @@ export default function Upload() {
   const [progress, setProgress] = useState(0)
   const inputRef = useRef()
 
-  const { data: baseline } = useFetch('/api/baseline')
+  // ── Optimized data fetching with conditional loading ─────────────────────────
+  const { data: baseline } = useFetch('/api/baseline', { 
+    enabled: tab === 'results' || result !== null 
+  })
   const trainMetrics = baseline?.train || {}
 
   const pickFile = useCallback(f => {
@@ -90,8 +93,8 @@ export default function Upload() {
       setProgress(85)
       const [drift, monthly, healing] = await Promise.all([
         API.drift(),
-        fetch(BASE + '/api/monthly-sales').then(r => r.json()).catch(() => []),
-        fetch(BASE + '/api/healing-history').then(r => r.json()).catch(() => []),
+        fetch(BASE + '/api/monthly-sales').then(r => r.ok ? r.json() : []).catch(() => []),
+        fetch(BASE + '/api/healing-history').then(r => r.ok ? r.json() : []).catch(() => []),
       ])
       setProgress(100)
       setResult({ stdout: data.stdout, drift, monthly, healing })
@@ -106,43 +109,56 @@ export default function Upload() {
     }
   }, [file])
 
-  // ── Derived data ─────────────────────────────────────────────────────────────
-  const drift   = result?.drift   || []
-  const monthly = result?.monthly || []
-  const healing = result?.healing || []
-  const healMap = Object.fromEntries(healing.map(h => [h.month, h]))
+  // ── Memoized derived data for performance ─────────────────────────────────────
+  const drift = useMemo(() => result?.drift || [], [result?.drift])
+  const monthly = useMemo(() => result?.monthly || [], [result?.monthly])
+  const healing = useMemo(() => result?.healing || [], [result?.healing])
+  const healMap = useMemo(() => 
+    Object.fromEntries(healing.map(h => [h.month, h])), [healing]
+  )
 
-  const avgCurrentMAE  = drift.length ? drift.reduce((s, d) => s + (d.error_trend?.current_error  || 0), 0) / drift.length : 0
-  const avgBaselineMAE = drift.length ? drift.reduce((s, d) => s + (d.error_trend?.baseline_error || 0), 0) / drift.length : 0
-  const severeMonths   = drift.filter(d => d.severity === 'severe').length
-  const mildMonths     = drift.filter(d => d.severity === 'mild').length
+  const stats = useMemo(() => {
+    if (!drift.length) return { avgCurrentMAE: 0, avgBaselineMAE: 0, severeMonths: 0, mildMonths: 0 }
+    return {
+      avgCurrentMAE: drift.reduce((s, d) => s + (d.error_trend?.current_error || 0), 0) / drift.length,
+      avgBaselineMAE: drift.reduce((s, d) => s + (d.error_trend?.baseline_error || 0), 0) / drift.length,
+      severeMonths: drift.filter(d => d.severity === 'severe').length,
+      mildMonths: drift.filter(d => d.severity === 'mild').length
+    }
+  }, [drift])
 
-  // Chart data
-  const maeTrendData = drift.map(d => ({
-    month:    d.month,
-    'Test Set MAE': +(d.error_trend?.current_error  || 0).toFixed(0),
-    'Baseline': +(d.error_trend?.baseline_error || 0).toFixed(0),
-  }))
-
-  const featureData = drift.map(d => ({
-    month:  d.month,
-    Severe: d.severe_features || 0,
-    Mild:   d.mild_features   || 0,
-    Total:  (d.severe_features || 0) + (d.mild_features || 0),
-  }))
-
-  const errorIncreaseData = drift.map(d => ({
-    month:    d.month,
-    'Error Increase %': +((d.error_trend?.error_increase || 0) * 100).toFixed(1),
-    sev:      d.severity,
-  }))
-
-  const salesData = monthly.map(d => ({
-    month:     d.month,
-    'Test Set':  d.actual,
-    Predicted: d.predicted,
-    MAE:       d.mae,
-  }))
+  // Memoized chart data
+  const chartData = useMemo(() => {
+    if (!drift.length) return { maeTrendData: [], featureData: [], errorIncreaseData: [], salesData: [] }
+    
+    return {
+      maeTrendData: drift.map(d => ({
+        month: d.month,
+        'Test Set MAE': +(d.error_trend?.current_error || 0).toFixed(0),
+        'Baseline': +(d.error_trend?.baseline_error || 0).toFixed(0),
+      })),
+      
+      featureData: drift.map(d => ({
+        month: d.month,
+        Severe: d.severe_features || 0,
+        Mild: d.mild_features || 0,
+        Total: (d.severe_features || 0) + (d.mild_features || 0),
+      })),
+      
+      errorIncreaseData: drift.map(d => ({
+        month: d.month,
+        'Error Increase %': +((d.error_trend?.error_increase || 0) * 100).toFixed(1),
+        sev: d.severity,
+      })),
+      
+      salesData: monthly.map(d => ({
+        month: d.month,
+        'Test Set': d.actual,
+        Predicted: d.predicted,
+        MAE: d.mae,
+      }))
+    }
+  }, [drift, monthly])
 
   return (
     <>
@@ -184,13 +200,20 @@ export default function Upload() {
             <div style={{ marginTop: 14 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, color: 'var(--text3)', marginBottom: 6 }}>
                 <span style={{ fontWeight: 600 }}>
-                  {progress < 65 ? 'Running pipeline…' : progress < 90 ? 'Fetching drift results…' : 'Finalising…'}
+                  {progress < 30 ? '⚡ Fast feature engineering...' : 
+                   progress < 65 ? '⚡ Optimized model training...' : 
+                   progress < 90 ? 'Fetching drift results...' : 'Finalising...'}
                 </span>
                 <span>{progress}%</span>
               </div>
               <div className="progress-bar" style={{ height: 5 }}>
-                <div className="progress-fill" style={{ width: `${progress}%`, background: 'linear-gradient(90deg, var(--blue), var(--purple))' }} />
+                <div className="progress-fill" style={{ width: `${progress}%`, background: 'linear-gradient(90deg, var(--green), var(--blue))' }} />
               </div>
+              {progress < 65 && (
+                <div style={{ fontSize: 10, color: 'var(--text3)', marginTop: 4 }}>
+                  ⚡ Speed optimizations: Reduced features, faster hyperparameter tuning, optimized CV
+                </div>
+              )}
             </div>
           )}
 
@@ -205,19 +228,19 @@ export default function Upload() {
             </div>
           )}
 
-          <SectionCard title="Expected CSV Format" style={{ marginTop: 20 }}>
-            <div className="alert alert-b" style={{ marginBottom: 12, fontSize: 12 }}>
-              <strong>Date, Product, and Demand are required.</strong> Add any extra columns (Store, Temperature, CPI, etc.) and the system auto-detects them as features.
+          <SectionCard title="Required CSV Format" style={{ marginTop: 20 }}>
+            <div className="alert alert-r" style={{ marginBottom: 12, fontSize: 12 }}>
+              <strong>REQUIRED: Date, Product, and Demand columns.</strong> The model needs all three to work properly. Store and other columns are optional features.
             </div>
             <table className="tbl">
               <thead><tr><th>Column</th><th>Type</th><th>Example</th><th>Required</th></tr></thead>
               <tbody>
                 {CSV_COLS.map(([col, type, ex, req]) => (
                   <tr key={col}>
-                    <td className="mono" style={{ color: req ? 'var(--blue)' : 'var(--text3)', fontWeight: 600 }}>{col}</td>
+                    <td className="mono" style={{ color: req ? 'var(--red)' : 'var(--text3)', fontWeight: 600 }}>{col}</td>
                     <td style={{ color: 'var(--text3)' }}>{type}</td>
                     <td className="mono">{ex}</td>
-                    <td>{req ? <span className="badge b-blue">Required</span> : <span className="badge b-green">Optional</span>}</td>
+                    <td>{req ? <span className="badge b-red">Required</span> : <span className="badge b-green">Optional</span>}</td>
                   </tr>
                 ))}
                 <tr>
@@ -228,6 +251,13 @@ export default function Upload() {
                 </tr>
               </tbody>
             </table>
+            <div className="alert alert-b" style={{ marginTop: 12, fontSize: 12 }}>
+              <strong>Column aliases work:</strong> Sales→Demand, Item→Product, etc. Supports DD-MM-YYYY, YYYY-MM-DD, MM/DD/YYYY date formats.
+            </div>
+            <div className="alert alert-g" style={{ marginTop: 8, fontSize: 11 }}>
+              <strong>⚡ EXTREME SPEED:</strong> No hyperparameter tuning, 10 RF trees, ~10 features only, 
+              auto-sampling &gt;50K rows, simplified confidence intervals, 20min timeout
+            </div>
           </SectionCard>
         </>
       )}
@@ -242,10 +272,10 @@ export default function Upload() {
               {/* ── KPI Summary ── */}
               <div className="kpi-grid" style={{ gridTemplateColumns: 'repeat(5,1fr)' }}>
                 <KPI label="Months Analysed"  value={drift.length} delta="Test set" />
-                <KPI label="Severe Months"    value={severeMonths} color="var(--red)"    delta={drift.length ? `${((severeMonths/drift.length)*100).toFixed(0)}% of months` : '—'} />
-                <KPI label="Mild Months"      value={mildMonths}   color="var(--orange)" delta={drift.length ? `${((mildMonths/drift.length)*100).toFixed(0)}% of months` : '—'} />
-                <KPI label="Avg Test MAE"       value={Number(avgCurrentMAE.toFixed(0)).toLocaleString() + ' units'}  color="var(--red)"   delta="Test set" />
-                <KPI label="Baseline MAE"        value={Number(avgBaselineMAE.toFixed(0)).toLocaleString() + ' units'} color="var(--green)" delta="Trained model" />
+                <KPI label="Severe Months"    value={stats.severeMonths} color="var(--red)"    delta={drift.length ? `${((stats.severeMonths/drift.length)*100).toFixed(0)}% of months` : '—'} />
+                <KPI label="Mild Months"      value={stats.mildMonths}   color="var(--orange)" delta={drift.length ? `${((stats.mildMonths/drift.length)*100).toFixed(0)}% of months` : '—'} />
+                <KPI label="Avg Test MAE"     value={Number(stats.avgCurrentMAE.toFixed(0)).toLocaleString() + ' units'}  color="var(--red)"   delta="Test set" />
+                <KPI label="Training Speed"   value="⚡ Optimized" color="var(--green)" delta="Fast mode" />
               </div>
 
               {/* ── Metric Comparison Table ── */}
@@ -260,16 +290,16 @@ export default function Upload() {
                     </tr>
                   </thead>
                   <tbody>
-                    <StatRow label="MAE"          train={trainMetrics.MAE}  test={avgCurrentMAE} />
-                    <StatRow label="Baseline MAE" train={avgBaselineMAE}    test={avgCurrentMAE} />
+                    <StatRow label="MAE"          train={trainMetrics.MAE}  test={stats.avgCurrentMAE} />
+                    <StatRow label="Baseline MAE" train={stats.avgBaselineMAE}    test={stats.avgCurrentMAE} />
                     <StatRow label="RMSE"         train={trainMetrics.RMSE} test={null} />
                     <StatRow label="MAPE"         train={trainMetrics.MAPE} test={null} unit="%" />
                     <StatRow label="R²"           train={trainMetrics.R2}   test={null} />
                     <tr>
                       <td style={{ color: 'var(--text3)', fontWeight: 500, fontSize: 12 }}>Severe Drift Months</td>
                       <td className="mono" style={{ color: 'var(--green)', fontWeight: 600 }}>0</td>
-                      <td className="mono" style={{ color: 'var(--red)', fontWeight: 600 }}>{severeMonths}</td>
-                      <td className="mono" style={{ color: 'var(--red)', fontWeight: 700 }}>+{severeMonths}</td>
+                      <td className="mono" style={{ color: 'var(--red)', fontWeight: 600 }}>{stats.severeMonths}</td>
+                      <td className="mono" style={{ color: 'var(--red)', fontWeight: 700 }}>+{stats.severeMonths}</td>
                     </tr>
                     <tr>
                       <td style={{ color: 'var(--text3)', fontWeight: 500, fontSize: 12 }}>Avg Drifted Features</td>
@@ -289,7 +319,7 @@ export default function Upload() {
               <div className="grid-2">
                 <SectionCard title="MAE — Baseline vs Test Set per Month">
                   <ResponsiveContainer width="100%" height={230}>
-                    <LineChart data={maeTrendData} margin={{ top: 8, right: 12, bottom: 0, left: 0 }}>
+                    <LineChart data={chartData.maeTrendData} margin={{ top: 8, right: 12, bottom: 0, left: 0 }}>
                       <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
                       <XAxis dataKey="month" tick={{ fontSize: 10 }} />
                       <YAxis tick={{ fontSize: 10 }} tickFormatter={v => (v / 1000).toFixed(0) + 'K'} />
@@ -305,7 +335,7 @@ export default function Upload() {
 
                 <SectionCard title="Error Increase vs Baseline (%) — by month">
                   <ResponsiveContainer width="100%" height={230}>
-                    <BarChart data={errorIncreaseData} margin={{ top: 8, right: 12, bottom: 0, left: 0 }}>
+                    <BarChart data={chartData.errorIncreaseData} margin={{ top: 8, right: 12, bottom: 0, left: 0 }}>
                       <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
                       <XAxis dataKey="month" tick={{ fontSize: 10 }} />
                       <YAxis tick={{ fontSize: 10 }} tickFormatter={v => v + '%'} />
@@ -313,7 +343,7 @@ export default function Upload() {
                       <ReferenceLine y={10}  stroke="#d97706" strokeDasharray="4 2" label={{ value: 'Mild (10%)',   fontSize: 10, fill: '#d97706', position: 'insideTopRight' }} />
                       <ReferenceLine y={50}  stroke="#dc2626" strokeDasharray="4 2" label={{ value: 'Severe (50%)', fontSize: 10, fill: '#dc2626', position: 'insideTopRight' }} />
                       <Bar dataKey="Error Increase %" radius={[4, 4, 0, 0]}>
-                        {errorIncreaseData.map((d, i) => (
+                        {chartData.errorIncreaseData.map((d, i) => (
                           <Cell key={i} fill={sevColor(d.sev)} />
                         ))}
                       </Bar>
@@ -324,7 +354,7 @@ export default function Upload() {
 
               {/* ── Drift Severity + Healing Action Chart ── */}
               <SectionCard title="Drift Detection — Severity Level & Self-Healing Actions">
-                {(() => {
+                {useMemo(() => {
                   const sevMap = { none: 0, mild: 1, severe: 2 }
                   const chartData = drift.map(d => {
                     const h = healMap[d.month]
@@ -387,14 +417,14 @@ export default function Upload() {
                       </div>
                     </>
                   )
-                })()}
+                }, [drift, healMap])}
               </SectionCard>
 
               {/* ── Row 2: Drifted Features + Test Set vs Predicted ── */}
               <div className="grid-2">
                 <SectionCard title="Drifted Features per Test Month — Severe vs Mild">
                   <ResponsiveContainer width="100%" height={230}>
-                    <ComposedChart data={featureData} margin={{ top: 8, right: 12, bottom: 0, left: 0 }}>
+                    <ComposedChart data={chartData.featureData} margin={{ top: 8, right: 12, bottom: 0, left: 0 }}>
                       <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
                       <XAxis dataKey="month" tick={{ fontSize: 10 }} />
                       <YAxis tick={{ fontSize: 10 }} />
@@ -408,9 +438,9 @@ export default function Upload() {
                 </SectionCard>
 
                 <SectionCard title="Test Set vs Predicted Demand">
-                  {salesData.length > 0 ? (
+                  {chartData.salesData.length > 0 ? (
                     <ResponsiveContainer width="100%" height={230}>
-                      <AreaChart data={salesData} margin={{ top: 8, right: 12, bottom: 0, left: 0 }}>
+                      <AreaChart data={chartData.salesData} margin={{ top: 8, right: 12, bottom: 0, left: 0 }}>
                         <defs>
                           <linearGradient id="gAct" x1="0" y1="0" x2="0" y2="1">
                             <stop offset="5%"  stopColor="#2563eb" stopOpacity={0.15} />

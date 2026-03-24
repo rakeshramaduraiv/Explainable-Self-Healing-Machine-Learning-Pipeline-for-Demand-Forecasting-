@@ -112,7 +112,7 @@ export const ToastContainer = memo(() => {
 // ── Formatters ───────────────────────────────────────────────────────────────
 export const fmt    = n => n == null ? '—' : Number(n).toLocaleString('en-US', { maximumFractionDigits: 2 })
 export const fmtK   = n => n == null ? '—' : (n / 1000).toFixed(1) + 'K'
-export const fmtD   = n => n == null ? '—' : Number(n).toLocaleString('en-US', { maximumFractionDigits: 0 })
+export const fmtD   = n => n == null ? '—' : Number(n).toFixed(2)
 export const fmtPct = n => n == null ? '—' : Number(n).toFixed(2) + '%'
 
 export const CHART_STYLE = {

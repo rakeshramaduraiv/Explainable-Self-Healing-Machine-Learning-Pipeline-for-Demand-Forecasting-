@@ -1,43 +1,30 @@
-# Models
-models/*.pkl
+# Large dataset files
+backend/retail_sales.csv
 
-# Data
-data/*.csv
-uploads/
-processed/
-test_data/
+# Model files (too large)
+backend/models/*.pkl
 
-# Kaggle raw data
-backend/train.csv
-backend/test.csv
-backend/sample_submission.csv
+# Log files
+backend/logs/*.log
+backend/uvicorn.log
 
-# Predictions output
-predictions/
+# Environment files
+.env
+.env.local
 
-# Logs
-logs/*.csv
-logs/*.db
-logs/*.log
+# Node modules
+frontend/node_modules/
+frontend/.vite/
 
-# Python
+# Python cache
 __pycache__/
-*.py[cod]
-*.egg-info/
-.Python
-venv/
-env/
+*.pyc
+*.pyo
 
-# IDE
+# IDE files
 .vscode/
 .idea/
 
-# Secrets
-.env
-config_local.json
-
-# Keep folder structure
-!logs/.gitkeep
-!models/.gitkeep
-!processed/.gitkeep
-!uploads/.gitkeep
+# OS files
+.DS_Store
+Thumbs.db

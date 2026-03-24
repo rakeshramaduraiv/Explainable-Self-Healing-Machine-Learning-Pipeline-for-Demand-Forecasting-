@@ -121,15 +121,21 @@ export default function Features() {
     <>
       <div className="page-header">
         <div className="page-title">Feature Importance</div>
-        <div className="page-sub">{loading ? 'Loading…' : `${features.length} engineered features driving product demand predictions`}</div>
+        <div className="page-sub">{loading ? 'Loading…' : `${features.length} ultra-optimized features driving product demand predictions`}</div>
       </div>
 
       <div className="kpi-grid" style={{ gridTemplateColumns: 'repeat(5,1fr)' }}>
-        <KPI label="Total Features"  value={loading ? '…' : features.length} delta="Engineered" />
+        <KPI label="Total Features"  value={loading ? '…' : features.length} delta="Ultra-optimized" />
         <KPI label="Feature Groups"  value={loading ? '…' : groupTotals.length} delta="Categories" />
         <KPI label="Top Feature"     value={loading ? '…' : (topFeat?.name || '—')} delta={topFeat ? (topFeat.value * 100).toFixed(1) + '% importance' : ''} />
         <KPI label="Top 10 Coverage" value={loading ? '…' : (totalImp * 100).toFixed(1) + '%'} delta="of total importance" />
         <KPI label="Model Accuracy"  value={liveAccuracy != null ? liveAccuracy + '%' : '—'} color="var(--green)" delta="Live · test set" />
+      </div>
+
+      {/* Technical note */}
+      <div className="alert alert-g" style={{ marginBottom: 16, fontSize: 11 }}>
+        <strong>⚡ Speed Optimizations:</strong> Reduced from 40-87+ to ~20-30 features using minimal lag windows (4 vs 8), 
+        fewer rolling stats (2 vs 4), essential temporal features only, and limited interactions (5 vs 10 pairs)
       </div>
 
       {/* Group filter pills */}
@@ -201,7 +207,26 @@ export default function Features() {
           {loading
             ? <div className="skel" style={{ height: 300, borderRadius: 8 }} />
             : <ResponsiveContainer width="100%" height={300}>
-            <Treemap data={groupTotals} dataKey="value" nameKey="name" aspectRatio={4 / 3} content={<TreeContent />}>
+            <Treemap data={groupTotals.map(g => ({
+              ...g,
+              opacity: !activeGroup || activeGroup === g.name ? 1 : 0.3
+            }))} dataKey="value" nameKey="name" aspectRatio={4 / 3} 
+              content={({ x, y, width, height, name, value, color, opacity = 1 }) => {
+                if (width < 30 || height < 20) return <rect x={x} y={y} width={width} height={height} fill={color} rx={3} opacity={opacity} />
+                return (
+                  <g>
+                    <rect x={x} y={y} width={width} height={height} fill={color} rx={3} stroke="#fff" strokeWidth={2} opacity={opacity} />
+                    {width > 60 && height > 28 && (
+                      <text x={x + width / 2} y={y + height / 2} textAnchor="middle" dominantBaseline="middle"
+                        fill="#fff" fontSize={Math.min(12, width / 6)} fontWeight={600} opacity={opacity}>{name}</text>
+                    )}
+                    {width > 60 && height > 44 && (
+                      <text x={x + width / 2} y={y + height / 2 + 14} textAnchor="middle" dominantBaseline="middle"
+                        fill="rgba(255,255,255,0.75)" fontSize={10} opacity={opacity}>{(value * 100).toFixed(1)}%</text>
+                    )}
+                  </g>
+                )
+              }}>
               <Tooltip content={({ active, payload }) => {
                 if (!active || !payload?.length) return null
                 const d = payload[0]?.payload

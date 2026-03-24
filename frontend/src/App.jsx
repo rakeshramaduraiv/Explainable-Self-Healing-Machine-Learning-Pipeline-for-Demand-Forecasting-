@@ -2,6 +2,13 @@ import { useState, lazy, Suspense, useEffect, useCallback, memo, useTransition }
 import { ToastContainer } from './ui.jsx'
 import { API, useFetch } from './api.js'
 
+// Live clock for last-updated display
+function useClock() {
+  const [t, setT] = useState(() => new Date())
+  useEffect(() => { const id = setInterval(() => setT(new Date()), 15000); return () => clearInterval(id) }, [])
+  return t
+}
+
 const Overview    = lazy(() => import('./pages/Overview.jsx'))
 const Drift       = lazy(() => import('./pages/Drift.jsx'))
 const Performance = lazy(() => import('./pages/Performance.jsx'))
@@ -66,9 +73,10 @@ export default function App() {
   const [apiOk, setApiOk] = useState(null)
   const [isPending, startTransition] = useTransition()
   const { data: health } = useFetch('/api/health', { pollMs: 60000 })
-  const { data: summary } = useFetch('/api/summary', { pollMs: 120000 })
-  const { data: datasets } = useFetch('/api/datasets', { pollMs: 120000 })
+  const { data: summary }  = useFetch('/api/summary',  { pollMs: 30000 })
+  const { data: datasets }  = useFetch('/api/datasets',  { pollMs: 30000 })
 
+  const clock = useClock()
   const navigate = useCallback(id => { startTransition(() => setPage(id)) }, [])
 
   useEffect(() => {
@@ -133,6 +141,9 @@ export default function App() {
           <div style={{ marginTop: 3 }}>
             {datasets?.inspection?.columns?.length ?? '—'} columns · {typeof rows === 'number' ? rows.toLocaleString() : '—'} rows
           </div>
+          <div style={{ marginTop: 3, fontSize: 10, color: 'var(--text3)' }}>
+            Train: {datasets?.split?.train_start?.slice(0,4) ?? '—'}–{datasets?.split?.train_end?.slice(0,4) ?? '—'} · Test: {datasets?.split?.test_year ?? '—'}
+          </div>
           {severity && (
             <div style={{ marginTop: 6 }}>
               <span className={`badge ${severity === 'severe' ? 'b-red' : severity === 'mild' ? 'b-orange' : 'b-green'}`}
@@ -153,6 +164,9 @@ export default function App() {
             {health?.model_exists && (
               <span className="badge b-green" style={{ fontSize: 9, padding: '2px 8px' }}>Model Active</span>
             )}
+            <span style={{ fontSize: 10, color: 'var(--text3)', fontFamily: 'var(--mono)' }}>
+              Updated {clock.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+            </span>
             <div style={{
               display: 'flex', alignItems: 'center', gap: 6, fontSize: 11,
               color: apiOk === false ? 'var(--red)' : 'var(--green)',

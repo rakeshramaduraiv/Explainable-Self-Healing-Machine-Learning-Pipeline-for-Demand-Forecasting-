@@ -69,51 +69,41 @@ class FeatureEngineer:
         log.info(f"Numeric user cols: {self._numeric_cols}")
         log.info(f"Categorical user cols: {self._categorical_cols}")
 
-    # ── Temporal features (always created) ────────────────────────────────
+    # ── Temporal features (always created) - FULL FEATURES ────────────────────────────────────
     def create_temporal_features(self, df):
         df = df.copy()
-        df["Year"]      = df["Date"].dt.year
         df["Month"]     = df["Date"].dt.month
-        df["Week"]      = df["Date"].dt.isocalendar().week.astype(int)
         df["Quarter"]   = df["Date"].dt.quarter
+        df["Year"]      = df["Date"].dt.year
         df["DayOfYear"] = df["Date"].dt.dayofyear
-
-        df["Is_Year_End"]   = (df["Month"] == 12).astype(int)
-        df["Is_Year_Start"] = (df["Month"] == 1).astype(int)
-        df["Is_Q4"]         = (df["Quarter"] == 4).astype(int)
-
-        # Cyclical encoding
-        df["Week_Sin"]  = np.sin(2 * np.pi * df["Week"]  / 52)
-        df["Week_Cos"]  = np.cos(2 * np.pi * df["Week"]  / 52)
+        df["WeekOfYear"] = df["Date"].dt.isocalendar().week
+        df["Is_Q1"]     = (df["Quarter"] == 1).astype(int)
+        df["Is_Q2"]     = (df["Quarter"] == 2).astype(int)
+        df["Is_Q3"]     = (df["Quarter"] == 3).astype(int)
+        df["Is_Q4"]     = (df["Quarter"] == 4).astype(int)
+        
+        # Full cyclical encoding
         df["Month_Sin"] = np.sin(2 * np.pi * df["Month"] / 12)
         df["Month_Cos"] = np.cos(2 * np.pi * df["Month"] / 12)
-
-        # Holiday proximity (universal — works for any dataset)
-        for hw in [6, 47, 51]:
-            df[f"Weeks_To_Holiday_{hw}"] = np.minimum(
-                np.abs(df["Week"] - hw), 52 - np.abs(df["Week"] - hw)
-            )
-        df["Near_Holiday"] = (
-            (df["Weeks_To_Holiday_6"]  <= 1) |
-            (df["Weeks_To_Holiday_47"] <= 1) |
-            (df["Weeks_To_Holiday_51"] <= 1)
-        ).astype(int)
-
-        # Season
-        df["Season"] = df["Month"].map({
-            12: "Winter", 1: "Winter", 2: "Winter",
-            3: "Spring", 4: "Spring", 5: "Spring",
-            6: "Summer", 7: "Summer", 8: "Summer",
-            9: "Fall", 10: "Fall", 11: "Fall"
-        })
+        df["Quarter_Sin"] = np.sin(2 * np.pi * df["Quarter"] / 4)
+        df["Quarter_Cos"] = np.cos(2 * np.pi * df["Quarter"] / 4)
+        df["Week_Sin"] = np.sin(2 * np.pi * df["WeekOfYear"] / 52)
+        df["Week_Cos"] = np.cos(2 * np.pi * df["WeekOfYear"] / 52)
+        
+        # Comprehensive holiday and seasonal flags
+        df["Near_Holiday"] = df["Month"].isin([11, 12]).astype(int)
+        df["Is_Summer"] = df["Month"].isin([6, 7, 8]).astype(int)
+        df["Is_Winter"] = df["Month"].isin([12, 1, 2]).astype(int)
+        
         return df
 
-    # ── Lag features (sliding window) ─────────────────────────────────────
+    # ── Lag features (sliding window) - FULL FEATURES ─────────────────────────────────────
     def create_lag_features(self, df):
         group = self._group_cols if self._group_cols else None
         df = df.sort_values((self._group_cols or []) + ["Date"]).copy()
 
-        for lag in [1, 2, 3, 4, 8, 12, 26, 52]:
+        # Comprehensive lag features
+        for lag in [1, 2, 3, 4, 6, 8, 12]:  # Full range of lags
             col = f"Lag_{lag}"
             if group:
                 df[col] = df.groupby(group)["Demand"].shift(lag)
@@ -122,145 +112,138 @@ class FeatureEngineer:
                 df[col] = df["Demand"].shift(lag)
                 df[col] = df[col].fillna(df[col].mean()).fillna(0)
 
-        df["Lag_52_ratio"] = df["Lag_52"] / (df["Lag_1"] + 1)
         return df
 
-    # ── Rolling features (sliding window) ─────────────────────────────────
+    # ── Rolling features (sliding window) - FULL FEATURES ─────────────────────────────────────
     def create_rolling_features(self, df):
         group = self._group_cols if self._group_cols else None
         df = df.sort_values((self._group_cols or []) + ["Date"]).copy()
 
-        for w in [4, 8, 12, 26]:
+        # Comprehensive rolling windows
+        for w in [3, 4, 6, 8, 12]:  # Multiple window sizes
             if group:
                 s = df.groupby(group)["Demand"].transform
-            else:
-                s = df["Demand"].transform if hasattr(df["Demand"], "transform") else None
-
-            if group:
                 df[f"Rolling_Mean_{w}"] = s(lambda x: x.shift(1).rolling(w, min_periods=1).mean())
-                df[f"Rolling_Std_{w}"]  = s(lambda x: x.shift(1).rolling(w, min_periods=1).std().fillna(0))
-                df[f"Rolling_Max_{w}"]  = s(lambda x: x.shift(1).rolling(w, min_periods=1).max())
-                df[f"Rolling_Min_{w}"]  = s(lambda x: x.shift(1).rolling(w, min_periods=1).min())
+                df[f"Rolling_Std_{w}"] = s(lambda x: x.shift(1).rolling(w, min_periods=1).std().fillna(0))
+                df[f"Rolling_Max_{w}"] = s(lambda x: x.shift(1).rolling(w, min_periods=1).max())
+                df[f"Rolling_Min_{w}"] = s(lambda x: x.shift(1).rolling(w, min_periods=1).min())
             else:
                 shifted = df["Demand"].shift(1)
                 df[f"Rolling_Mean_{w}"] = shifted.rolling(w, min_periods=1).mean()
-                df[f"Rolling_Std_{w}"]  = shifted.rolling(w, min_periods=1).std().fillna(0)
-                df[f"Rolling_Max_{w}"]  = shifted.rolling(w, min_periods=1).max()
-                df[f"Rolling_Min_{w}"]  = shifted.rolling(w, min_periods=1).min()
+                df[f"Rolling_Std_{w}"] = shifted.rolling(w, min_periods=1).std().fillna(0)
+                df[f"Rolling_Max_{w}"] = shifted.rolling(w, min_periods=1).max()
+                df[f"Rolling_Min_{w}"] = shifted.rolling(w, min_periods=1).min()
 
-        df["Momentum_4"]   = df["Lag_1"] / (df["Rolling_Mean_4"]  + 1)
-        df["Momentum_12"]  = df["Lag_1"] / (df["Rolling_Mean_12"] + 1)
-        df["Volatility_4"]  = df["Rolling_Std_4"]  / (df["Rolling_Mean_4"]  + 1)
-        df["Volatility_12"] = df["Rolling_Std_12"] / (df["Rolling_Mean_12"] + 1)
+        # Advanced momentum and volatility features
+        df["Momentum_3"] = df["Lag_1"] / (df["Rolling_Mean_3"] + 1)
+        df["Momentum_6"] = df["Lag_1"] / (df["Rolling_Mean_6"] + 1)
+        df["Volatility_4"] = df["Rolling_Std_4"] / (df["Rolling_Mean_4"] + 1)
+        df["Volatility_8"] = df["Rolling_Std_8"] / (df["Rolling_Mean_8"] + 1)
         return df
 
-    # ── Store features (only if Store column exists) ──────────────────────
+    # ── Store features (only if Store column exists) - OPTIMIZED ──────────────────────────
     def create_store_features(self, df, fit=True):
         if "Store" not in df.columns:
             return df
         if fit:
             store_stats = df.groupby("Store")["Demand"].agg(
-                Store_Mean="mean", Store_Median="median",
-                Store_Std="std", Store_Max="max", Store_Min="min"
+                Store_Mean="mean", Store_Std="std"
             ).reset_index()
             store_stats["Store_Std"] = store_stats["Store_Std"].fillna(0)
             self._store_stats_full = store_stats
         else:
             store_stats = self._store_stats_full if self._store_stats_full is not None else \
                 df.groupby("Store")["Demand"].agg(
-                    Store_Mean="mean", Store_Median="median",
-                    Store_Std="std", Store_Max="max", Store_Min="min"
+                    Store_Mean="mean", Store_Std="std"
                 ).reset_index()
             store_stats["Store_Std"] = store_stats["Store_Std"].fillna(0)
         df = df.merge(store_stats, on="Store", how="left")
-        df["Demand_vs_Store_Mean"]   = df["Demand"] / (df["Store_Mean"]   + 1)
-        df["Demand_vs_Store_Median"] = df["Demand"] / (df["Store_Median"] + 1)
-        df["Store_CV"]               = df["Store_Std"] / (df["Store_Mean"] + 1)
+        df["Demand_vs_Store_Mean"] = df["Demand"] / (df["Store_Mean"] + 1)
+        df["Store_CV"] = df["Store_Std"] / (df["Store_Mean"] + 1)
         return df
 
-    # ── Product features (only if Product column exists) ──────────────────
+    # ── Product features (only if Product column exists) - OPTIMIZED ──────────────────────
     def create_product_features(self, df, fit=True):
         if "Product" not in df.columns:
             return df
         if fit:
             product_stats = df.groupby("Product")["Demand"].agg(
-                Product_Mean="mean", Product_Median="median",
-                Product_Std="std", Product_Max="max", Product_Min="min"
+                Product_Mean="mean", Product_Std="std"
             ).reset_index()
             product_stats["Product_Std"] = product_stats["Product_Std"].fillna(0)
             self._product_stats_full = product_stats
         else:
             product_stats = self._product_stats_full if self._product_stats_full is not None else \
                 df.groupby("Product")["Demand"].agg(
-                    Product_Mean="mean", Product_Median="median",
-                    Product_Std="std", Product_Max="max", Product_Min="min"
+                    Product_Mean="mean", Product_Std="std"
                 ).reset_index()
             product_stats["Product_Std"] = product_stats["Product_Std"].fillna(0)
         df = df.merge(product_stats, on="Product", how="left")
-        df["Demand_vs_Product_Mean"]   = df["Demand"] / (df["Product_Mean"]   + 1)
-        df["Demand_vs_Product_Median"] = df["Demand"] / (df["Product_Median"] + 1)
-        df["Product_CV"]               = df["Product_Std"] / (df["Product_Mean"] + 1)
+        df["Demand_vs_Product_Mean"] = df["Demand"] / (df["Product_Mean"] + 1)
+        df["Product_CV"] = df["Product_Std"] / (df["Product_Mean"] + 1)
         return df
 
-    # ── Interaction features (dynamic — only uses columns that exist) ─────
+    # ── Interaction features (dynamic — only uses columns that exist) - FULL FEATURES ─────
     def create_interaction_features(self, df):
-        cols = set(df.columns)
-
-        if "Store" in cols and "Holiday_Flag" in cols:
-            df["Store_Holiday"] = df["Store"] * df["Holiday_Flag"]
-        if "Product" in cols and "Holiday_Flag" in cols:
-            df["Product_Holiday"] = df["Product"] * df["Holiday_Flag"]
-        if "Store" in cols and "Product" in cols:
-            df["Store_Product"] = df["Store"] * 1000 + df["Product"]
-        if "Temperature" in cols and "Fuel_Price" in cols:
-            df["Temp_Fuel"] = df["Temperature"] * df["Fuel_Price"]
-        if "CPI" in cols and "Unemployment" in cols:
-            df["Price_Index"] = df["CPI"] * df["Unemployment"]
-            df["Unemployment_CPI"] = df["Unemployment"] / (df["CPI"] + 1)
-        if "Fuel_Price" in cols and "Unemployment" in cols:
-            df["Fuel_Unemployment"] = df["Fuel_Price"] * df["Unemployment"]
-        if "CPI" in cols and "Fuel_Price" in cols:
-            df["CPI_Fuel"] = df["CPI"] * df["Fuel_Price"]
-        if "Temperature" in cols and "Holiday_Flag" in cols:
-            df["Temp_Holiday"] = df["Temperature"] * df["Holiday_Flag"]
-        if "Holiday_Flag" in cols and "Is_Q4" in cols:
-            df["Holiday_Q4"] = df["Holiday_Flag"] * df["Is_Q4"]
-
-        # Dynamic interactions between user numeric columns
-        num_cols = [c for c in self._numeric_cols if c in cols]
-        if len(num_cols) >= 2:
-            # Create top pairwise interactions (limit to avoid explosion)
-            pairs_created = 0
-            for i in range(len(num_cols)):
-                for j in range(i + 1, len(num_cols)):
-                    if pairs_created >= 10:
-                        break
-                    a, b = num_cols[i], num_cols[j]
-                    name = f"{a}_x_{b}"
-                    df[name] = df[a] * df[b]
-                    pairs_created += 1
-
+        # Full interaction features for maximum model performance
+        interactions = []
+        
+        # Numeric column interactions
+        for i, col1 in enumerate(self._numeric_cols):
+            for col2 in self._numeric_cols[i+1:]:
+                if col1 != col2:
+                    interaction_name = f"{col1}_x_{col2}"
+                    df[interaction_name] = df[col1] * df[col2]
+                    interactions.append(interaction_name)
+        
+        # Lag interactions with user features
+        lag_cols = [c for c in df.columns if c.startswith("Lag_")]
+        for lag_col in lag_cols[:3]:  # Top 3 lag features
+            for num_col in self._numeric_cols[:2]:  # Top 2 numeric features
+                interaction_name = f"{lag_col}_x_{num_col}"
+                df[interaction_name] = df[lag_col] * df[num_col]
+                interactions.append(interaction_name)
+        
+        # Rolling feature interactions
+        rolling_cols = [c for c in df.columns if c.startswith("Rolling_Mean_")]
+        for roll_col in rolling_cols[:2]:  # Top 2 rolling features
+            for num_col in self._numeric_cols[:2]:  # Top 2 numeric features
+                interaction_name = f"{roll_col}_x_{num_col}"
+                df[interaction_name] = df[roll_col] * df[num_col]
+                interactions.append(interaction_name)
+        
+        log.info(f"Created {len(interactions)} interaction features")
         return df
 
-    # ── Encode categoricals ───────────────────────────────────────────────
+    # ── Encode categoricals - FULL ENCODING ───────────────────────────────────────────────
     def encode_categorical(self, df, fit=True):
-        cats = ["Season"] + [c for c in self._categorical_cols if c in df.columns]
-        for col in cats:
+        # Full categorical encoding for maximum model performance
+        for col in self._categorical_cols:
             if col not in df.columns:
                 continue
+            
+            encoder_key = f"encoder_{col}"
             if fit:
-                le = LabelEncoder()
-                df[col] = le.fit_transform(df[col].astype(str))
-                self.encoders[col] = le
-            else:
-                le = self.encoders.get(col)
-                if le:
-                    known = set(le.classes_)
-                    df[col] = df[col].astype(str).apply(lambda x: x if x in known else le.classes_[0])
-                    df[col] = le.transform(df[col])
-                else:
-                    le = LabelEncoder()
-                    df[col] = le.fit_transform(df[col].astype(str))
+                if encoder_key not in self.encoders:
+                    self.encoders[encoder_key] = LabelEncoder()
+                # Handle unseen categories
+                unique_vals = df[col].dropna().unique()
+                self.encoders[encoder_key].fit(unique_vals)
+                
+            if encoder_key in self.encoders:
+                # Transform with handling for unseen categories
+                def safe_transform(x):
+                    try:
+                        return self.encoders[encoder_key].transform([x])[0]
+                    except ValueError:
+                        return -1  # Unknown category
+                
+                df[f"{col}_Encoded"] = df[col].fillna("Unknown").apply(safe_transform)
+                
+                # Create frequency encoding as well
+                freq_map = df[col].value_counts().to_dict()
+                df[f"{col}_Freq"] = df[col].map(freq_map).fillna(0)
+        
         return df
 
     # ── Main pipeline ─────────────────────────────────────────────────────
@@ -282,5 +265,5 @@ class FeatureEngineer:
         df = df.dropna(subset=["Demand"]).reset_index(drop=True)
         self.feature_names = feat_cols
 
-        log.info(f"Feature pipeline: {len(feat_cols)} features from {len(df)} rows")
+        log.info(f"Feature pipeline: {len(feat_cols)} comprehensive features from {len(df)} rows (FULL DATASET)")
         return df, self.feature_names

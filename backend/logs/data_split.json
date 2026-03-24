@@ -1,8 +1,18 @@
 {
-  "train_year": 2016,
-  "test_year": 2017,
-  "train_rows": 26500,
-  "test_rows": 26000,
-  "train_months": 12,
+  "train_years": [
+    2019,
+    2020,
+    2021,
+    2022
+  ],
+  "test_year": 2023,
+  "train_year": 2019,
+  "train_start": "2019-01-04",
+  "train_end": "2022-12-30",
+  "test_start": "2023-01-06",
+  "test_end": "2023-12-29",
+  "train_rows": 522500,
+  "test_rows": 130000,
+  "train_months": 48,
   "test_months": 12
 }

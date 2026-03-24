@@ -1,22 +1,24 @@
 {
-  "rows": 52500,
+  "rows": 652500,
   "columns": [
     "Date",
     "Store",
     "Product",
-    "Demand"
+    "Demand",
+    "Price",
+    "Promo"
   ],
   "date_range": [
-    "2016-01-01 00:00:00",
-    "2017-12-29 00:00:00"
+    "2019-01-04 00:00:00",
+    "2023-12-29 00:00:00"
   ],
-  "stores": 10,
+  "stores": 50,
   "products": 50,
   "missing_values": 0,
   "demand_stats": {
-    "mean": 402.9820190476191,
-    "min": 46.0,
-    "max": 1191.0
+    "mean": 204.4167754789272,
+    "min": 20.0,
+    "max": 653.0
   },
   "detected_columns": {
     "target": "Demand",
@@ -24,8 +26,15 @@
     "has_store": true,
     "has_product": true,
     "has_holiday": false,
-    "numeric_features": [],
-    "categorical_features": []
+    "numeric_features": [
+      "Price"
+    ],
+    "categorical_features": [
+      "Promo"
+    ]
   },
-  "user_features": []
+  "user_features": [
+    "Price",
+    "Promo"
+  ]
 }

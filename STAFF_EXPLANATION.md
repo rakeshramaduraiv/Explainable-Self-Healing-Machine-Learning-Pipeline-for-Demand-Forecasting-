@@ -11,13 +11,15 @@ SH-DFS (Self-Healing Demand Forecasting System) is a machine learning platform t
 
 ## Dataset
 
-**Kaggle Store Item Demand Forecasting** (https://www.kaggle.com/datasets/dhrubangtalukdar/store-item-demand-forecasting-dataset)
+**Retail Sales Forecasting Dataset** (`retail_sales.csv`)
 
-- 5 years of daily sales, 50 items, 10 stores, ~913K rows
-- Aggregated to weekly: 52,500 rows, 2 years (2016 train + 2017 test)
-- Columns used: `Date`, `Store`, `Product`, `Demand`
+- **4,565,000 rows** of daily sales — 5 years (2019-01-01 to 2023-12-31)
+- **50 stores** (`store_1`…`store_50`) × **50 products** (`item_1`…`item_50`) = 2,500 unique combinations
+- Each store-product pair has exactly **1,826 daily rows** — no missing values
+- Columns: `date`, `store_id`, `item_id`, `sales`, `price`, `promo`, `weekday`, `month`
+- Aggregated to weekly demand via `generate_data.py` before entering the pipeline
 
-The system auto-renames common aliases: `sales`→Demand, `item`→Product, `store`→Store, `date`→Date.
+The system auto-renames: `sales`→Demand, `item_id`→Product, `store_id`→Store, `date`→Date.
 
 ---
 
@@ -29,12 +31,12 @@ The user uploads a CSV with **3 required columns**:
 
 | Column | Type | Example |
 |--------|------|---------|
-| Date | DD-MM-YYYY | 05-01-2016 |
-| Product | integer | 1, 2, 3 … 50 |
-| Demand | integer (units) | 152 |
+| Date | DD-MM-YYYY | 05-01-2019 |
+| Product | str/int | item_1 … item_50 |
+| Demand | integer (units) | 41 |
 
 **Optional columns** (auto-detected and used as features):
-- Store, Holiday_Flag, Temperature, Fuel_Price, CPI, Unemployment
+- Store (`store_1`…`store_50`), Price (8.02–99.99), Promo (0/1), Weekday (0–6), Month (1–12)
 - Any other numeric or text columns — treated as features automatically
 
 Missing required columns → file rejected with a clear error message.
@@ -43,13 +45,13 @@ Missing required columns → file rejected with a clear error message.
 
 ```
 Step 1: Load & Inspect   → Read CSV, validate columns, compute data stats
-Step 2: Split            → Year 1 = Training (2016), Year 2 = Testing (2017)
+Step 2: Split            → Year 1 = Training, Year 2 = Testing (based on uploaded data date range)
 Step 3: Feature Eng.     → Generate 63 features from 4 columns (see below)
 Step 4: Train Model      → RF + GB + XGB → Gradient Boosting selected (best MAE)
 Step 5: Simulate Months  → Test month-by-month, detect drift, apply self-healing
 Step 6: Summary          → Aggregate severity counts, healing stats
 Step 7: Save Results     → Logs, processed CSVs, model files
-Step 8: First Prediction → Predict 2018-01 (first future month)
+Step 8: First Prediction → Predict first future month after the data range
 ```
 
 Pipeline runs asynchronously in a thread executor with a 600-second timeout. Returns HTTP 504 if it exceeds the limit.
@@ -57,15 +59,15 @@ Pipeline runs asynchronously in a thread executor with a 600-second timeout. Ret
 ### Step 3: Monthly Prediction Cycle (Predict Cycle page)
 
 ```
-Model predicts 2018-01 demand (500 rows: 50 products × ~10 weeks)
+Model predicts Month N+1 demand (50 products × ~4 weeks)
         ↓
-User uploads ACTUAL January 2018 data (Date + Product + Demand)
+User uploads ACTUAL Month N+1 data (Date + Product + Demand)
         ↓
 System compares predictions vs actuals (MAE, MAPE, RMSE)
         ↓
-System auto-predicts 2018-02
+System auto-predicts Month N+2
         ↓
-User uploads February actuals → System predicts March → Repeat forever
+User uploads next month actuals → System predicts following month → Repeat forever
 ```
 
 ---
@@ -85,7 +87,7 @@ The user uploads 4 columns (Date, Store, Product, Demand). The system auto-gener
 | **Store Stats** | 8 | Store column | Store_Mean, Store_Median, Store_Std, Store_Max, Store_Min, Demand_vs_Store_Mean, Demand_vs_Store_Median, Store_CV |
 | **Product Stats** | 8 | Product column | Product_Mean, Product_Median, Product_Std, Product_Max, Product_Min, Demand_vs_Product_Mean, Demand_vs_Product_Median, Product_CV |
 
-With additional optional columns (Holiday_Flag, Temperature, CPI, etc.), up to 19 more interaction features are added, reaching 87+ total.
+With additional optional columns (Price, Promo, etc.), up to 19 more interaction features are added, reaching 87+ total.
 
 ### Feature Count by Input
 
@@ -93,7 +95,7 @@ With additional optional columns (Holiday_Flag, Temperature, CPI, etc.), up to 1
 |-------------|-------------------|
 | Date + Product + Demand | ~48 |
 | + Store | ~56 |
-| + Store + 5 economic columns | ~87 |
+| + Store + Price + Promo + Weekday + Month | ~87 |
 | Current dataset (4 cols) | **63** |
 
 ---
@@ -151,9 +153,9 @@ Each fine-tuned model is saved as `models/model_v1_{timestamp}.pkl` with metadat
 
 When predicting a future month (e.g., 2018-01), optional columns like Temperature and CPI are not yet available. `sequential_predictor.py` handles this:
 
-1. Gets the **last row** of all existing data (last week of December 2017)
-2. Reads last-known values: Temperature=35.0, Fuel_Price=3.44, etc.
-3. Creates **scaffold rows**: 4 weeks × 50 products = 200 rows for January 2018
+1. Gets the **last row** of all existing data (last week of the training period)
+2. Reads last-known values for optional columns (Price, Promo, etc.)
+3. Creates **scaffold rows**: 4 weeks × 50 products = 200 rows for the next month
 4. Fills each scaffold row with those last-known values
 5. Sets Demand = NaN (what the model will predict)
 6. Runs full feature engineering on combined historical + scaffold data
@@ -306,14 +308,15 @@ User uploads CSV → Pipeline runs (async, 600s timeout) → Results saved to lo
 
 | Metric | Value |
 |--------|-------|
-| Dataset | Kaggle Store Item Demand (2016–2017) |
-| Rows | 52,500 weekly |
-| Stores | 10 |
-| Products | 50 |
-| Features | 63 |
+| Dataset | Retail Sales Forecasting (2019–2023) |
+| Source rows | 4,565,000 daily |
+| Stores | 50 (`store_1`…`store_50`) |
+| Products | 50 (`item_1`…`item_50`) |
+| Store-Product combos | 2,500 |
+| Features generated | 63–87+ |
 | Model | Gradient Boosting |
 | Training R² | ~1.0 (near-perfect fit) |
 | Training MAPE | < 1% |
-| Test Months | 12 (all of 2017) |
-| First Prediction | 2018-01 |
-| Sequential Predictions | 2026-02, 2026-03 (after actuals uploaded) |
+| Test Months | 12 (Year 2) |
+| First Prediction | Year 3 Month 1 |
+| Sequential Predictions | Ongoing monthly cycle |

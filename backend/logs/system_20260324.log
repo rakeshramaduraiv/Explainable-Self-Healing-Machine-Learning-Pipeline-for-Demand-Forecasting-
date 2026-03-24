@@ -1,0 +1,647 @@
+2026-03-24 00:00:41 | INFO     | demand_analyzer | Loaded 652500 rows for demand analysis
+2026-03-24 00:00:41 | INFO     | demand_analyzer | Demand metrics calculated: avg=204
+2026-03-24 00:00:42 | INFO     | demand_analyzer | Loaded 652500 rows for demand analysis
+2026-03-24 00:00:44 | INFO     | demand_analyzer | Loaded 652500 rows for demand analysis
+2026-03-24 00:00:45 | INFO     | demand_analyzer | Loaded 652500 rows for demand analysis
+2026-03-24 00:00:47 | INFO     | demand_analyzer | Loaded 652500 rows for demand analysis
+2026-03-24 00:00:47 | INFO     | demand_analyzer | Demand metrics calculated: avg=204
+2026-03-24 00:00:48 | INFO     | demand_analyzer | Loaded 652500 rows for demand analysis
+2026-03-24 00:00:49 | INFO     | demand_analyzer | Loaded 652500 rows for demand analysis
+2026-03-24 00:00:50 | INFO     | demand_analyzer | Loaded 652500 rows for demand analysis
+2026-03-24 00:02:23 | INFO     | __main__ | Cleared stale logs from previous run
+2026-03-24 00:02:23 | INFO     | __main__ | Preparing data from retail_sales.csv
+2026-03-24 00:05:37 | INFO     | __main__ | Years in data: [np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023)]
+2026-03-24 00:05:38 | INFO     | __main__ | Saved 652,500 rows → C:\Users\balan\OneDrive\Desktop\caps\backend\data\uploaded_data.csv  (Train: 2019–2022 | Test: 2023)
+2026-03-24 00:05:38 | INFO     | pipeline | ============================================================
+2026-03-24 00:05:38 | INFO     | pipeline | PHASE 1: SELF-HEALING DEMAND FORECASTING SYSTEM
+2026-03-24 00:05:38 | INFO     | pipeline | ============================================================
+2026-03-24 00:05:38 | INFO     | pipeline | [1/7] Loading data
+2026-03-24 00:05:39 | INFO     | data_loader | Using full dataset: 652500 rows for complete model training
+2026-03-24 00:05:39 | INFO     | data_loader | Numeric features: ['Price']
+2026-03-24 00:05:39 | INFO     | data_loader | Categorical features: ['Promo']
+2026-03-24 00:05:39 | INFO     | data_loader | Loaded 652500 rows, 6 columns
+2026-03-24 00:05:39 | INFO     | data_loader | Detected roles: {'target': 'Demand', 'date': 'Date', 'has_store': True, 'has_product': True, 'has_holiday': False, 'numeric_features': ['Price'], 'categorical_features': ['Promo']}
+2026-03-24 00:05:39 | INFO     | data_loader | Stores: 50 | Products: 50 | Missing: 0
+2026-03-24 00:05:39 | INFO     | pipeline | [1/7] Loading data done in 1s
+2026-03-24 00:05:39 | INFO     | pipeline | [2/7] Splitting data
+2026-03-24 00:05:39 | INFO     | data_loader | Train: [np.int32(2019), np.int32(2020), np.int32(2021), np.int32(2022)] (522,500 rows, 48 months)
+2026-03-24 00:05:39 | INFO     | data_loader | Test:  2023 (130,000 rows, 12 months)
+2026-03-24 00:05:39 | INFO     | pipeline | Train year: 2019 | Test year: 2023
+2026-03-24 00:05:39 | INFO     | pipeline | [2/7] Splitting data done in 0s
+2026-03-24 00:05:39 | INFO     | pipeline | [3/7] Feature engineering
+2026-03-24 00:05:39 | INFO     | feature_engineering | Group cols: ['Store', 'Product']
+2026-03-24 00:05:39 | INFO     | feature_engineering | Numeric user cols: ['Price', 'Promo']
+2026-03-24 00:05:39 | INFO     | feature_engineering | Categorical user cols: []
+2026-03-24 00:05:42 | INFO     | feature_engineering | Feature pipeline: 20 features from 522500 rows
+2026-03-24 00:05:43 | INFO     | feature_engineering | Feature pipeline: 20 features from 130000 rows
+2026-03-24 00:05:43 | INFO     | pipeline | Features: 20 | Train rows: 522500 | Test rows: 130000
+2026-03-24 00:05:43 | INFO     | pipeline | [3/7] Feature engineering done in 3s
+2026-03-24 00:05:43 | INFO     | pipeline | [4/7] Training model
+2026-03-24 00:05:43 | INFO     | model_trainer | ⚡ ULTRA SPEED: Skipping ALL hyperparameter tuning
+2026-03-24 00:05:43 | INFO     | model_trainer | ⚡ EXTREME SPEED XGBoost training: {'n_estimators': 50, 'max_depth': 3, 'learning_rate': 0.2, 'subsample': 0.8, 'colsample_bytree': 0.8, 'min_child_weight': 3, 'reg_alpha': 0.0, 'reg_lambda': 0.5}
+2026-03-24 00:05:48 | INFO     | model_trainer | ⚡ XGB ULTRA SPEED trained - MAE:5.0
+2026-03-24 00:05:49 | INFO     | model_trainer | train → RMSE:7 MAE:5 R²:99% MAPE:3% Accuracy:97%
+2026-03-24 00:05:49 | INFO     | model_trainer | Model saved: models/active_model.pkl | Version:v1_20260324_000549 | Type:XGB
+2026-03-24 00:05:49 | INFO     | model_trainer | Metrics saved: logs/baseline_metrics.json
+2026-03-24 00:05:49 | INFO     | drift_detector | Dynamic thresholds set for 20 features
+2026-03-24 00:05:49 | INFO     | model_trainer | CI Coverage:98.35% | Avg Width:35
+2026-03-24 00:05:49 | INFO     | drift_detector | Baseline set: 20 features
+2026-03-24 00:05:49 | INFO     | pipeline | [4/7] Training model done in 5s
+2026-03-24 00:05:49 | INFO     | pipeline | [5/7] Simulating months
+2026-03-24 00:05:49 | INFO     | pipeline | ⚡ Fast simulating 12 months...
+2026-03-24 00:05:49 | INFO     | pipeline | ⚡ Processing month 1/12: 2023-01
+2026-03-24 00:05:51 | INFO     | healing_status | 🔧 Fine-tuning started for 2023-01
+2026-03-24 00:05:51 | INFO     | fine_tuner | Fine-tuning: Adding trees to existing model...
+2026-03-24 00:05:51 | INFO     | fine_tuner | Fine-tune successful: 64.2% improvement
+2026-03-24 00:05:51 | INFO     | healing_status | ✅ Fine-tuning complete: 64.2% improvement
+2026-03-24 00:05:51 | INFO     | pipeline |   2023-01: FINE-TUNE | Improvement: 64.2%
+2026-03-24 00:05:51 | INFO     | pipeline | ⚡ Processing month 2/12: 2023-02
+2026-03-24 00:05:53 | INFO     | healing_status | 🔧 Fine-tuning started for 2023-02
+2026-03-24 00:05:53 | INFO     | fine_tuner | Fine-tuning: Adding trees to existing model...
+2026-03-24 00:05:53 | INFO     | fine_tuner | Fine-tune successful: 31.9% improvement
+2026-03-24 00:05:53 | INFO     | healing_status | ✅ Fine-tuning complete: 31.9% improvement
+2026-03-24 00:05:53 | INFO     | pipeline |   2023-02: FINE-TUNE | Improvement: 31.9%
+2026-03-24 00:05:53 | INFO     | pipeline | ⚡ Processing month 3/12: 2023-03
+2026-03-24 00:05:56 | INFO     | healing_status | 🔧 Fine-tuning started for 2023-03
+2026-03-24 00:05:56 | INFO     | fine_tuner | Fine-tuning: Adding trees to existing model...
+2026-03-24 00:05:56 | INFO     | fine_tuner | Fine-tune successful: 44.9% improvement
+2026-03-24 00:05:56 | INFO     | healing_status | ✅ Fine-tuning complete: 44.9% improvement
+2026-03-24 00:05:56 | INFO     | pipeline |   2023-03: FINE-TUNE | Improvement: 44.9%
+2026-03-24 00:05:56 | INFO     | pipeline | ⚡ Progress: 3/12 months completed (25%)
+2026-03-24 00:05:56 | INFO     | pipeline | ⚡ Processing month 4/12: 2023-04
+2026-03-24 00:05:58 | INFO     | healing_status | 🔧 Fine-tuning started for 2023-04
+2026-03-24 00:05:58 | INFO     | fine_tuner | Fine-tuning: Adding trees to existing model...
+2026-03-24 00:05:58 | INFO     | fine_tuner | Fine-tune successful: 21.7% improvement
+2026-03-24 00:05:58 | INFO     | healing_status | ✅ Fine-tuning complete: 21.7% improvement
+2026-03-24 00:05:58 | INFO     | pipeline |   2023-04: FINE-TUNE | Improvement: 21.7%
+2026-03-24 00:05:58 | INFO     | pipeline | ⚡ Processing month 5/12: 2023-05
+2026-03-24 00:06:00 | INFO     | healing_status | 🔧 Fine-tuning started for 2023-05
+2026-03-24 00:06:00 | INFO     | fine_tuner | Fine-tuning: Adding trees to existing model...
+2026-03-24 00:06:00 | INFO     | fine_tuner | Fine-tune successful: 14.0% improvement
+2026-03-24 00:06:00 | INFO     | healing_status | ✅ Fine-tuning complete: 14.0% improvement
+2026-03-24 00:06:00 | INFO     | pipeline |   2023-05: FINE-TUNE | Improvement: 14.0%
+2026-03-24 00:06:00 | INFO     | pipeline | ⚡ Processing month 6/12: 2023-06
+2026-03-24 00:06:02 | INFO     | healing_status | 🔧 Fine-tuning started for 2023-06
+2026-03-24 00:06:02 | INFO     | fine_tuner | Fine-tuning: Adding trees to existing model...
+2026-03-24 00:06:02 | INFO     | fine_tuner | Fine-tune successful: 35.4% improvement
+2026-03-24 00:06:02 | INFO     | healing_status | ✅ Fine-tuning complete: 35.4% improvement
+2026-03-24 00:06:02 | INFO     | pipeline |   2023-06: FINE-TUNE | Improvement: 35.4%
+2026-03-24 00:06:02 | INFO     | pipeline | ⚡ Progress: 6/12 months completed (50%)
+2026-03-24 00:06:03 | INFO     | pipeline | ⚡ Processing month 7/12: 2023-07
+2026-03-24 00:06:04 | INFO     | healing_status | 🔧 Fine-tuning started for 2023-07
+2026-03-24 00:06:05 | INFO     | fine_tuner | Fine-tuning: Adding trees to existing model...
+2026-03-24 00:06:05 | INFO     | fine_tuner | Fine-tune successful: 43.1% improvement
+2026-03-24 00:06:05 | INFO     | healing_status | ✅ Fine-tuning complete: 43.1% improvement
+2026-03-24 00:06:05 | INFO     | pipeline |   2023-07: FINE-TUNE | Improvement: 43.1%
+2026-03-24 00:06:05 | INFO     | pipeline | ⚡ Processing month 8/12: 2023-08
+2026-03-24 00:06:07 | INFO     | healing_status | 🔧 Fine-tuning started for 2023-08
+2026-03-24 00:06:07 | INFO     | fine_tuner | Fine-tuning: Adding trees to existing model...
+2026-03-24 00:06:07 | INFO     | fine_tuner | Fine-tune successful: 50.7% improvement
+2026-03-24 00:06:07 | INFO     | healing_status | ✅ Fine-tuning complete: 50.7% improvement
+2026-03-24 00:06:07 | INFO     | pipeline |   2023-08: FINE-TUNE | Improvement: 50.7%
+2026-03-24 00:06:07 | INFO     | pipeline | ⚡ Processing month 9/12: 2023-09
+2026-03-24 00:06:09 | INFO     | healing_status | 🔧 Fine-tuning started for 2023-09
+2026-03-24 00:06:09 | INFO     | fine_tuner | Fine-tuning: Adding trees to existing model...
+2026-03-24 00:06:09 | INFO     | fine_tuner | Fine-tune successful: 57.0% improvement
+2026-03-24 00:06:09 | INFO     | healing_status | ✅ Fine-tuning complete: 57.0% improvement
+2026-03-24 00:06:09 | INFO     | pipeline |   2023-09: FINE-TUNE | Improvement: 57.0%
+2026-03-24 00:06:09 | INFO     | pipeline | ⚡ Progress: 9/12 months completed (75%)
+2026-03-24 00:06:09 | INFO     | pipeline | ⚡ Processing month 10/12: 2023-10
+2026-03-24 00:06:12 | INFO     | healing_status | 🔧 Fine-tuning started for 2023-10
+2026-03-24 00:06:12 | INFO     | fine_tuner | Fine-tuning: Adding trees to existing model...
+2026-03-24 00:06:12 | INFO     | fine_tuner | Fine-tune successful: 30.8% improvement
+2026-03-24 00:06:12 | INFO     | healing_status | ✅ Fine-tuning complete: 30.8% improvement
+2026-03-24 00:06:12 | INFO     | pipeline |   2023-10: FINE-TUNE | Improvement: 30.8%
+2026-03-24 00:06:12 | INFO     | pipeline | ⚡ Processing month 11/12: 2023-11
+2026-03-24 00:06:14 | INFO     | healing_status | 🔧 Fine-tuning started for 2023-11
+2026-03-24 00:06:14 | INFO     | fine_tuner | Fine-tuning: Adding trees to existing model...
+2026-03-24 00:06:14 | INFO     | fine_tuner | Fine-tune improvement 4.2% < threshold, rolling back
+2026-03-24 00:06:14 | WARNING  | healing_status | ❌ Fine-tuning failed or rolled back
+2026-03-24 00:06:14 | INFO     | pipeline |   2023-11: FINE-TUNE | Improvement: 0.0%
+2026-03-24 00:06:14 | INFO     | pipeline | ⚡ Processing month 12/12: 2023-12
+2026-03-24 00:06:17 | INFO     | healing_status | 🔧 Fine-tuning started for 2023-12
+2026-03-24 00:06:17 | INFO     | fine_tuner | Fine-tuning: Adding trees to existing model...
+2026-03-24 00:06:17 | INFO     | fine_tuner | Fine-tune successful: 33.9% improvement
+2026-03-24 00:06:17 | INFO     | healing_status | ✅ Fine-tuning complete: 33.9% improvement
+2026-03-24 00:06:17 | INFO     | pipeline |   2023-12: FINE-TUNE | Improvement: 33.9%
+2026-03-24 00:06:17 | INFO     | pipeline | ⚡ Progress: 12/12 months completed (100%)
+2026-03-24 00:06:17 | INFO     | pipeline | [5/7] Simulating months done in 27s
+2026-03-24 00:06:17 | INFO     | pipeline | [6/7] Generating summary
+2026-03-24 00:06:17 | INFO     | pipeline | Final Severity: SEVERE | Severe drift detected: Fine-tuning applied
+2026-03-24 00:06:17 | INFO     | pipeline | Healing Summary: {'total_actions': 12, 'monitor_only': 0, 'fine_tuned': 11, 'rollbacks': 1}
+2026-03-24 00:06:17 | INFO     | pipeline | [6/7] Generating summary done in 0s
+2026-03-24 00:06:17 | INFO     | pipeline | [7/7] Saving results
+2026-03-24 00:06:17 | INFO     | fine_tuner | 💾 Healed model saved to C:\Users\balan\OneDrive\Desktop\caps\backend\models\active_model.pkl
+2026-03-24 00:06:17 | INFO     | pipeline | Healed model saved after 12 healing actions
+2026-03-24 00:06:17 | INFO     | pipeline | All results saved
+2026-03-24 00:06:17 | INFO     | pipeline | [7/7] Saving results done in 0s
+2026-03-24 00:06:17 | INFO     | pipeline | [8/7] First future prediction
+2026-03-24 00:06:17 | INFO     | sequential_predictor | Loaded model with 20 features
+2026-03-24 00:06:17 | INFO     | sequential_predictor | Loaded feature engineer state
+2026-03-24 00:06:19 | INFO     | sequential_predictor | ⚡ ULTRA SPEED: Using minimal feature engineering for faster processing
+2026-03-24 00:06:23 | INFO     | feature_engineering | Feature pipeline: 20 features from 652540 rows
+2026-03-24 00:06:23 | INFO     | sequential_predictor | Predicted 2024-01: 5 rows, mean=96 units
+2026-03-24 00:06:23 | INFO     | pipeline | First prediction: 2024-01 (5 rows)
+2026-03-24 00:06:23 | INFO     | pipeline | [8/7] First future prediction done in 6s
+2026-03-24 00:06:23 | INFO     | pipeline | PHASE 1 COMPLETE in 45s
+2026-03-24 00:06:23 | INFO     | __main__ | Final Drift Severity: SEVERE
+2026-03-24 00:06:23 | INFO     | __main__ | Recommendation: Severe drift detected: Fine-tuning applied
+2026-03-24 00:09:37 | INFO     | __main__ | Cleared stale logs from previous run
+2026-03-24 00:09:37 | INFO     | __main__ | Preparing data from retail_sales.csv
+2026-03-24 00:12:41 | INFO     | __main__ | Years in data: [np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023)]
+2026-03-24 00:12:42 | INFO     | __main__ | Saved 652,500 rows → C:\Users\balan\OneDrive\Desktop\caps\backend\data\uploaded_data.csv  (Train: 2019–2022 | Test: 2023)
+2026-03-24 00:12:42 | INFO     | pipeline | ============================================================
+2026-03-24 00:12:42 | INFO     | pipeline | PHASE 1: SELF-HEALING DEMAND FORECASTING SYSTEM
+2026-03-24 00:12:42 | INFO     | pipeline | ============================================================
+2026-03-24 00:12:42 | INFO     | pipeline | [1/7] Loading data
+2026-03-24 00:12:43 | INFO     | data_loader | Using full dataset: 652500 rows for complete model training
+2026-03-24 00:12:43 | INFO     | data_loader | Numeric features: ['Price']
+2026-03-24 00:12:43 | INFO     | data_loader | Categorical features: ['Promo']
+2026-03-24 00:12:43 | INFO     | data_loader | Loaded 652500 rows, 6 columns
+2026-03-24 00:12:43 | INFO     | data_loader | Detected roles: {'target': 'Demand', 'date': 'Date', 'has_store': True, 'has_product': True, 'has_holiday': False, 'numeric_features': ['Price'], 'categorical_features': ['Promo']}
+2026-03-24 00:12:43 | INFO     | data_loader | Stores: 50 | Products: 50 | Missing: 0
+2026-03-24 00:12:43 | INFO     | pipeline | [1/7] Loading data done in 0s
+2026-03-24 00:12:43 | INFO     | pipeline | [2/7] Splitting data
+2026-03-24 00:12:43 | INFO     | data_loader | Train: [np.int32(2019), np.int32(2020), np.int32(2021), np.int32(2022)] (522,500 rows, 48 months)
+2026-03-24 00:12:43 | INFO     | data_loader | Test:  2023 (130,000 rows, 12 months)
+2026-03-24 00:12:43 | INFO     | pipeline | Train year: 2019 | Test year: 2023
+2026-03-24 00:12:43 | INFO     | pipeline | [2/7] Splitting data done in 0s
+2026-03-24 00:12:43 | INFO     | pipeline | [3/7] Feature engineering
+2026-03-24 00:12:43 | INFO     | feature_engineering | Group cols: ['Store', 'Product']
+2026-03-24 00:12:43 | INFO     | feature_engineering | Numeric user cols: ['Price', 'Promo']
+2026-03-24 00:12:43 | INFO     | feature_engineering | Categorical user cols: []
+2026-03-24 00:13:01 | INFO     | feature_engineering | Created 11 interaction features
+2026-03-24 00:13:02 | INFO     | feature_engineering | Feature pipeline: 70 comprehensive features from 522500 rows (FULL DATASET)
+2026-03-24 00:13:17 | INFO     | feature_engineering | Created 11 interaction features
+2026-03-24 00:13:17 | INFO     | feature_engineering | Feature pipeline: 70 comprehensive features from 130000 rows (FULL DATASET)
+2026-03-24 00:13:17 | INFO     | pipeline | Features: 70 | Train rows: 522500 | Test rows: 130000
+2026-03-24 00:13:17 | INFO     | pipeline | [3/7] Feature engineering done in 33s
+2026-03-24 00:13:17 | INFO     | pipeline | [4/7] Training model
+2026-03-24 00:13:21 | INFO     | model_trainer | 🎯 FULL TRAINING: Running comprehensive hyperparameter tuning on 522500 samples
+2026-03-24 00:36:33 | INFO     | __main__ | Cleared stale logs from previous run
+2026-03-24 00:36:33 | INFO     | __main__ | Preparing data from retail_sales.csv
+2026-03-24 00:38:55 | INFO     | __main__ | Years in data: [np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023)]
+2026-03-24 00:38:56 | INFO     | __main__ | Saved 652,500 rows → C:\Users\balan\OneDrive\Desktop\caps\backend\data\uploaded_data.csv  (Train: 2019–2022 | Test: 2023)
+2026-03-24 00:38:56 | INFO     | pipeline | ============================================================
+2026-03-24 00:38:56 | INFO     | pipeline | PHASE 1: SELF-HEALING DEMAND FORECASTING SYSTEM
+2026-03-24 00:38:56 | INFO     | pipeline | ============================================================
+2026-03-24 00:38:56 | INFO     | pipeline | [1/7] Loading data
+2026-03-24 00:38:56 | INFO     | data_loader | Using full dataset: 652500 rows for complete model training
+2026-03-24 00:38:56 | INFO     | data_loader | Numeric features: ['Price']
+2026-03-24 00:38:56 | INFO     | data_loader | Categorical features: ['Promo']
+2026-03-24 00:38:56 | INFO     | data_loader | Loaded 652500 rows, 6 columns
+2026-03-24 00:38:56 | INFO     | data_loader | Detected roles: {'target': 'Demand', 'date': 'Date', 'has_store': True, 'has_product': True, 'has_holiday': False, 'numeric_features': ['Price'], 'categorical_features': ['Promo']}
+2026-03-24 00:38:56 | INFO     | data_loader | Stores: 50 | Products: 50 | Missing: 0
+2026-03-24 00:38:56 | INFO     | pipeline | [1/7] Loading data done in 0s
+2026-03-24 00:38:56 | INFO     | pipeline | [2/7] Splitting data
+2026-03-24 00:38:56 | INFO     | data_loader | Train: [np.int32(2019), np.int32(2020), np.int32(2021), np.int32(2022)] (522,500 rows, 48 months)
+2026-03-24 00:38:56 | INFO     | data_loader | Test:  2023 (130,000 rows, 12 months)
+2026-03-24 00:38:56 | INFO     | pipeline | Train year: 2019 | Test year: 2023
+2026-03-24 00:38:56 | INFO     | pipeline | [2/7] Splitting data done in 0s
+2026-03-24 00:38:56 | INFO     | pipeline | [3/7] Feature engineering
+2026-03-24 00:38:56 | INFO     | feature_engineering | Group cols: ['Store', 'Product']
+2026-03-24 00:38:56 | INFO     | feature_engineering | Numeric user cols: ['Price', 'Promo']
+2026-03-24 00:38:56 | INFO     | feature_engineering | Categorical user cols: []
+2026-03-24 00:39:12 | INFO     | feature_engineering | Created 11 interaction features
+2026-03-24 00:39:13 | INFO     | feature_engineering | Feature pipeline: 70 comprehensive features from 522500 rows (FULL DATASET)
+2026-03-24 00:39:25 | INFO     | feature_engineering | Created 11 interaction features
+2026-03-24 00:39:25 | INFO     | feature_engineering | Feature pipeline: 70 comprehensive features from 130000 rows (FULL DATASET)
+2026-03-24 00:39:25 | INFO     | pipeline | Features: 70 | Train rows: 522500 | Test rows: 130000
+2026-03-24 00:39:25 | INFO     | pipeline | [3/7] Feature engineering done in 28s
+2026-03-24 00:39:25 | INFO     | pipeline | [4/7] Training model
+2026-03-24 00:39:29 | INFO     | model_trainer | 🎯 FULL TRAINING: Running comprehensive hyperparameter tuning on 522500 samples
+2026-03-24 06:57:35 | INFO     | demand_analyzer | Loaded 652500 rows for demand analysis
+2026-03-24 06:57:35 | INFO     | demand_analyzer | Demand metrics calculated: avg=204
+2026-03-24 06:57:35 | INFO     | demand_analyzer | Loaded 652500 rows for demand analysis
+2026-03-24 06:57:36 | INFO     | demand_analyzer | Loaded 652500 rows for demand analysis
+2026-03-24 06:57:37 | INFO     | demand_analyzer | Loaded 652500 rows for demand analysis
+2026-03-24 06:57:44 | INFO     | demand_analyzer | Loaded 652500 rows for demand analysis
+2026-03-24 06:58:59 | INFO     | __main__ | Cleared stale logs from previous run
+2026-03-24 06:58:59 | INFO     | __main__ | Preparing data from retail_sales.csv
+2026-03-24 07:01:18 | INFO     | __main__ | Years in data: [np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023)]
+2026-03-24 07:01:19 | INFO     | __main__ | Saved 652,500 rows → C:\Users\balan\OneDrive\Desktop\caps\backend\data\uploaded_data.csv  (Train: 2019–2022 | Test: 2023)
+2026-03-24 07:01:19 | INFO     | pipeline | ============================================================
+2026-03-24 07:01:19 | INFO     | pipeline | PHASE 1: SELF-HEALING DEMAND FORECASTING SYSTEM
+2026-03-24 07:01:19 | INFO     | pipeline | ============================================================
+2026-03-24 07:01:19 | INFO     | pipeline | [1/7] Loading data
+2026-03-24 07:01:19 | INFO     | data_loader | Using full dataset: 652500 rows for complete model training
+2026-03-24 07:01:19 | INFO     | data_loader | Numeric features: ['Price']
+2026-03-24 07:01:19 | INFO     | data_loader | Categorical features: ['Promo']
+2026-03-24 07:01:19 | INFO     | data_loader | Loaded 652500 rows, 6 columns
+2026-03-24 07:01:19 | INFO     | data_loader | Detected roles: {'target': 'Demand', 'date': 'Date', 'has_store': True, 'has_product': True, 'has_holiday': False, 'numeric_features': ['Price'], 'categorical_features': ['Promo']}
+2026-03-24 07:01:19 | INFO     | data_loader | Stores: 50 | Products: 50 | Missing: 0
+2026-03-24 07:01:19 | INFO     | pipeline | [1/7] Loading data done in 0s
+2026-03-24 07:01:19 | INFO     | pipeline | [2/7] Splitting data
+2026-03-24 07:01:20 | INFO     | data_loader | Train: [np.int32(2019), np.int32(2020), np.int32(2021), np.int32(2022)] (522,500 rows, 48 months)
+2026-03-24 07:01:20 | INFO     | data_loader | Test:  2023 (130,000 rows, 12 months)
+2026-03-24 07:01:20 | INFO     | pipeline | Train year: 2019 | Test year: 2023
+2026-03-24 07:01:20 | INFO     | pipeline | [2/7] Splitting data done in 0s
+2026-03-24 07:01:20 | INFO     | pipeline | [3/7] Feature engineering
+2026-03-24 07:01:20 | INFO     | feature_engineering | Group cols: ['Store', 'Product']
+2026-03-24 07:01:20 | INFO     | feature_engineering | Numeric user cols: ['Price', 'Promo']
+2026-03-24 07:01:20 | INFO     | feature_engineering | Categorical user cols: []
+2026-03-24 07:01:33 | INFO     | feature_engineering | Created 11 interaction features
+2026-03-24 07:01:33 | INFO     | feature_engineering | Feature pipeline: 70 comprehensive features from 522500 rows (FULL DATASET)
+2026-03-24 07:01:45 | INFO     | feature_engineering | Created 11 interaction features
+2026-03-24 07:01:45 | INFO     | feature_engineering | Feature pipeline: 70 comprehensive features from 130000 rows (FULL DATASET)
+2026-03-24 07:01:45 | INFO     | pipeline | Features: 70 | Train rows: 522500 | Test rows: 130000
+2026-03-24 07:01:45 | INFO     | pipeline | [3/7] Feature engineering done in 25s
+2026-03-24 07:01:45 | INFO     | pipeline | [4/7] Training model
+2026-03-24 07:01:48 | INFO     | model_trainer | 🎯 FULL TRAINING: Running comprehensive hyperparameter tuning on 522500 samples
+2026-03-24 07:43:51 | INFO     | __main__ | Cleared stale logs from previous run
+2026-03-24 07:43:51 | INFO     | __main__ | Preparing data from retail_sales.csv
+2026-03-24 07:45:42 | INFO     | __main__ | Cleared stale logs from previous run
+2026-03-24 07:45:42 | INFO     | __main__ | Preparing data from retail_sales.csv
+2026-03-24 07:46:41 | INFO     | demand_analyzer | Loaded 652500 rows for demand analysis
+2026-03-24 07:46:41 | INFO     | demand_analyzer | Demand metrics calculated: avg=204
+2026-03-24 07:46:45 | INFO     | demand_analyzer | Loaded 652500 rows for demand analysis
+2026-03-24 07:46:49 | INFO     | demand_analyzer | Loaded 652500 rows for demand analysis
+2026-03-24 07:46:52 | INFO     | demand_analyzer | Loaded 652500 rows for demand analysis
+2026-03-24 07:47:09 | INFO     | sequential_predictor | Loaded model with 0 features
+2026-03-24 07:47:09 | INFO     | sequential_predictor | Loaded model with 0 features
+2026-03-24 07:47:09 | INFO     | sequential_predictor | Loaded feature engineer state
+2026-03-24 07:47:09 | INFO     | sequential_predictor | Loaded feature engineer state
+2026-03-24 07:47:09 | INFO     | sequential_predictor | Loaded model with 0 features
+2026-03-24 07:47:09 | INFO     | sequential_predictor | Loaded feature engineer state
+2026-03-24 07:47:10 | INFO     | sequential_predictor | Loaded model with 0 features
+2026-03-24 07:47:10 | INFO     | sequential_predictor | Loaded feature engineer state
+2026-03-24 07:47:10 | INFO     | sequential_predictor | Loaded model with 0 features
+2026-03-24 07:47:10 | INFO     | sequential_predictor | Loaded feature engineer state
+2026-03-24 07:49:39 | INFO     | __main__ | Years in data: [np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023)]
+2026-03-24 07:49:41 | INFO     | __main__ | Saved 652,500 rows → C:\Users\balan\OneDrive\Desktop\caps\backend\data\uploaded_data.csv  (Train: 2019–2022 | Test: 2023)
+2026-03-24 07:49:41 | INFO     | pipeline | ============================================================
+2026-03-24 07:49:41 | INFO     | pipeline | PHASE 1: SELF-HEALING DEMAND FORECASTING SYSTEM
+2026-03-24 07:49:41 | INFO     | pipeline | ============================================================
+2026-03-24 07:49:41 | INFO     | pipeline | [1/7] Loading data
+2026-03-24 07:49:41 | INFO     | data_loader | Using full dataset: 652500 rows for complete model training
+2026-03-24 07:49:42 | INFO     | data_loader | Numeric features: ['Price']
+2026-03-24 07:49:42 | INFO     | data_loader | Categorical features: ['Promo']
+2026-03-24 07:49:42 | INFO     | data_loader | Loaded 652500 rows, 6 columns
+2026-03-24 07:49:42 | INFO     | data_loader | Detected roles: {'target': 'Demand', 'date': 'Date', 'has_store': True, 'has_product': True, 'has_holiday': False, 'numeric_features': ['Price'], 'categorical_features': ['Promo']}
+2026-03-24 07:49:42 | INFO     | data_loader | Stores: 50 | Products: 50 | Missing: 0
+2026-03-24 07:49:42 | INFO     | pipeline | [1/7] Loading data done in 0s
+2026-03-24 07:49:42 | INFO     | pipeline | [2/7] Splitting data
+2026-03-24 07:49:42 | INFO     | data_loader | Train: [np.int32(2019), np.int32(2020), np.int32(2021), np.int32(2022)] (522,500 rows, 48 months)
+2026-03-24 07:49:42 | INFO     | data_loader | Test:  2023 (130,000 rows, 12 months)
+2026-03-24 07:49:42 | INFO     | pipeline | Train year: 2019 | Test year: 2023
+2026-03-24 07:49:42 | INFO     | pipeline | [2/7] Splitting data done in 0s
+2026-03-24 07:49:42 | INFO     | pipeline | [3/7] Feature engineering
+2026-03-24 07:49:42 | INFO     | feature_engineering | Group cols: ['Store', 'Product']
+2026-03-24 07:49:42 | INFO     | feature_engineering | Numeric user cols: ['Price', 'Promo']
+2026-03-24 07:49:42 | INFO     | feature_engineering | Categorical user cols: []
+2026-03-24 07:50:04 | INFO     | feature_engineering | Created 11 interaction features
+2026-03-24 07:50:05 | INFO     | feature_engineering | Feature pipeline: 70 comprehensive features from 522500 rows (FULL DATASET)
+2026-03-24 07:50:28 | INFO     | feature_engineering | Created 11 interaction features
+2026-03-24 07:50:28 | INFO     | feature_engineering | Feature pipeline: 70 comprehensive features from 130000 rows (FULL DATASET)
+2026-03-24 07:50:28 | INFO     | pipeline | Features: 70 | Train rows: 522500 | Test rows: 130000
+2026-03-24 07:50:28 | INFO     | pipeline | [3/7] Feature engineering done in 46s
+2026-03-24 07:50:28 | INFO     | pipeline | [4/7] Training model
+2026-03-24 07:50:35 | INFO     | model_trainer | 🎯 FAST TRAINING: Running optimized hyperparameter tuning on 522500 samples (15 iter × 3 folds)
+2026-03-24 07:51:50 | INFO     | demand_analyzer | Loaded 652500 rows for demand analysis
+2026-03-24 07:51:50 | INFO     | demand_analyzer | Demand metrics calculated: avg=204
+2026-03-24 07:51:51 | INFO     | demand_analyzer | Loaded 652500 rows for demand analysis
+2026-03-24 07:51:52 | INFO     | demand_analyzer | Loaded 652500 rows for demand analysis
+2026-03-24 07:51:54 | INFO     | demand_analyzer | Loaded 652500 rows for demand analysis
+2026-03-24 07:51:57 | INFO     | __main__ | Cleared stale logs from previous run
+2026-03-24 07:51:57 | INFO     | __main__ | Preparing data from retail_sales.csv
+2026-03-24 07:55:10 | INFO     | __main__ | Years in data: [np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023)]
+2026-03-24 07:55:11 | INFO     | __main__ | Saved 652,500 rows → C:\Users\balan\OneDrive\Desktop\caps\backend\data\uploaded_data.csv  (Train: 2019–2022 | Test: 2023)
+2026-03-24 07:55:11 | INFO     | pipeline | ============================================================
+2026-03-24 07:55:11 | INFO     | pipeline | PHASE 1: SELF-HEALING DEMAND FORECASTING SYSTEM
+2026-03-24 07:55:11 | INFO     | pipeline | ============================================================
+2026-03-24 07:55:11 | INFO     | pipeline | [1/7] Loading data
+2026-03-24 07:55:12 | INFO     | data_loader | Using full dataset: 652500 rows for complete model training
+2026-03-24 07:55:12 | INFO     | data_loader | Numeric features: ['Price']
+2026-03-24 07:55:12 | INFO     | data_loader | Categorical features: ['Promo']
+2026-03-24 07:55:12 | INFO     | data_loader | Loaded 652500 rows, 6 columns
+2026-03-24 07:55:12 | INFO     | data_loader | Detected roles: {'target': 'Demand', 'date': 'Date', 'has_store': True, 'has_product': True, 'has_holiday': False, 'numeric_features': ['Price'], 'categorical_features': ['Promo']}
+2026-03-24 07:55:12 | INFO     | data_loader | Stores: 50 | Products: 50 | Missing: 0
+2026-03-24 07:55:12 | INFO     | pipeline | [1/7] Loading data done in 0s
+2026-03-24 07:55:12 | INFO     | pipeline | [2/7] Splitting data
+2026-03-24 07:55:12 | INFO     | data_loader | Train: [np.int32(2019), np.int32(2020), np.int32(2021), np.int32(2022)] (522,500 rows, 48 months)
+2026-03-24 07:55:12 | INFO     | data_loader | Test:  2023 (130,000 rows, 12 months)
+2026-03-24 07:55:12 | INFO     | pipeline | Train year: 2019 | Test year: 2023
+2026-03-24 07:55:12 | INFO     | pipeline | [2/7] Splitting data done in 0s
+2026-03-24 07:55:12 | INFO     | pipeline | [3/7] Feature engineering
+2026-03-24 07:55:12 | INFO     | feature_engineering | Group cols: ['Store', 'Product']
+2026-03-24 07:55:12 | INFO     | feature_engineering | Numeric user cols: ['Price', 'Promo']
+2026-03-24 07:55:12 | INFO     | feature_engineering | Categorical user cols: []
+2026-03-24 07:55:30 | INFO     | feature_engineering | Created 11 interaction features
+2026-03-24 07:55:31 | INFO     | feature_engineering | Feature pipeline: 70 comprehensive features from 522500 rows (FULL DATASET)
+2026-03-24 07:55:46 | INFO     | feature_engineering | Created 11 interaction features
+2026-03-24 07:55:47 | INFO     | feature_engineering | Feature pipeline: 70 comprehensive features from 130000 rows (FULL DATASET)
+2026-03-24 07:55:47 | INFO     | pipeline | Features: 70 | Train rows: 522500 | Test rows: 130000
+2026-03-24 07:55:47 | INFO     | pipeline | [3/7] Feature engineering done in 34s
+2026-03-24 07:55:47 | INFO     | pipeline | [4/7] Training model
+2026-03-24 07:55:50 | INFO     | model_trainer | 🎯 FULL DATASET TRAINING: Hyperparameter tuning on 522,500 samples
+2026-03-24 07:55:50 | INFO     | model_trainer | 🎯 Starting hyperparameter search: 18 iterations × 3 folds = 54 model fits
+2026-03-24 08:30:11 | INFO     | __main__ | Cleared stale logs from previous run
+2026-03-24 08:30:11 | INFO     | __main__ | Preparing data from retail_sales.csv
+2026-03-24 08:30:50 | INFO     | sequential_predictor | Loaded model with 0 features
+2026-03-24 08:30:50 | INFO     | sequential_predictor | Loaded feature engineer state
+2026-03-24 08:30:50 | INFO     | sequential_predictor | ⚡ ULTRA SPEED: Skipping auto-fill for faster processing
+2026-03-24 08:31:00 | INFO     | sequential_predictor | ⚡ ULTRA SPEED: Generating next prediction...
+2026-03-24 08:31:03 | INFO     | sequential_predictor | ⚡ ULTRA SPEED: Using minimal feature engineering for faster processing
+2026-03-24 08:31:54 | INFO     | feature_engineering | Created 11 interaction features
+2026-03-24 08:31:59 | INFO     | feature_engineering | Feature pipeline: 70 comprehensive features from 662740 rows (FULL DATASET)
+2026-03-24 08:34:43 | INFO     | __main__ | Years in data: [np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023)]
+2026-03-24 08:34:44 | INFO     | __main__ | Saved 652,500 rows → C:\Users\balan\OneDrive\Desktop\caps\backend\data\uploaded_data.csv  (Train: 2019–2022 | Test: 2023)
+2026-03-24 08:34:44 | INFO     | pipeline | ============================================================
+2026-03-24 08:34:44 | INFO     | pipeline | PHASE 1: SELF-HEALING DEMAND FORECASTING SYSTEM
+2026-03-24 08:34:44 | INFO     | pipeline | ============================================================
+2026-03-24 08:34:44 | INFO     | pipeline | [1/7] Loading data
+2026-03-24 08:34:45 | INFO     | data_loader | Using full dataset: 652500 rows for complete model training
+2026-03-24 08:34:45 | INFO     | data_loader | Numeric features: ['Price']
+2026-03-24 08:34:45 | INFO     | data_loader | Categorical features: ['Promo']
+2026-03-24 08:34:45 | INFO     | data_loader | Loaded 652500 rows, 6 columns
+2026-03-24 08:34:45 | INFO     | data_loader | Detected roles: {'target': 'Demand', 'date': 'Date', 'has_store': True, 'has_product': True, 'has_holiday': False, 'numeric_features': ['Price'], 'categorical_features': ['Promo']}
+2026-03-24 08:34:45 | INFO     | data_loader | Stores: 50 | Products: 50 | Missing: 0
+2026-03-24 08:34:45 | INFO     | pipeline | [1/7] Loading data done in 0s
+2026-03-24 08:34:45 | INFO     | pipeline | [2/7] Splitting data
+2026-03-24 08:34:45 | INFO     | data_loader | Train: [np.int32(2019), np.int32(2020), np.int32(2021), np.int32(2022)] (522,500 rows, 48 months)
+2026-03-24 08:34:45 | INFO     | data_loader | Test:  2023 (130,000 rows, 12 months)
+2026-03-24 08:34:45 | INFO     | pipeline | Train year: 2019 | Test year: 2023
+2026-03-24 08:34:45 | INFO     | pipeline | [2/7] Splitting data done in 0s
+2026-03-24 08:34:45 | INFO     | pipeline | [3/7] Feature engineering
+2026-03-24 08:34:45 | INFO     | feature_engineering | Group cols: ['Store', 'Product']
+2026-03-24 08:34:45 | INFO     | feature_engineering | Numeric user cols: ['Price', 'Promo']
+2026-03-24 08:34:45 | INFO     | feature_engineering | Categorical user cols: []
+2026-03-24 08:35:00 | INFO     | feature_engineering | Created 11 interaction features
+2026-03-24 08:35:01 | INFO     | feature_engineering | Feature pipeline: 70 comprehensive features from 522500 rows (FULL DATASET)
+2026-03-24 08:35:13 | INFO     | feature_engineering | Created 11 interaction features
+2026-03-24 08:35:13 | INFO     | feature_engineering | Feature pipeline: 70 comprehensive features from 130000 rows (FULL DATASET)
+2026-03-24 08:35:13 | INFO     | pipeline | Features: 70 | Train rows: 522500 | Test rows: 130000
+2026-03-24 08:35:13 | INFO     | pipeline | [3/7] Feature engineering done in 28s
+2026-03-24 08:35:13 | INFO     | pipeline | [4/7] Training model
+2026-03-24 08:35:16 | INFO     | model_trainer | 🎯 FULL DATASET TRAINING: Hyperparameter tuning on 522,500 samples
+2026-03-24 08:35:16 | INFO     | model_trainer | 🎯 Starting hyperparameter search: 18 iterations × 3 folds = 54 model fits
+2026-03-24 08:48:07 | INFO     | demand_analyzer | Loaded 652500 rows for demand analysis
+2026-03-24 08:48:10 | INFO     | demand_analyzer | Demand metrics calculated: avg=204
+2026-03-24 08:48:12 | INFO     | demand_analyzer | Loaded 652500 rows for demand analysis
+2026-03-24 08:48:17 | INFO     | demand_analyzer | Loaded 652500 rows for demand analysis
+2026-03-24 08:48:21 | INFO     | demand_analyzer | Loaded 652500 rows for demand analysis
+2026-03-24 08:48:52 | INFO     | demand_analyzer | Loaded 652500 rows for demand analysis
+2026-03-24 08:48:52 | INFO     | demand_analyzer | Demand metrics calculated: avg=204
+2026-03-24 08:48:56 | INFO     | demand_analyzer | Loaded 652500 rows for demand analysis
+2026-03-24 08:49:00 | INFO     | demand_analyzer | Loaded 652500 rows for demand analysis
+2026-03-24 08:49:09 | INFO     | demand_analyzer | Loaded 652500 rows for demand analysis
+2026-03-24 08:49:36 | INFO     | __main__ | Cleared stale logs from previous run
+2026-03-24 08:49:36 | INFO     | __main__ | Preparing data from retail_sales.csv
+2026-03-24 08:59:22 | INFO     | __main__ | Years in data: [np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023)]
+2026-03-24 08:59:27 | INFO     | __main__ | Saved 652,500 rows → C:\Users\balan\OneDrive\Desktop\caps\backend\data\uploaded_data.csv  (Train: 2019–2022 | Test: 2023)
+2026-03-24 08:59:28 | INFO     | pipeline | ============================================================
+2026-03-24 08:59:28 | INFO     | pipeline | PHASE 1: SELF-HEALING DEMAND FORECASTING SYSTEM
+2026-03-24 08:59:28 | INFO     | pipeline | ============================================================
+2026-03-24 08:59:28 | INFO     | pipeline | [1/7] Loading data
+2026-03-24 08:59:29 | INFO     | data_loader | Using full dataset: 652500 rows for complete model training
+2026-03-24 08:59:30 | INFO     | data_loader | Numeric features: ['Price']
+2026-03-24 08:59:30 | INFO     | data_loader | Categorical features: ['Promo']
+2026-03-24 08:59:30 | INFO     | data_loader | Loaded 652500 rows, 6 columns
+2026-03-24 08:59:30 | INFO     | data_loader | Detected roles: {'target': 'Demand', 'date': 'Date', 'has_store': True, 'has_product': True, 'has_holiday': False, 'numeric_features': ['Price'], 'categorical_features': ['Promo']}
+2026-03-24 08:59:30 | INFO     | data_loader | Stores: 50 | Products: 50 | Missing: 0
+2026-03-24 08:59:30 | INFO     | pipeline | [1/7] Loading data done in 2s
+2026-03-24 08:59:30 | INFO     | pipeline | [2/7] Splitting data
+2026-03-24 08:59:31 | INFO     | data_loader | Train: [np.int32(2019), np.int32(2020), np.int32(2021), np.int32(2022)] (522,500 rows, 48 months)
+2026-03-24 08:59:31 | INFO     | data_loader | Test:  2023 (130,000 rows, 12 months)
+2026-03-24 08:59:31 | INFO     | pipeline | Train year: 2019 | Test year: 2023
+2026-03-24 08:59:31 | INFO     | pipeline | [2/7] Splitting data done in 0s
+2026-03-24 08:59:31 | INFO     | pipeline | [3/7] Feature engineering
+2026-03-24 08:59:31 | INFO     | feature_engineering | Group cols: ['Store', 'Product']
+2026-03-24 08:59:31 | INFO     | feature_engineering | Numeric user cols: ['Price', 'Promo']
+2026-03-24 08:59:31 | INFO     | feature_engineering | Categorical user cols: []
+2026-03-24 09:00:30 | INFO     | feature_engineering | Created 11 interaction features
+2026-03-24 09:00:40 | INFO     | feature_engineering | Feature pipeline: 70 comprehensive features from 522500 rows (FULL DATASET)
+2026-03-24 09:01:28 | INFO     | feature_engineering | Created 11 interaction features
+2026-03-24 09:01:28 | INFO     | feature_engineering | Feature pipeline: 70 comprehensive features from 130000 rows (FULL DATASET)
+2026-03-24 09:01:29 | INFO     | pipeline | Features: 70 | Train rows: 522500 | Test rows: 130000
+2026-03-24 09:01:29 | INFO     | pipeline | [3/7] Feature engineering done in 117s
+2026-03-24 09:01:29 | INFO     | pipeline | [4/7] Training model
+2026-03-24 09:02:29 | INFO     | model_trainer | 🎯 FULL DATASET TRAINING: Hyperparameter tuning on 522,500 samples
+2026-03-24 09:02:29 | INFO     | model_trainer | 🎯 SPEED OPTIMIZED: 10 iterations × 2 folds = 20 model fits on full dataset
+2026-03-24 09:10:45 | INFO     | model_trainer | 🎯 BEST PARAMETERS FOUND: {'subsample': 0.8, 'reg_lambda': 1.0, 'reg_alpha': 0.1, 'n_estimators': 200, 'min_child_weight': 5, 'max_depth': 8, 'learning_rate': 0.05, 'colsample_bytree': 0.7}
+2026-03-24 09:10:45 | INFO     | model_trainer | 🎯 Best CV Score: 2.54 MAE
+2026-03-24 09:11:21 | ERROR    | pipeline | Step 4 (Training model) failed: 'ModelTrainer' object has no attribute '_model_name'
+2026-03-24 09:11:21 | ERROR    | __main__ | Pipeline failed: 'ModelTrainer' object has no attribute '_model_name'
+2026-03-24 09:14:12 | INFO     | model_trainer | 🎯 BEST PARAMETERS FOUND: {'subsample': 0.8, 'reg_lambda': 1.0, 'reg_alpha': 0.0, 'n_estimators': 150, 'min_child_weight': 3, 'max_depth': 8, 'learning_rate': 0.1, 'colsample_bytree': 0.8}
+2026-03-24 09:14:12 | INFO     | model_trainer | 🎯 Best CV Score: 2.63 MAE
+2026-03-24 09:14:17 | ERROR    | pipeline | Step 4 (Training model) failed: 'ModelTrainer' object has no attribute '_model_name'
+2026-03-24 09:14:17 | ERROR    | __main__ | Pipeline failed: 'ModelTrainer' object has no attribute '_model_name'
+2026-03-24 09:23:37 | INFO     | __main__ | Cleared stale logs from previous run
+2026-03-24 09:23:37 | INFO     | __main__ | Preparing data from retail_sales.csv
+2026-03-24 09:26:01 | INFO     | __main__ | Years in data: [np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023)]
+2026-03-24 09:26:02 | INFO     | __main__ | Saved 652,500 rows → C:\Users\balan\OneDrive\Desktop\caps\backend\data\uploaded_data.csv  (Train: 2019–2022 | Test: 2023)
+2026-03-24 09:26:02 | INFO     | pipeline | ============================================================
+2026-03-24 09:26:02 | INFO     | pipeline | PHASE 1: SELF-HEALING DEMAND FORECASTING SYSTEM
+2026-03-24 09:26:02 | INFO     | pipeline | ============================================================
+2026-03-24 09:26:02 | INFO     | pipeline | [1/7] Loading data
+2026-03-24 09:26:03 | INFO     | data_loader | Using full dataset: 652500 rows for complete model training
+2026-03-24 09:26:03 | INFO     | data_loader | Numeric features: ['Price']
+2026-03-24 09:26:03 | INFO     | data_loader | Categorical features: ['Promo']
+2026-03-24 09:26:03 | INFO     | data_loader | Loaded 652500 rows, 6 columns
+2026-03-24 09:26:03 | INFO     | data_loader | Detected roles: {'target': 'Demand', 'date': 'Date', 'has_store': True, 'has_product': True, 'has_holiday': False, 'numeric_features': ['Price'], 'categorical_features': ['Promo']}
+2026-03-24 09:26:03 | INFO     | data_loader | Stores: 50 | Products: 50 | Missing: 0
+2026-03-24 09:26:03 | INFO     | pipeline | [1/7] Loading data done in 0s
+2026-03-24 09:26:03 | INFO     | pipeline | [2/7] Splitting data
+2026-03-24 09:26:03 | INFO     | data_loader | Train: [np.int32(2019), np.int32(2020), np.int32(2021), np.int32(2022)] (522,500 rows, 48 months)
+2026-03-24 09:26:03 | INFO     | data_loader | Test:  2023 (130,000 rows, 12 months)
+2026-03-24 09:26:03 | INFO     | pipeline | Train year: 2019 | Test year: 2023
+2026-03-24 09:26:03 | INFO     | pipeline | [2/7] Splitting data done in 0s
+2026-03-24 09:26:03 | INFO     | pipeline | [3/7] Feature engineering
+2026-03-24 09:26:03 | INFO     | feature_engineering | Group cols: ['Store', 'Product']
+2026-03-24 09:26:03 | INFO     | feature_engineering | Numeric user cols: ['Price', 'Promo']
+2026-03-24 09:26:03 | INFO     | feature_engineering | Categorical user cols: []
+2026-03-24 09:26:18 | INFO     | feature_engineering | Created 11 interaction features
+2026-03-24 09:26:18 | INFO     | feature_engineering | Feature pipeline: 70 comprehensive features from 522500 rows (FULL DATASET)
+2026-03-24 09:26:30 | INFO     | feature_engineering | Created 11 interaction features
+2026-03-24 09:26:31 | INFO     | feature_engineering | Feature pipeline: 70 comprehensive features from 130000 rows (FULL DATASET)
+2026-03-24 09:26:31 | INFO     | pipeline | Features: 70 | Train rows: 522500 | Test rows: 130000
+2026-03-24 09:26:31 | INFO     | pipeline | [3/7] Feature engineering done in 27s
+2026-03-24 09:26:31 | INFO     | pipeline | [4/7] Training model
+2026-03-24 09:26:34 | INFO     | model_trainer | 🎯 FULL DATASET TRAINING: Hyperparameter tuning on 522,500 samples
+2026-03-24 09:26:34 | INFO     | model_trainer | 🎯 SPEED OPTIMIZED: 10 iterations × 2 folds = 20 model fits on full dataset
+2026-03-24 09:33:46 | INFO     | model_trainer | 🎯 BEST PARAMETERS FOUND: {'subsample': 0.8, 'reg_lambda': 1.0, 'reg_alpha': 0.0, 'n_estimators': 150, 'min_child_weight': 3, 'max_depth': 8, 'learning_rate': 0.1, 'colsample_bytree': 0.8}
+2026-03-24 09:33:46 | INFO     | model_trainer | 🎯 Best CV Score: 2.63 MAE
+2026-03-24 09:33:50 | INFO     | model_trainer | ⚡ FULL DATASET TRAINING: XGB on 522,500 samples with optimal params
+2026-03-24 09:34:10 | INFO     | model_trainer | 🌲 Training Random Forest (100 trees) on 522,500 samples
+2026-03-24 09:40:09 | INFO     | model_trainer | 🎯 XGB FULL TRAINING completed - MAE:0.9
+2026-03-24 09:40:10 | INFO     | model_trainer | train → RMSE:1 MAE:1 R²:100% MAPE:0% Accuracy:100%
+2026-03-24 09:40:11 | INFO     | model_trainer | Model saved: models/active_model.pkl | Version:v1_20260324_094010 | Type:XGB
+2026-03-24 09:40:11 | INFO     | model_trainer | Metrics saved: logs/baseline_metrics.json
+2026-03-24 09:40:11 | INFO     | drift_detector | Dynamic thresholds set for 70 features
+2026-03-24 09:40:17 | INFO     | model_trainer | CI Coverage:100.00% | Avg Width:36
+2026-03-24 09:40:18 | INFO     | drift_detector | Baseline set: 70 features
+2026-03-24 09:40:18 | INFO     | pipeline | [4/7] Training model done in 827s
+2026-03-24 09:40:18 | INFO     | pipeline | [5/7] Simulating months
+2026-03-24 09:40:19 | INFO     | pipeline | 🎯 Processing 12 months with comprehensive analysis...
+2026-03-24 09:40:20 | INFO     | pipeline | 🎯 Processing month 1/12: 2023-01 (10000 rows)
+2026-03-24 09:40:24 | INFO     | healing_status | 🔧 Fine-tuning started for 2023-01
+2026-03-24 09:40:25 | INFO     | fine_tuner | Fine-tuning: Adding trees to existing model...
+2026-03-24 09:40:28 | INFO     | fine_tuner | Fine-tune successful: 33.8% improvement
+2026-03-24 09:40:29 | INFO     | healing_status | ✅ Fine-tuning complete: 33.8% improvement
+2026-03-24 09:40:29 | INFO     | pipeline |   2023-01: COMPREHENSIVE FINE-TUNE | Improvement: 33.8%
+2026-03-24 09:40:29 | INFO     | pipeline | 🎯 Progress: 1/12 months completed (8%) - Full analysis
+2026-03-24 09:40:29 | INFO     | pipeline | 🎯 Processing month 2/12: 2023-02 (10000 rows)
+2026-03-24 09:40:33 | INFO     | healing_status | 🔧 Fine-tuning started for 2023-02
+2026-03-24 09:40:34 | INFO     | fine_tuner | Fine-tuning: Adding trees to existing model...
+2026-03-24 09:40:38 | INFO     | fine_tuner | Fine-tune successful: 45.9% improvement
+2026-03-24 09:40:38 | INFO     | healing_status | ✅ Fine-tuning complete: 45.9% improvement
+2026-03-24 09:40:38 | INFO     | pipeline |   2023-02: COMPREHENSIVE FINE-TUNE | Improvement: 45.9%
+2026-03-24 09:40:38 | INFO     | pipeline | 🎯 Progress: 2/12 months completed (17%) - Full analysis
+2026-03-24 09:40:38 | INFO     | pipeline | 🎯 Processing month 3/12: 2023-03 (12500 rows)
+2026-03-24 09:40:42 | INFO     | healing_status | 🔧 Fine-tuning started for 2023-03
+2026-03-24 09:40:43 | INFO     | fine_tuner | Fine-tuning: Adding trees to existing model...
+2026-03-24 09:40:48 | INFO     | fine_tuner | Fine-tune successful: 45.6% improvement
+2026-03-24 09:40:48 | INFO     | healing_status | ✅ Fine-tuning complete: 45.6% improvement
+2026-03-24 09:40:48 | INFO     | pipeline |   2023-03: COMPREHENSIVE FINE-TUNE | Improvement: 45.6%
+2026-03-24 09:40:48 | INFO     | pipeline | 🎯 Progress: 3/12 months completed (25%) - Full analysis
+2026-03-24 09:40:48 | INFO     | pipeline | 🎯 Processing month 4/12: 2023-04 (10000 rows)
+2026-03-24 09:40:53 | INFO     | healing_status | 🔧 Fine-tuning started for 2023-04
+2026-03-24 09:40:54 | INFO     | fine_tuner | Fine-tuning: Adding trees to existing model...
+2026-03-24 09:40:58 | INFO     | fine_tuner | Fine-tune successful: 55.1% improvement
+2026-03-24 09:40:59 | INFO     | healing_status | ✅ Fine-tuning complete: 55.1% improvement
+2026-03-24 09:40:59 | INFO     | pipeline |   2023-04: COMPREHENSIVE FINE-TUNE | Improvement: 55.1%
+2026-03-24 09:40:59 | INFO     | pipeline | 🎯 Progress: 4/12 months completed (33%) - Full analysis
+2026-03-24 09:40:59 | INFO     | pipeline | 🎯 Processing month 5/12: 2023-05 (10000 rows)
+2026-03-24 09:41:03 | INFO     | healing_status | 🔧 Fine-tuning started for 2023-05
+2026-03-24 09:41:04 | INFO     | fine_tuner | Fine-tuning: Adding trees to existing model...
+2026-03-24 09:41:09 | INFO     | fine_tuner | Fine-tune successful: 27.5% improvement
+2026-03-24 09:41:10 | INFO     | healing_status | ✅ Fine-tuning complete: 27.5% improvement
+2026-03-24 09:41:10 | INFO     | pipeline |   2023-05: COMPREHENSIVE FINE-TUNE | Improvement: 27.5%
+2026-03-24 09:41:10 | INFO     | pipeline | 🎯 Progress: 5/12 months completed (42%) - Full analysis
+2026-03-24 09:41:10 | INFO     | pipeline | 🎯 Processing month 6/12: 2023-06 (12500 rows)
+2026-03-24 09:41:14 | INFO     | healing_status | 🔧 Fine-tuning started for 2023-06
+2026-03-24 09:41:15 | INFO     | fine_tuner | Fine-tuning: Adding trees to existing model...
+2026-03-24 09:41:22 | INFO     | fine_tuner | Fine-tune successful: 38.6% improvement
+2026-03-24 09:41:22 | INFO     | healing_status | ✅ Fine-tuning complete: 38.6% improvement
+2026-03-24 09:41:22 | INFO     | pipeline |   2023-06: COMPREHENSIVE FINE-TUNE | Improvement: 38.6%
+2026-03-24 09:41:22 | INFO     | pipeline | 🎯 Progress: 6/12 months completed (50%) - Full analysis
+2026-03-24 09:41:22 | INFO     | pipeline | 🎯 Processing month 7/12: 2023-07 (10000 rows)
+2026-03-24 09:41:27 | INFO     | healing_status | 🔧 Fine-tuning started for 2023-07
+2026-03-24 09:41:28 | INFO     | fine_tuner | Fine-tuning: Adding trees to existing model...
+2026-03-24 09:41:35 | INFO     | fine_tuner | Fine-tune successful: 38.1% improvement
+2026-03-24 09:41:36 | INFO     | healing_status | ✅ Fine-tuning complete: 38.1% improvement
+2026-03-24 09:41:36 | INFO     | pipeline |   2023-07: COMPREHENSIVE FINE-TUNE | Improvement: 38.1%
+2026-03-24 09:41:36 | INFO     | pipeline | 🎯 Progress: 7/12 months completed (58%) - Full analysis
+2026-03-24 09:41:36 | INFO     | pipeline | 🎯 Processing month 8/12: 2023-08 (10000 rows)
+2026-03-24 09:41:40 | INFO     | healing_status | 🔧 Fine-tuning started for 2023-08
+2026-03-24 09:41:41 | INFO     | fine_tuner | Fine-tuning: Adding trees to existing model...
+2026-03-24 09:41:50 | INFO     | fine_tuner | Fine-tune successful: 53.0% improvement
+2026-03-24 09:41:50 | INFO     | healing_status | ✅ Fine-tuning complete: 53.0% improvement
+2026-03-24 09:41:50 | INFO     | pipeline |   2023-08: COMPREHENSIVE FINE-TUNE | Improvement: 53.0%
+2026-03-24 09:41:50 | INFO     | pipeline | 🎯 Progress: 8/12 months completed (67%) - Full analysis
+2026-03-24 09:41:50 | INFO     | pipeline | 🎯 Processing month 9/12: 2023-09 (12500 rows)
+2026-03-24 09:41:55 | INFO     | healing_status | 🔧 Fine-tuning started for 2023-09
+2026-03-24 09:41:56 | INFO     | fine_tuner | Fine-tuning: Adding trees to existing model...
+2026-03-24 09:42:07 | INFO     | fine_tuner | Fine-tune successful: 67.9% improvement
+2026-03-24 09:42:07 | INFO     | healing_status | ✅ Fine-tuning complete: 67.9% improvement
+2026-03-24 09:42:07 | INFO     | pipeline |   2023-09: COMPREHENSIVE FINE-TUNE | Improvement: 67.9%
+2026-03-24 09:42:07 | INFO     | pipeline | 🎯 Progress: 9/12 months completed (75%) - Full analysis
+2026-03-24 09:42:07 | INFO     | pipeline | 🎯 Processing month 10/12: 2023-10 (10000 rows)
+2026-03-24 09:42:12 | INFO     | healing_status | 🔧 Fine-tuning started for 2023-10
+2026-03-24 09:42:13 | INFO     | fine_tuner | Fine-tuning: Adding trees to existing model...
+2026-03-24 09:42:24 | INFO     | fine_tuner | Fine-tune successful: 59.0% improvement
+2026-03-24 09:42:25 | INFO     | healing_status | ✅ Fine-tuning complete: 59.0% improvement
+2026-03-24 09:42:25 | INFO     | pipeline |   2023-10: COMPREHENSIVE FINE-TUNE | Improvement: 59.0%
+2026-03-24 09:42:25 | INFO     | pipeline | 🎯 Progress: 10/12 months completed (83%) - Full analysis
+2026-03-24 09:42:25 | INFO     | pipeline | 🎯 Processing month 11/12: 2023-11 (10000 rows)
+2026-03-24 09:42:29 | INFO     | healing_status | 🔧 Fine-tuning started for 2023-11
+2026-03-24 09:42:31 | INFO     | fine_tuner | Fine-tuning: Adding trees to existing model...
+2026-03-24 09:42:43 | INFO     | fine_tuner | Fine-tune successful: 27.1% improvement
+2026-03-24 09:42:44 | INFO     | healing_status | ✅ Fine-tuning complete: 27.1% improvement
+2026-03-24 09:42:44 | INFO     | pipeline |   2023-11: COMPREHENSIVE FINE-TUNE | Improvement: 27.1%
+2026-03-24 09:42:44 | INFO     | pipeline | 🎯 Progress: 11/12 months completed (92%) - Full analysis
+2026-03-24 09:42:44 | INFO     | pipeline | 🎯 Processing month 12/12: 2023-12 (12500 rows)
+2026-03-24 09:42:49 | INFO     | healing_status | 🔧 Fine-tuning started for 2023-12
+2026-03-24 09:42:50 | INFO     | fine_tuner | Fine-tuning: Adding trees to existing model...
+2026-03-24 09:43:06 | INFO     | fine_tuner | Fine-tune successful: 46.4% improvement
+2026-03-24 09:43:07 | INFO     | healing_status | ✅ Fine-tuning complete: 46.4% improvement
+2026-03-24 09:43:07 | INFO     | pipeline |   2023-12: COMPREHENSIVE FINE-TUNE | Improvement: 46.4%
+2026-03-24 09:43:07 | INFO     | pipeline | 🎯 Progress: 12/12 months completed (100%) - Full analysis
+2026-03-24 09:43:07 | INFO     | pipeline | [5/7] Simulating months done in 168s
+2026-03-24 09:43:07 | INFO     | pipeline | [6/7] Generating summary
+2026-03-24 09:43:07 | INFO     | pipeline | Final Severity: SEVERE | Severe drift detected: Fine-tuning applied
+2026-03-24 09:43:07 | INFO     | pipeline | Healing Summary: {'total_actions': 12, 'monitor_only': 0, 'fine_tuned': 12, 'rollbacks': 0}
+2026-03-24 09:43:07 | INFO     | pipeline | [6/7] Generating summary done in 0s
+2026-03-24 09:43:07 | INFO     | pipeline | [7/7] Saving results
+2026-03-24 09:43:07 | INFO     | fine_tuner | 💾 Healed model saved to C:\Users\balan\OneDrive\Desktop\caps\backend\models\active_model.pkl
+2026-03-24 09:43:07 | INFO     | pipeline | Healed model saved after 12 healing actions
+2026-03-24 09:43:07 | INFO     | pipeline | All results saved
+2026-03-24 09:43:07 | INFO     | pipeline | [7/7] Saving results done in 0s
+2026-03-24 09:43:07 | INFO     | pipeline | [8/7] First future prediction
+2026-03-24 09:43:07 | INFO     | sequential_predictor | Loaded model with 70 features
+2026-03-24 09:43:07 | INFO     | sequential_predictor | Loaded feature engineer state
+2026-03-24 09:43:08 | INFO     | sequential_predictor | ⚡ ULTRA SPEED: Using minimal feature engineering for faster processing
+2026-03-24 09:43:25 | INFO     | feature_engineering | Created 11 interaction features
+2026-03-24 09:43:26 | INFO     | feature_engineering | Feature pipeline: 70 comprehensive features from 652540 rows (FULL DATASET)
+2026-03-24 09:43:26 | INFO     | sequential_predictor | Predicted 2024-01: 5 rows, mean=67 units
+2026-03-24 09:43:26 | INFO     | pipeline | First prediction: 2024-01 (5 rows)
+2026-03-24 09:43:26 | INFO     | pipeline | [8/7] First future prediction done in 19s
+2026-03-24 09:43:26 | INFO     | pipeline | PHASE 1 COMPLETE in 1044s
+2026-03-24 09:43:27 | INFO     | __main__ | Final Drift Severity: SEVERE
+2026-03-24 09:43:27 | INFO     | __main__ | Recommendation: Severe drift detected: Fine-tuning applied
+2026-03-24 09:44:34 | INFO     | demand_analyzer | Loaded 652500 rows for demand analysis
+2026-03-24 09:44:34 | INFO     | demand_analyzer | Demand metrics calculated: avg=204
+2026-03-24 09:44:35 | INFO     | demand_analyzer | Loaded 652500 rows for demand analysis
+2026-03-24 09:44:36 | INFO     | demand_analyzer | Loaded 652500 rows for demand analysis
+2026-03-24 09:44:37 | INFO     | demand_analyzer | Loaded 652500 rows for demand analysis
+2026-03-24 09:44:44 | INFO     | demand_analyzer | Loaded 652500 rows for demand analysis
+2026-03-24 09:48:19 | INFO     | sequential_predictor | Loaded model with 70 features
+2026-03-24 09:48:19 | INFO     | sequential_predictor | Loaded model with 70 features
+2026-03-24 09:48:19 | INFO     | sequential_predictor | Loaded feature engineer state
+2026-03-24 09:48:19 | INFO     | sequential_predictor | Loaded feature engineer state
+2026-03-24 09:48:20 | INFO     | sequential_predictor | Loaded model with 70 features
+2026-03-24 09:48:20 | INFO     | sequential_predictor | Loaded feature engineer state
+2026-03-24 09:48:48 | INFO     | sequential_predictor | Loaded model with 70 features
+2026-03-24 09:48:48 | INFO     | sequential_predictor | Loaded feature engineer state
+2026-03-24 09:48:50 | INFO     | sequential_predictor | Loaded model with 70 features
+2026-03-24 09:48:50 | INFO     | sequential_predictor | Loaded feature engineer state
+2026-03-24 09:49:02 | INFO     | sequential_predictor | Loaded model with 70 features
+2026-03-24 09:49:02 | INFO     | sequential_predictor | Loaded feature engineer state
+2026-03-24 09:49:02 | INFO     | sequential_predictor | ⚡ ULTRA SPEED: Skipping auto-fill for faster processing
+2026-03-24 09:49:09 | INFO     | sequential_predictor | ⚡ ULTRA SPEED: Generating next prediction...
+2026-03-24 09:49:11 | INFO     | sequential_predictor | ⚡ ULTRA SPEED: Using minimal feature engineering for faster processing
+2026-03-24 09:49:38 | INFO     | feature_engineering | Created 11 interaction features
+2026-03-24 09:49:40 | INFO     | feature_engineering | Feature pipeline: 70 comprehensive features from 662740 rows (FULL DATASET)
+2026-03-24 09:49:44 | INFO     | sequential_predictor | Predicted 2024-02: 10200 rows, mean=132 units
+2026-03-24 09:49:44 | INFO     | sequential_predictor | ⚡ ULTRA SPEED: Processed actuals for 2024-01, predicted 2024-02
+2026-03-24 09:49:45 | INFO     | sequential_predictor | Loaded model with 70 features
+2026-03-24 09:49:45 | INFO     | sequential_predictor | Loaded feature engineer state
+2026-03-24 09:49:45 | INFO     | sequential_predictor | Loaded model with 70 features
+2026-03-24 09:49:45 | INFO     | sequential_predictor | Loaded feature engineer state
+2026-03-24 09:52:56 | INFO     | __main__ | Cleared stale logs from previous run
+2026-03-24 09:52:56 | INFO     | __main__ | Preparing data from retail_sales.csv
+2026-03-24 09:56:59 | INFO     | __main__ | Years in data: [np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023)]
+2026-03-24 09:57:00 | INFO     | __main__ | Saved 652,500 rows → C:\Users\balan\OneDrive\Desktop\caps\backend\data\uploaded_data.csv  (Train: 2019–2022 | Test: 2023)
+2026-03-24 09:57:00 | INFO     | pipeline | ============================================================
+2026-03-24 09:57:00 | INFO     | pipeline | PHASE 1: SELF-HEALING DEMAND FORECASTING SYSTEM
+2026-03-24 09:57:00 | INFO     | pipeline | ============================================================
+2026-03-24 09:57:00 | INFO     | pipeline | [1/7] Loading data
+2026-03-24 09:57:01 | INFO     | data_loader | Using full dataset: 652500 rows for complete model training
+2026-03-24 09:57:01 | INFO     | data_loader | Numeric features: ['Price']
+2026-03-24 09:57:01 | INFO     | data_loader | Categorical features: ['Promo']
+2026-03-24 09:57:01 | INFO     | data_loader | Loaded 652500 rows, 6 columns
+2026-03-24 09:57:01 | INFO     | data_loader | Detected roles: {'target': 'Demand', 'date': 'Date', 'has_store': True, 'has_product': True, 'has_holiday': False, 'numeric_features': ['Price'], 'categorical_features': ['Promo']}
+2026-03-24 09:57:01 | INFO     | data_loader | Stores: 50 | Products: 50 | Missing: 0
+2026-03-24 09:57:01 | INFO     | pipeline | [1/7] Loading data done in 0s
+2026-03-24 09:57:01 | INFO     | pipeline | [2/7] Splitting data
+2026-03-24 09:57:01 | INFO     | data_loader | Train: [np.int32(2019), np.int32(2020), np.int32(2021), np.int32(2022)] (522,500 rows, 48 months)
+2026-03-24 09:57:01 | INFO     | data_loader | Test:  2023 (130,000 rows, 12 months)
+2026-03-24 09:57:02 | INFO     | pipeline | Train year: 2019 | Test year: 2023
+2026-03-24 09:57:02 | INFO     | pipeline | [2/7] Splitting data done in 0s
+2026-03-24 09:57:02 | INFO     | pipeline | [3/7] Feature engineering
+2026-03-24 09:57:02 | INFO     | feature_engineering | Group cols: ['Store', 'Product']
+2026-03-24 09:57:02 | INFO     | feature_engineering | Numeric user cols: ['Price', 'Promo']
+2026-03-24 09:57:02 | INFO     | feature_engineering | Categorical user cols: []
+2026-03-24 09:57:24 | INFO     | feature_engineering | Created 11 interaction features
+2026-03-24 09:57:25 | INFO     | feature_engineering | Feature pipeline: 70 comprehensive features from 522500 rows (FULL DATASET)
+2026-03-24 09:57:45 | INFO     | feature_engineering | Created 11 interaction features
+2026-03-24 09:57:45 | INFO     | feature_engineering | Feature pipeline: 70 comprehensive features from 130000 rows (FULL DATASET)
+2026-03-24 09:57:45 | INFO     | pipeline | Features: 70 | Train rows: 522500 | Test rows: 130000
+2026-03-24 09:57:45 | INFO     | pipeline | [3/7] Feature engineering done in 43s
+2026-03-24 09:57:45 | INFO     | pipeline | [4/7] Training model
+2026-03-24 09:57:49 | INFO     | model_trainer | 🎯 FULL DATASET TRAINING: Hyperparameter tuning on 522,500 samples
+2026-03-24 09:57:49 | INFO     | model_trainer | 🎯 SPEED OPTIMIZED: 10 iterations × 2 folds = 20 model fits on full dataset
+2026-03-24 10:08:13 | INFO     | model_trainer | 🎯 BEST PARAMETERS FOUND: {'subsample': 0.8, 'reg_lambda': 1.0, 'reg_alpha': 0.0, 'n_estimators': 150, 'min_child_weight': 3, 'max_depth': 8, 'learning_rate': 0.1, 'colsample_bytree': 0.8}
+2026-03-24 10:08:13 | INFO     | model_trainer | 🎯 Best CV Score: 2.63 MAE
+2026-03-24 10:08:19 | INFO     | model_trainer | ⚡ FULL DATASET TRAINING: XGB on 522,500 samples with optimal params
+2026-03-24 10:08:49 | INFO     | model_trainer | 🌲 Training Random Forest (100 trees) on 522,500 samples

@@ -1,0 +1,43 @@
+{
+  "month": "2026-03",
+  "mae": 74.8,
+  "rmse": 95.54,
+  "mape": 33.07,
+  "products": [
+    {
+      "Product": 1,
+      "Actual": 275.0,
+      "Predicted": 134.68357843137255,
+      "Error": 140.31642156862745,
+      "Error_Pct": 51.02
+    },
+    {
+      "Product": 2,
+      "Actual": 101.0,
+      "Predicted": 128.87632352941176,
+      "Error": 27.876323529411764,
+      "Error_Pct": 27.6
+    },
+    {
+      "Product": 3,
+      "Actual": 286.0,
+      "Predicted": 135.39142156862744,
+      "Error": 150.60857843137256,
+      "Error_Pct": 52.66
+    },
+    {
+      "Product": 4,
+      "Actual": 128.0,
+      "Predicted": 133.57460784313727,
+      "Error": 5.574607843137272,
+      "Error_Pct": 4.36
+    },
+    {
+      "Product": 5,
+      "Actual": 167.0,
+      "Predicted": 117.36857843137254,
+      "Error": 49.63142156862746,
+      "Error_Pct": 29.72
+    }
+  ]
+}

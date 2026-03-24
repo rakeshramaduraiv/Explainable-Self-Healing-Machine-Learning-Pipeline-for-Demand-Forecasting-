@@ -1,0 +1,26 @@
+{
+  "version": "v1_20260323_233857",
+  "saved_at": "2026-03-23T23:38:57.845221",
+  "params": {
+    "n_estimators": 50,
+    "max_depth": 3,
+    "learning_rate": 0.2,
+    "subsample": 0.8,
+    "colsample_bytree": 0.8,
+    "min_child_weight": 3,
+    "reg_alpha": 0.0,
+    "reg_lambda": 0.5
+  },
+  "metrics": {
+    "train": {
+      "RMSE": 5,
+      "MAE": 4,
+      "R2": 100,
+      "MAPE": 2,
+      "WMAPE": 2,
+      "Accuracy": 98,
+      "model": "XGB"
+    }
+  },
+  "model_type": "XGB"
+}

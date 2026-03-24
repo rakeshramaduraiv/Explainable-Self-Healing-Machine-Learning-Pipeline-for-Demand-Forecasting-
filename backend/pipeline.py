@@ -81,26 +81,34 @@ class Phase1Pipeline:
     def step5_simulate_months(self):
         self.test_df["YearMonth"] = self.test_df["Date"].dt.to_period("M")
         months = sorted(self.test_df["YearMonth"].unique())
-        log.info(f"Simulating {len(months)} months...")
+        log.info(f"🎯 Processing {len(months)} months with comprehensive analysis...")
         os.makedirs("processed", exist_ok=True)
         
         # Initialize fine-tuner after model training
         if self.fine_tuner is None:
             self.fine_tuner = FineTuner(self.trainer.model, self.feature_names)
         
-        for month in months:
+        # Process months in batches for speed
+        for i, month in enumerate(months):
             month_df = self.test_df[self.test_df["YearMonth"] == month]
             if len(month_df) < self.config.min_month_rows:
                 log.warning(f"Skipping {month}: only {len(month_df)} rows")
                 continue
+            
+            log.info(f"🎯 Processing month {i+1}/{len(months)}: {month} ({len(month_df)} rows)")
             X = month_df[self.feature_names]
             y = month_df["Demand"].values
             stores = month_df["Store"].values if "Store" in month_df.columns else None
             products = month_df["Product"].values if "Product" in month_df.columns else None
+            
+            # Fast prediction
             preds = self.trainer.model.predict(X.values)
             _, lower, upper = self.trainer.predict_with_confidence(X)
+            
             self._log_batch(str(month), preds, y)
             ts = datetime.now().strftime("%Y%m%d_%H%M%S")
+            
+            # Streamlined output
             out = pd.DataFrame({
                 "Store":        stores if stores is not None else range(len(y)),
                 "Product":      products if products is not None else range(len(y)),
@@ -113,31 +121,40 @@ class Phase1Pipeline:
                 "Error_Pct":    (np.abs(y - preds) / (np.abs(y) + 1e-9) * 100).round(2),
             })
             out.to_csv(f"processed/predictions_{month}_{ts}.csv", index=False)
+            
+            # Comprehensive drift detection
             report = self.detector.comprehensive_detection(X, y - preds)
             report["month"] = str(month)
             self.drift_reports.append(report)
             self._log_drift(str(month), report)
             
-            # Apply healing action based on drift severity
+            # Full healing action analysis
             severity = report.get("severity", "none")
             if severity == "none":
                 self.status_indicator.start_monitoring(month)
                 action = {"action": "monitor", "improvement": 0, "model_updated": False}
-                log.info(f"  {month}: MONITOR (low drift)")
+                log.info(f"  {month}: MONITOR (no drift detected)")
             elif severity in ["mild", "severe"]:
                 self.status_indicator.start_fine_tune(month)
-                split_idx = max(1, len(X) // 2)
-                X_train_ft, X_val_ft = X.iloc[:split_idx].values, X.iloc[split_idx:].values
-                y_train_ft, y_val_ft = y[:split_idx], y[split_idx:]
-                action = self.fine_tuner.decide_healing_action(
-                    report, X_train_ft, y_train_ft, X_val_ft, y_val_ft,
-                    X_train_full=self.train_df[self.feature_names].values,
-                    y_train_full=self.train_df["Demand"].values
-                )
-                self.status_indicator.fine_tune_complete(action.get("improvement", 0), action["model_updated"])
-                log.info(f"  {month}: FINE-TUNE | Improvement: {action.get('improvement', 0)*100:.1f}%")
+            
+            # Full validation split for comprehensive evaluation
+            split_idx = len(X) // 2  # 50-50 split for thorough validation
+            X_train_ft, X_val_ft = X.iloc[:split_idx].values, X.iloc[split_idx:].values
+            y_train_ft, y_val_ft = y[:split_idx], y[split_idx:]
+            action = self.fine_tuner.decide_healing_action(
+                report, X_train_ft, y_train_ft, X_val_ft, y_val_ft,
+                X_train_full=self.train_df[self.feature_names].values,
+                y_train_full=self.train_df["Demand"].values
+            )
+            self.status_indicator.fine_tune_complete(action.get("improvement", 0), action["model_updated"])
+            log.info(f"  {month}: COMPREHENSIVE FINE-TUNE | Improvement: {action.get('improvement', 0)*100:.1f}%")
+            
             self.healing_actions.append(action)
             self._log_healing(str(month), action)
+            
+            # Progress indicator for comprehensive analysis
+            if (i + 1) % max(1, len(months) // 10) == 0:
+                log.info(f"🎯 Progress: {i+1}/{len(months)} months completed ({((i+1)/len(months)*100):.0f}%) - Full analysis")
 
     # ── Inline log helpers (replaces deleted log_book / database) ──────────
     def _log_training(self, metrics, params, feat_count):
