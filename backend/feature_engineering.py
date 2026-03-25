@@ -145,11 +145,17 @@ class FeatureEngineer:
     def create_store_features(self, df, fit=True):
         if "Store" not in df.columns:
             return df
+        
+        # Ensure Store column is string type for consistent merging
+        df["Store"] = df["Store"].astype(str)
+        
         if fit:
             store_stats = df.groupby("Store")["Demand"].agg(
                 Store_Mean="mean", Store_Std="std"
             ).reset_index()
             store_stats["Store_Std"] = store_stats["Store_Std"].fillna(0)
+            # Ensure Store column in stats is also string
+            store_stats["Store"] = store_stats["Store"].astype(str)
             self._store_stats_full = store_stats
         else:
             store_stats = self._store_stats_full if self._store_stats_full is not None else \
@@ -157,6 +163,9 @@ class FeatureEngineer:
                     Store_Mean="mean", Store_Std="std"
                 ).reset_index()
             store_stats["Store_Std"] = store_stats["Store_Std"].fillna(0)
+            # Ensure Store column in stats is also string
+            store_stats["Store"] = store_stats["Store"].astype(str)
+        
         df = df.merge(store_stats, on="Store", how="left")
         df["Demand_vs_Store_Mean"] = df["Demand"] / (df["Store_Mean"] + 1)
         df["Store_CV"] = df["Store_Std"] / (df["Store_Mean"] + 1)
@@ -166,11 +175,17 @@ class FeatureEngineer:
     def create_product_features(self, df, fit=True):
         if "Product" not in df.columns:
             return df
+        
+        # Ensure Product column is string type for consistent merging
+        df["Product"] = df["Product"].astype(str)
+        
         if fit:
             product_stats = df.groupby("Product")["Demand"].agg(
                 Product_Mean="mean", Product_Std="std"
             ).reset_index()
             product_stats["Product_Std"] = product_stats["Product_Std"].fillna(0)
+            # Ensure Product column in stats is also string
+            product_stats["Product"] = product_stats["Product"].astype(str)
             self._product_stats_full = product_stats
         else:
             product_stats = self._product_stats_full if self._product_stats_full is not None else \
@@ -178,6 +193,9 @@ class FeatureEngineer:
                     Product_Mean="mean", Product_Std="std"
                 ).reset_index()
             product_stats["Product_Std"] = product_stats["Product_Std"].fillna(0)
+            # Ensure Product column in stats is also string
+            product_stats["Product"] = product_stats["Product"].astype(str)
+        
         df = df.merge(product_stats, on="Product", how="left")
         df["Demand_vs_Product_Mean"] = df["Demand"] / (df["Product_Mean"] + 1)
         df["Product_CV"] = df["Product_Std"] / (df["Product_Mean"] + 1)

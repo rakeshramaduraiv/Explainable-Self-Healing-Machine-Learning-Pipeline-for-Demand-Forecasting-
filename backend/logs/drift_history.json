@@ -1,0 +1,17 @@
+[
+  {
+    "severity": "severe",
+    "severe_features": 0,
+    "mild_features": 0,
+    "total_features": 0,
+    "error_trend": {
+      "baseline_error": 39.87,
+      "current_error": 71.48,
+      "error_increase": 0.7926,
+      "drift": true
+    },
+    "wasserstein": {},
+    "js_divergence": {},
+    "month": "2024-01"
+  }
+]

@@ -45,8 +45,8 @@ def prepare_real_data():
 
     out = pd.DataFrame({
         "Date":    agg["week"].dt.strftime("%d-%m-%Y"),
-        "Store":   agg["store_int"].astype(int),
-        "Product": agg["item_int"].astype(int),
+        "Store":   "store_" + agg["store_int"].astype(str),
+        "Product": "item_" + agg["item_int"].astype(str),
         "Demand":  agg["Demand"].astype(int),
         "Price":   agg["Price"].round(2),
         "Promo":   agg["Promo"].astype(int),

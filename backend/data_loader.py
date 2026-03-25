@@ -75,6 +75,12 @@ class DataLoader:
         # Ensure Demand is numeric
         self.df["Demand"] = pd.to_numeric(self.df["Demand"], errors="coerce")
         self.df = self.df.dropna(subset=["Demand"])
+        
+        # Ensure Store and Product are strings for consistent data types
+        if "Store" in self.df.columns:
+            self.df["Store"] = self.df["Store"].astype(str)
+        if "Product" in self.df.columns:
+            self.df["Product"] = self.df["Product"].astype(str)
 
         # Auto-detect column roles
         self._detect_columns()
