@@ -100,6 +100,7 @@ class DataLoader:
 
     def _detect_columns(self):
         """Auto-detect column roles from the data."""
+        assert self.df is not None, "DataTable must be loaded before detecting columns"
         cols = set(self.df.columns)
         self.detected_columns = {
             "target": "Demand",
@@ -112,6 +113,7 @@ class DataLoader:
         }
 
         skip = {"Date", "Demand", "Store", "Product"}
+        assert self.df is not None
         for col in self.df.columns:
             if col in skip:
                 continue
@@ -153,25 +155,15 @@ class DataLoader:
         return info
 
     def split_by_year(self):
-        """Train: all years except last full year. Test: last full year only.
-        A year is 'full' if it has >= 10 months of data.
-        """
+        """Train: first 3 years (2019-2021). Test: 4th year (2022). 2023 reserved for user upload."""
+        assert self.df is not None
         years = sorted(self.df["Date"].dt.year.unique())
         if len(years) < 2:
-            raise ValueError(
-                f"Need at least 2 years of data. Found only: {years}."
-            )
+            raise ValueError(f"Need at least 2 years of data. Found only: {years}.")
 
-        # Find last year with >= 10 months (skip partial overflow years)
-        months_per_year = self.df.groupby(self.df["Date"].dt.year)["Date"].apply(
-            lambda s: s.dt.month.nunique()
-        )
-        full_years = [y for y in years if months_per_year.get(y, 0) >= 10]
-        if len(full_years) < 2:
-            full_years = years  # fallback: use all years
-
-        test_year   = full_years[-1]
-        train_years = [y for y in years if y < test_year]
+        # Always use first 3 years for train, 4th year for test — exclude anything beyond
+        train_years = years[:3]
+        test_year   = years[3] if len(years) > 3 else years[-1]
 
         train_df = self.df[self.df["Date"].dt.year.isin(train_years)].copy()
         test_df  = self.df[self.df["Date"].dt.year == test_year].copy()
@@ -199,11 +191,12 @@ class DataLoader:
             json.dump(split_info, f, indent=2)
 
         log.info(f"Train: {train_years} ({len(train_df):,} rows, {split_info['train_months']} months)")
-        log.info(f"Test:  {test_year} ({len(test_df):,} rows, {split_info['test_months']} months)")
+        log.info(f"Test:  {test_year} ({len(test_df):,} rows, {split_info['test_months']} months) | 2023 reserved for user upload")
 
         return train_df, test_df
 
     def split_train_test(self, train_months=12):
+        assert self.df is not None
         cutoff = self.df["Date"].min() + pd.DateOffset(months=train_months)
         train_df = self.df[self.df["Date"] < cutoff].copy()
         test_df = self.df[self.df["Date"] >= cutoff].copy()

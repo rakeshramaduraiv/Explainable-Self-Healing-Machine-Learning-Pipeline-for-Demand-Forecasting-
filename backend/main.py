@@ -30,13 +30,13 @@ def prepare_real_data():
     df["store_int"] = df["store_id"].apply(_parse_id)
     df["item_int"]  = df["item_id"].apply(_parse_id)
 
-    # Cap at 2023-12-31 — prevents week-boundary bleed into 2024
-    df = df[df["date"].dt.year <= 2023].copy()
+    # Only keep 2019–2022 — 2023 is reserved for user upload via the UI
+    df = df[df["date"].dt.year <= 2022].copy()
 
     # Aggregate daily → weekly (week ending Friday)
     df["week"] = df["date"] - pd.to_timedelta((df["date"].dt.dayofweek - 4) % 7 - 7, unit="D")
-    # Drop any weeks whose end-date fell into 2024 after the shift
-    df = df[df["week"].dt.year <= 2023]
+    # Drop any weeks whose end-date fell into 2023 after the shift
+    df = df[df["week"].dt.year <= 2022]
     agg = df.groupby(["week", "store_int", "item_int"]).agg(
         Demand=("sales", "sum"),
         Price =("price", "mean"),
@@ -56,7 +56,7 @@ def prepare_real_data():
     log.info(f"Years in data: {years}")
     DATA_OUT.parent.mkdir(exist_ok=True)
     out.to_csv(DATA_OUT, index=False)
-    log.info(f"Saved {len(out):,} rows → {DATA_OUT}  (Train: 2019–2022 | Test: 2023)")
+    log.info(f"Saved {len(out):,} rows → {DATA_OUT}  (Train: 2019–2021 | Test: 2022 | 2023 reserved for user)")
     return out
 
 
@@ -163,8 +163,8 @@ def run_monitor_pipeline(data_path: str) -> dict:
 
         prediction_batches.append({
             "month": str(month), "count": len(y),
-            "mean_pred": round(float(preds.mean()), 2),
-            "mean_actual": round(float(y.mean()), 2),
+            "mean_pred": np.round(float(preds.mean()), 2),
+            "mean_actual": np.round(float(y.mean()), 2),
         })
 
         report = detector.comprehensive_detection(X, y - preds)
@@ -184,9 +184,10 @@ def run_monitor_pipeline(data_path: str) -> dict:
             train_mae = float(np.mean(np.abs(y[:split_idx] - train_preds)))
             # If val MAE is >5% worse than train MAE, recommend fine-tune
             if train_mae > 0 and (val_mae - train_mae) / train_mae >= 0.05:
-                action = {"action": "fine_tune", "improvement": round((val_mae - train_mae) / train_mae, 4), "model_updated": False}
+                # Use float casts to ensure consistent type for the dict values
+                action = {"action": "fine_tune", "improvement": float(np.round((val_mae - train_mae) / train_mae, 4)), "model_updated": False}
             else:
-                action = {"action": "monitor", "improvement": 0, "model_updated": False}
+                action = {"action": "monitor", "improvement": 0.0, "model_updated": False}
         action["month"] = str(month)
         healing_actions.append(action)
 
