@@ -68,15 +68,26 @@ def dedup(records: list, key="month"):
     return sorted(out.values(), key=lambda x: x[key])
 
 # ── Extracted build functions (called at startup + on demand) ─────────────────
+def _latest_processed_files():
+    """Return only the latest file per month (deduplicate multiple runs)."""
+    best = {}
+    for f in PROCESSED.glob("predictions_*.csv"):
+        parts = f.stem.split("_")
+        if len(parts) >= 2:
+            month = parts[1]
+            if month not in best or f.stat().st_mtime > best[month].stat().st_mtime:
+                best[month] = f
+    return sorted(best.values())
+
 def _build_store_stats():
     frames = []
-    for f in list(LOGS.glob("predictions_*.csv")) + list(PROCESSED.glob("predictions_*.csv")):
+    for f in _latest_processed_files():
         try:
             df = pd.read_csv(f)
             df.columns = [c.lower() for c in df.columns]
             if "weekly_sales" in df.columns: df = df.rename(columns={"weekly_sales": "actual"})
             if "demand" in df.columns: df = df.rename(columns={"demand": "actual"})
-            if "predicted"    in df.columns: df = df.rename(columns={"predicted": "prediction"})
+            if "predicted" in df.columns: df = df.rename(columns={"predicted": "prediction"})
             if {"store", "actual", "prediction"}.issubset(df.columns):
                 frames.append(df[["store", "actual", "prediction"]])
         except Exception: pass
@@ -275,7 +286,7 @@ def predictions_meta():
 def predictions(month: str):
     if not month.replace("-", "").isalnum():
         raise HTTPException(400, "Invalid month format")
-    files = sorted(PROCESSED.glob(f"predictions_{month}_*.csv"))
+    files = sorted(PROCESSED.glob(f"predictions_{month}_*.csv"), key=lambda f: f.stat().st_mtime)
     if not files: raise HTTPException(404, "No predictions for this month")
     df = pd.read_csv(files[-1])
     for col in ["CI_Lower", "CI_Upper", "Abs_Error", "Error_Pct"]:
@@ -356,11 +367,11 @@ def product_forecast():
     """Per-product forecast accuracy across all test months."""
     def _build():
         frames = []
-        for f in sorted(PROCESSED.glob("predictions_*.csv")):
+        for f in _latest_processed_files():
             try:
                 df = pd.read_csv(f)
                 if {"Product", "Demand", "Predicted"}.issubset(df.columns):
-                    frames.append(df)
+                    frames.append(df[[c for c in ["Product","Demand","Predicted"] if c in df.columns]])
             except Exception: pass
         if not frames: return []
         df = pd.concat(frames, ignore_index=True)
@@ -385,12 +396,12 @@ def product_monthly():
     """Monthly forecast vs actual per product."""
     def _build():
         frames = []
-        for f in sorted(PROCESSED.glob("predictions_*.csv")):
+        for f in _latest_processed_files():
             try:
                 df = pd.read_csv(f)
                 if {"Product", "Demand", "Predicted", "Date"}.issubset(df.columns):
                     df["month"] = pd.to_datetime(df["Date"]).dt.to_period("M").astype(str)
-                    frames.append(df)
+                    frames.append(df[["Product", "Demand", "Predicted", "month"]])
             except Exception: pass
         if not frames: return []
         df = pd.concat(frames, ignore_index=True)
@@ -425,11 +436,11 @@ def store_forecast():
     """Per-store, per-product forecast accuracy across all test months."""
     def _build():
         frames = []
-        for f in sorted(PROCESSED.glob("predictions_*.csv")):
+        for f in _latest_processed_files():
             try:
                 df = pd.read_csv(f)
                 if {"Store", "Product", "Demand", "Predicted"}.issubset(df.columns):
-                    frames.append(df)
+                    frames.append(df[["Store", "Product", "Demand", "Predicted"]])
             except Exception:
                 pass
         if not frames:
@@ -455,12 +466,12 @@ def store_monthly():
     """Monthly forecast vs actual per store (aggregated across products)."""
     def _build():
         frames = []
-        for f in sorted(PROCESSED.glob("predictions_*.csv")):
+        for f in _latest_processed_files():
             try:
                 df = pd.read_csv(f)
                 if {"Store", "Demand", "Predicted", "Date"}.issubset(df.columns):
                     df["month"] = pd.to_datetime(df["Date"]).dt.to_period("M").astype(str)
-                    frames.append(df)
+                    frames.append(df[["Store", "Demand", "Predicted", "month"]])
             except Exception:
                 pass
         if not frames:
@@ -478,7 +489,7 @@ def store_drift():
     """Per-store MAE per test month from processed prediction CSVs."""
     def _build():
         frames = []
-        for f in sorted(PROCESSED.glob("predictions_*.csv")):
+        for f in _latest_processed_files():
             try:
                 df = pd.read_csv(f)
                 if {"Store", "Demand", "Predicted", "Date"}.issubset(df.columns):
