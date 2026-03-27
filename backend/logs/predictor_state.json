@@ -1,8 +1,8 @@
 {
-  "last_prediction_month": "2026-04",
-  "last_upload_month": "2026-03",
-  "train_end": "2022-12",
-  "test_end": "2023-12",
-  "data_through": "2026-03",
-  "updated_at": "2026-03-25T20:25:39.593787"
+  "last_prediction_month": "2019-02",
+  "last_upload_month": "2019-01",
+  "train_end": "2021-12",
+  "test_end": "2022-12",
+  "data_through": "2019-01",
+  "updated_at": "2026-03-27T07:42:12.994243"
 }

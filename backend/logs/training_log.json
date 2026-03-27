@@ -1,12 +1,12 @@
 [
   {
-    "timestamp": "2026-03-25T18:47:30.550224",
+    "timestamp": "2026-03-27T03:34:29.882694",
     "feature_count": 70,
     "params": {
       "subsample": 0.8,
       "reg_lambda": 1.0,
       "reg_alpha": 0.0,
-      "n_estimators": 150,
+      "n_estimators": 100,
       "min_child_weight": 3,
       "max_depth": 8,
       "learning_rate": 0.1,
@@ -17,9 +17,9 @@
         "RMSE": 1,
         "MAE": 1,
         "R2": 100,
-        "MAPE": 0,
-        "WMAPE": 0,
-        "Accuracy": 100,
+        "MAPE": 1,
+        "WMAPE": 1,
+        "Accuracy": 99,
         "model": "XGB"
       }
     }

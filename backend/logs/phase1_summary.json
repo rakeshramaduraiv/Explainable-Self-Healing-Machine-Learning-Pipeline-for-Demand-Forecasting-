@@ -1,10 +1,10 @@
 {
   "final_severity": "severe",
-  "months_monitored": 1,
+  "months_monitored": 13,
   "healing_stats": {
-    "total_actions": 1,
-    "monitor_only": 0,
-    "fine_tuned": 1,
+    "total_actions": 13,
+    "monitor_only": 13,
+    "fine_tuned": 0,
     "rollbacks": 0
   },
   "recommendation": "Severe drift detected \u2014 fine-tuning applied"

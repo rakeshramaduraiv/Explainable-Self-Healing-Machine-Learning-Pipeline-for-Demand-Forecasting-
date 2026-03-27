@@ -3,9 +3,9 @@
     "RMSE": 1,
     "MAE": 1,
     "R2": 100,
-    "MAPE": 0,
-    "WMAPE": 0,
-    "Accuracy": 100,
+    "MAPE": 1,
+    "WMAPE": 1,
+    "Accuracy": 99,
     "model": "XGB"
   }
 }

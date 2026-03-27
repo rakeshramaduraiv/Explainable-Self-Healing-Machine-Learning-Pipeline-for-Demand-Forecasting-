@@ -1,8 +1,80 @@
 [
   {
+    "month": "2023-01",
+    "count": 10000,
+    "mean_pred": 138.28,
+    "mean_actual": 222.64
+  },
+  {
+    "month": "2023-02",
+    "count": 10000,
+    "mean_pred": 192.59,
+    "mean_actual": 265.37
+  },
+  {
+    "month": "2023-03",
+    "count": 12500,
+    "mean_pred": 205.53,
+    "mean_actual": 285.83
+  },
+  {
+    "month": "2023-04",
+    "count": 10000,
+    "mean_pred": 215.26,
+    "mean_actual": 289.58
+  },
+  {
+    "month": "2023-05",
+    "count": 10000,
+    "mean_pred": 217.21,
+    "mean_actual": 276.9
+  },
+  {
+    "month": "2023-06",
+    "count": 12500,
+    "mean_pred": 212.25,
+    "mean_actual": 247.84
+  },
+  {
+    "month": "2023-07",
+    "count": 10000,
+    "mean_pred": 199.98,
+    "mean_actual": 212.92
+  },
+  {
+    "month": "2023-08",
+    "count": 10000,
+    "mean_pred": 182.73,
+    "mean_actual": 184.86
+  },
+  {
+    "month": "2023-09",
+    "count": 12500,
+    "mean_pred": 160.3,
+    "mean_actual": 165.15
+  },
+  {
+    "month": "2023-10",
+    "count": 10000,
+    "mean_pred": 143.4,
+    "mean_actual": 162.85
+  },
+  {
+    "month": "2023-11",
+    "count": 10000,
+    "mean_pred": 140.95,
+    "mean_actual": 177.6
+  },
+  {
+    "month": "2023-12",
+    "count": 12500,
+    "mean_pred": 153.11,
+    "mean_actual": 208.9
+  },
+  {
     "month": "2024-01",
-    "count": 4,
-    "mean_pred": 54.27,
-    "mean_actual": 125.75
+    "count": 2500,
+    "mean_pred": 165.47,
+    "mean_actual": 84.49
   }
 ]

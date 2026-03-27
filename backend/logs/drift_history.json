@@ -1,17 +1,5683 @@
 [
   {
     "severity": "severe",
-    "severe_features": 0,
-    "mild_features": 0,
-    "total_features": 0,
+    "severe_features": 100,
+    "mild_features": 10,
+    "total_features": 70,
     "error_trend": {
-      "baseline_error": 39.87,
-      "current_error": 71.48,
-      "error_increase": 0.7926,
+      "baseline_error": 25.54,
+      "current_error": 84.37,
+      "error_increase": 2.304,
       "drift": true
     },
-    "wasserstein": {},
-    "js_divergence": {},
+    "wasserstein": {
+      "Price": {
+        "wasserstein": 3.3169
+      },
+      "Promo": {
+        "wasserstein": 0.0904
+      },
+      "Month": {
+        "wasserstein": 4.9476
+      },
+      "Quarter": {
+        "wasserstein": 1.358
+      },
+      "Year": {
+        "wasserstein": 2.9718
+      },
+      "DayOfYear": {
+        "wasserstein": 149.4207
+      },
+      "WeekOfYear": {
+        "wasserstein": 21.9484
+      },
+      "Is_Q1": {
+        "wasserstein": 0.6765
+      },
+      "Is_Q2": {
+        "wasserstein": 0.2231
+      },
+      "Is_Q3": {
+        "wasserstein": 0.2253
+      },
+      "Is_Q4": {
+        "wasserstein": 0.2281
+      },
+      "Month_Sin": {
+        "wasserstein": 0.6331
+      },
+      "Month_Cos": {
+        "wasserstein": 0.7995
+      },
+      "Quarter_Sin": {
+        "wasserstein": 0.9019
+      },
+      "Quarter_Cos": {
+        "wasserstein": 0.4512
+      },
+      "Week_Sin": {
+        "wasserstein": 0.5062
+      },
+      "Week_Cos": {
+        "wasserstein": 0.8478
+      },
+      "Near_Holiday": {
+        "wasserstein": 0.1476
+      },
+      "Is_Summer": {
+        "wasserstein": 0.2242
+      },
+      "Is_Winter": {
+        "wasserstein": 0.6769
+      },
+      "Lag_1": {
+        "wasserstein": 42.8449
+      },
+      "Lag_2": {
+        "wasserstein": 38.1131
+      },
+      "Lag_3": {
+        "wasserstein": 36.4735
+      },
+      "Lag_4": {
+        "wasserstein": 51.2269
+      },
+      "Lag_6": {
+        "wasserstein": 54.4964
+      },
+      "Lag_8": {
+        "wasserstein": 57.9286
+      },
+      "Lag_12": {
+        "wasserstein": 74.1168
+      },
+      "Rolling_Mean_3": {
+        "wasserstein": 19.5221
+      },
+      "Rolling_Std_3": {
+        "wasserstein": 5.1025
+      },
+      "Rolling_Max_3": {
+        "wasserstein": 27.1816
+      },
+      "Rolling_Min_3": {
+        "wasserstein": 15.8356
+      },
+      "Rolling_Mean_4": {
+        "wasserstein": 19.8038
+      },
+      "Rolling_Std_4": {
+        "wasserstein": 6.5567
+      },
+      "Rolling_Max_4": {
+        "wasserstein": 34.1906
+      },
+      "Rolling_Min_4": {
+        "wasserstein": 13.6052
+      },
+      "Rolling_Mean_6": {
+        "wasserstein": 19.7493
+      },
+      "Rolling_Std_6": {
+        "wasserstein": 9.2459
+      },
+      "Rolling_Max_6": {
+        "wasserstein": 41.4855
+      },
+      "Rolling_Min_6": {
+        "wasserstein": 14.9621
+      },
+      "Rolling_Mean_8": {
+        "wasserstein": 19.4987
+      },
+      "Rolling_Std_8": {
+        "wasserstein": 9.9491
+      },
+      "Rolling_Max_8": {
+        "wasserstein": 44.191
+      },
+      "Rolling_Min_8": {
+        "wasserstein": 16.5913
+      },
+      "Rolling_Mean_12": {
+        "wasserstein": 19.2767
+      },
+      "Rolling_Std_12": {
+        "wasserstein": 10.1563
+      },
+      "Rolling_Max_12": {
+        "wasserstein": 45.7861
+      },
+      "Rolling_Min_12": {
+        "wasserstein": 18.1995
+      },
+      "Momentum_3": {
+        "wasserstein": 0.1935
+      },
+      "Momentum_6": {
+        "wasserstein": 0.198
+      },
+      "Volatility_4": {
+        "wasserstein": 0.0606
+      },
+      "Volatility_8": {
+        "wasserstein": 0.0774
+      },
+      "Store_Mean": {
+        "wasserstein": 169.7487
+      },
+      "Store_Std": {
+        "wasserstein": 74.0463
+      },
+      "Demand_vs_Store_Mean": {
+        "wasserstein": 0.8727
+      },
+      "Store_CV": {
+        "wasserstein": 0.381
+      },
+      "Product_Mean": {
+        "wasserstein": 169.2617
+      },
+      "Product_Std": {
+        "wasserstein": 42.7177
+      },
+      "Demand_vs_Product_Mean": {
+        "wasserstein": 0.8748
+      },
+      "Product_CV": {
+        "wasserstein": 0.2215
+      },
+      "Price_x_Promo": {
+        "wasserstein": 7.7
+      },
+      "Lag_1_x_Price": {
+        "wasserstein": 2210.3372
+      },
+      "Lag_1_x_Promo": {
+        "wasserstein": 18.0084
+      },
+      "Lag_2_x_Price": {
+        "wasserstein": 1953.3518
+      },
+      "Lag_2_x_Promo": {
+        "wasserstein": 15.8692
+      },
+      "Lag_3_x_Price": {
+        "wasserstein": 1860.6787
+      },
+      "Lag_3_x_Promo": {
+        "wasserstein": 15.1624
+      },
+      "Rolling_Mean_3_x_Price": {
+        "wasserstein": 1127.8744
+      },
+      "Rolling_Mean_3_x_Promo": {
+        "wasserstein": 12.2885
+      },
+      "Rolling_Mean_4_x_Price": {
+        "wasserstein": 1143.2748
+      },
+      "Rolling_Mean_4_x_Promo": {
+        "wasserstein": 12.416
+      }
+    },
+    "js_divergence": {
+      "Price": {
+        "js_divergence": 0.1389
+      },
+      "Promo": {
+        "js_divergence": 0.0641
+      },
+      "Month": {
+        "js_divergence": 0.6642
+      },
+      "Quarter": {
+        "js_divergence": 0.5702
+      },
+      "Year": {
+        "js_divergence": 0.8326
+      },
+      "DayOfYear": {
+        "js_divergence": 0.6572
+      },
+      "WeekOfYear": {
+        "js_divergence": 0.6552
+      },
+      "Is_Q1": {
+        "js_divergence": 0.5702
+      },
+      "Is_Q2": {
+        "js_divergence": 0.2904
+      },
+      "Is_Q3": {
+        "js_divergence": 0.292
+      },
+      "Is_Q4": {
+        "js_divergence": 0.2939
+      },
+      "Month_Sin": {
+        "js_divergence": 0.6117
+      },
+      "Month_Cos": {
+        "js_divergence": 0.6152
+      },
+      "Quarter_Sin": {
+        "js_divergence": 0.5702
+      },
+      "Quarter_Cos": {
+        "js_divergence": 0.5702
+      },
+      "Week_Sin": {
+        "js_divergence": 0.6296
+      },
+      "Week_Cos": {
+        "js_divergence": 0.5903
+      },
+      "Near_Holiday": {
+        "js_divergence": 0.2326
+      },
+      "Is_Summer": {
+        "js_divergence": 0.2912
+      },
+      "Is_Winter": {
+        "js_divergence": 0.5705
+      },
+      "Lag_1": {
+        "js_divergence": 0.2316
+      },
+      "Lag_2": {
+        "js_divergence": 0.2269
+      },
+      "Lag_3": {
+        "js_divergence": 0.2269
+      },
+      "Lag_4": {
+        "js_divergence": 0.2701
+      },
+      "Lag_6": {
+        "js_divergence": 0.2756
+      },
+      "Lag_8": {
+        "js_divergence": 0.2845
+      },
+      "Lag_12": {
+        "js_divergence": 0.3241
+      },
+      "Rolling_Mean_3": {
+        "js_divergence": 0.197
+      },
+      "Rolling_Std_3": {
+        "js_divergence": 0.2318
+      },
+      "Rolling_Max_3": {
+        "js_divergence": 0.1976
+      },
+      "Rolling_Min_3": {
+        "js_divergence": 0.2088
+      },
+      "Rolling_Mean_4": {
+        "js_divergence": 0.1985
+      },
+      "Rolling_Std_4": {
+        "js_divergence": 0.2357
+      },
+      "Rolling_Max_4": {
+        "js_divergence": 0.2039
+      },
+      "Rolling_Min_4": {
+        "js_divergence": 0.2139
+      },
+      "Rolling_Mean_6": {
+        "js_divergence": 0.1973
+      },
+      "Rolling_Std_6": {
+        "js_divergence": 0.2274
+      },
+      "Rolling_Max_6": {
+        "js_divergence": 0.2143
+      },
+      "Rolling_Min_6": {
+        "js_divergence": 0.2225
+      },
+      "Rolling_Mean_8": {
+        "js_divergence": 0.1971
+      },
+      "Rolling_Std_8": {
+        "js_divergence": 0.227
+      },
+      "Rolling_Max_8": {
+        "js_divergence": 0.219
+      },
+      "Rolling_Min_8": {
+        "js_divergence": 0.2312
+      },
+      "Rolling_Mean_12": {
+        "js_divergence": 0.197
+      },
+      "Rolling_Std_12": {
+        "js_divergence": 0.2283
+      },
+      "Rolling_Max_12": {
+        "js_divergence": 0.2222
+      },
+      "Rolling_Min_12": {
+        "js_divergence": 0.2396
+      },
+      "Momentum_3": {
+        "js_divergence": 0.4554
+      },
+      "Momentum_6": {
+        "js_divergence": 0.4466
+      },
+      "Volatility_4": {
+        "js_divergence": 0.3034
+      },
+      "Volatility_8": {
+        "js_divergence": 0.2869
+      },
+      "Store_Mean": {
+        "js_divergence": 0.7071
+      },
+      "Store_Std": {
+        "js_divergence": 0.7071
+      },
+      "Demand_vs_Store_Mean": {
+        "js_divergence": 0.7071
+      },
+      "Store_CV": {
+        "js_divergence": 0.7071
+      },
+      "Product_Mean": {
+        "js_divergence": 0.7071
+      },
+      "Product_Std": {
+        "js_divergence": 0.7071
+      },
+      "Demand_vs_Product_Mean": {
+        "js_divergence": 0.7071
+      },
+      "Product_CV": {
+        "js_divergence": 0.7071
+      },
+      "Price_x_Promo": {
+        "js_divergence": 0.1648
+      },
+      "Lag_1_x_Price": {
+        "js_divergence": 0.1324
+      },
+      "Lag_1_x_Promo": {
+        "js_divergence": 0.1684
+      },
+      "Lag_2_x_Price": {
+        "js_divergence": 0.125
+      },
+      "Lag_2_x_Promo": {
+        "js_divergence": 0.1661
+      },
+      "Lag_3_x_Price": {
+        "js_divergence": 0.1236
+      },
+      "Lag_3_x_Promo": {
+        "js_divergence": 0.1664
+      },
+      "Rolling_Mean_3_x_Price": {
+        "js_divergence": 0.1249
+      },
+      "Rolling_Mean_3_x_Promo": {
+        "js_divergence": 0.1674
+      },
+      "Rolling_Mean_4_x_Price": {
+        "js_divergence": 0.1273
+      },
+      "Rolling_Mean_4_x_Promo": {
+        "js_divergence": 0.1644
+      }
+    },
+    "month": "2023-01"
+  },
+  {
+    "severity": "severe",
+    "severe_features": 129,
+    "mild_features": 5,
+    "total_features": 70,
+    "error_trend": {
+      "baseline_error": 25.54,
+      "current_error": 72.77,
+      "error_increase": 1.8497,
+      "drift": true
+    },
+    "wasserstein": {
+      "Price": {
+        "wasserstein": 3.3201
+      },
+      "Promo": {
+        "wasserstein": 0.0535
+      },
+      "Month": {
+        "wasserstein": 4.3075
+      },
+      "Quarter": {
+        "wasserstein": 1.358
+      },
+      "Year": {
+        "wasserstein": 2.9718
+      },
+      "DayOfYear": {
+        "wasserstein": 127.7583
+      },
+      "WeekOfYear": {
+        "wasserstein": 18.7106
+      },
+      "Is_Q1": {
+        "wasserstein": 0.6765
+      },
+      "Is_Q2": {
+        "wasserstein": 0.2231
+      },
+      "Is_Q3": {
+        "wasserstein": 0.2253
+      },
+      "Is_Q4": {
+        "wasserstein": 0.2281
+      },
+      "Month_Sin": {
+        "wasserstein": 0.8383
+      },
+      "Month_Cos": {
+        "wasserstein": 0.6733
+      },
+      "Quarter_Sin": {
+        "wasserstein": 0.9019
+      },
+      "Quarter_Cos": {
+        "wasserstein": 0.4512
+      },
+      "Week_Sin": {
+        "wasserstein": 0.7089
+      },
+      "Week_Cos": {
+        "wasserstein": 0.6726
+      },
+      "Near_Holiday": {
+        "wasserstein": 0.1476
+      },
+      "Is_Summer": {
+        "wasserstein": 0.2242
+      },
+      "Is_Winter": {
+        "wasserstein": 0.6769
+      },
+      "Lag_1": {
+        "wasserstein": 84.3401
+      },
+      "Lag_2": {
+        "wasserstein": 76.257
+      },
+      "Lag_3": {
+        "wasserstein": 68.599
+      },
+      "Lag_4": {
+        "wasserstein": 47.9269
+      },
+      "Lag_6": {
+        "wasserstein": 41.4765
+      },
+      "Lag_8": {
+        "wasserstein": 57.9286
+      },
+      "Lag_12": {
+        "wasserstein": 74.1168
+      },
+      "Rolling_Mean_3": {
+        "wasserstein": 85.6363
+      },
+      "Rolling_Std_3": {
+        "wasserstein": 11.0412
+      },
+      "Rolling_Max_3": {
+        "wasserstein": 77.5157
+      },
+      "Rolling_Min_3": {
+        "wasserstein": 94.3055
+      },
+      "Rolling_Mean_4": {
+        "wasserstein": 78.1706
+      },
+      "Rolling_Std_4": {
+        "wasserstein": 8.587
+      },
+      "Rolling_Max_4": {
+        "wasserstein": 71.1426
+      },
+      "Rolling_Min_4": {
+        "wasserstein": 80.6602
+      },
+      "Rolling_Mean_6": {
+        "wasserstein": 68.4607
+      },
+      "Rolling_Std_6": {
+        "wasserstein": 6.3591
+      },
+      "Rolling_Max_6": {
+        "wasserstein": 64.0688
+      },
+      "Rolling_Min_6": {
+        "wasserstein": 54.1443
+      },
+      "Rolling_Mean_8": {
+        "wasserstein": 65.7987
+      },
+      "Rolling_Std_8": {
+        "wasserstein": 8.4235
+      },
+      "Rolling_Max_8": {
+        "wasserstein": 61.3633
+      },
+      "Rolling_Min_8": {
+        "wasserstein": 44.3087
+      },
+      "Rolling_Mean_12": {
+        "wasserstein": 66.0206
+      },
+      "Rolling_Std_12": {
+        "wasserstein": 8.0719
+      },
+      "Rolling_Max_12": {
+        "wasserstein": 59.7682
+      },
+      "Rolling_Min_12": {
+        "wasserstein": 46.6533
+      },
+      "Momentum_3": {
+        "wasserstein": 0.1505
+      },
+      "Momentum_6": {
+        "wasserstein": 0.2092
+      },
+      "Volatility_4": {
+        "wasserstein": 0.0751
+      },
+      "Volatility_8": {
+        "wasserstein": 0.0594
+      },
+      "Store_Mean": {
+        "wasserstein": 169.7487
+      },
+      "Store_Std": {
+        "wasserstein": 74.0463
+      },
+      "Demand_vs_Store_Mean": {
+        "wasserstein": 0.8727
+      },
+      "Store_CV": {
+        "wasserstein": 0.381
+      },
+      "Product_Mean": {
+        "wasserstein": 169.2617
+      },
+      "Product_Std": {
+        "wasserstein": 42.7177
+      },
+      "Demand_vs_Product_Mean": {
+        "wasserstein": 0.8748
+      },
+      "Product_CV": {
+        "wasserstein": 0.2215
+      },
+      "Price_x_Promo": {
+        "wasserstein": 5.9745
+      },
+      "Lag_1_x_Price": {
+        "wasserstein": 4432.9756
+      },
+      "Lag_1_x_Promo": {
+        "wasserstein": 45.0366
+      },
+      "Lag_2_x_Price": {
+        "wasserstein": 3999.6126
+      },
+      "Lag_2_x_Promo": {
+        "wasserstein": 41.0155
+      },
+      "Lag_3_x_Price": {
+        "wasserstein": 3591.1566
+      },
+      "Lag_3_x_Promo": {
+        "wasserstein": 36.9206
+      },
+      "Rolling_Mean_3_x_Price": {
+        "wasserstein": 4511.943
+      },
+      "Rolling_Mean_3_x_Promo": {
+        "wasserstein": 44.3974
+      },
+      "Rolling_Mean_4_x_Price": {
+        "wasserstein": 4111.5204
+      },
+      "Rolling_Mean_4_x_Promo": {
+        "wasserstein": 40.4844
+      }
+    },
+    "js_divergence": {
+      "Price": {
+        "js_divergence": 0.1349
+      },
+      "Promo": {
+        "js_divergence": 0.038
+      },
+      "Month": {
+        "js_divergence": 0.7528
+      },
+      "Quarter": {
+        "js_divergence": 0.5702
+      },
+      "Year": {
+        "js_divergence": 0.8326
+      },
+      "DayOfYear": {
+        "js_divergence": 0.7164
+      },
+      "WeekOfYear": {
+        "js_divergence": 0.7135
+      },
+      "Is_Q1": {
+        "js_divergence": 0.5702
+      },
+      "Is_Q2": {
+        "js_divergence": 0.2904
+      },
+      "Is_Q3": {
+        "js_divergence": 0.292
+      },
+      "Is_Q4": {
+        "js_divergence": 0.2939
+      },
+      "Month_Sin": {
+        "js_divergence": 0.6903
+      },
+      "Month_Cos": {
+        "js_divergence": 0.6871
+      },
+      "Quarter_Sin": {
+        "js_divergence": 0.5702
+      },
+      "Quarter_Cos": {
+        "js_divergence": 0.5702
+      },
+      "Week_Sin": {
+        "js_divergence": 0.6652
+      },
+      "Week_Cos": {
+        "js_divergence": 0.6574
+      },
+      "Near_Holiday": {
+        "js_divergence": 0.2326
+      },
+      "Is_Summer": {
+        "js_divergence": 0.2912
+      },
+      "Is_Winter": {
+        "js_divergence": 0.5705
+      },
+      "Lag_1": {
+        "js_divergence": 0.3282
+      },
+      "Lag_2": {
+        "js_divergence": 0.3104
+      },
+      "Lag_3": {
+        "js_divergence": 0.2926
+      },
+      "Lag_4": {
+        "js_divergence": 0.2381
+      },
+      "Lag_6": {
+        "js_divergence": 0.2308
+      },
+      "Lag_8": {
+        "js_divergence": 0.2845
+      },
+      "Lag_12": {
+        "js_divergence": 0.3241
+      },
+      "Rolling_Mean_3": {
+        "js_divergence": 0.3455
+      },
+      "Rolling_Std_3": {
+        "js_divergence": 0.2843
+      },
+      "Rolling_Max_3": {
+        "js_divergence": 0.3073
+      },
+      "Rolling_Min_3": {
+        "js_divergence": 0.3814
+      },
+      "Rolling_Mean_4": {
+        "js_divergence": 0.3293
+      },
+      "Rolling_Std_4": {
+        "js_divergence": 0.2503
+      },
+      "Rolling_Max_4": {
+        "js_divergence": 0.2922
+      },
+      "Rolling_Min_4": {
+        "js_divergence": 0.3475
+      },
+      "Rolling_Mean_6": {
+        "js_divergence": 0.3113
+      },
+      "Rolling_Std_6": {
+        "js_divergence": 0.2874
+      },
+      "Rolling_Max_6": {
+        "js_divergence": 0.2775
+      },
+      "Rolling_Min_6": {
+        "js_divergence": 0.299
+      },
+      "Rolling_Mean_8": {
+        "js_divergence": 0.3084
+      },
+      "Rolling_Std_8": {
+        "js_divergence": 0.3063
+      },
+      "Rolling_Max_8": {
+        "js_divergence": 0.2724
+      },
+      "Rolling_Min_8": {
+        "js_divergence": 0.2963
+      },
+      "Rolling_Mean_12": {
+        "js_divergence": 0.3097
+      },
+      "Rolling_Std_12": {
+        "js_divergence": 0.3018
+      },
+      "Rolling_Max_12": {
+        "js_divergence": 0.2699
+      },
+      "Rolling_Min_12": {
+        "js_divergence": 0.3052
+      },
+      "Momentum_3": {
+        "js_divergence": 0.4275
+      },
+      "Momentum_6": {
+        "js_divergence": 0.5188
+      },
+      "Volatility_4": {
+        "js_divergence": 0.3851
+      },
+      "Volatility_8": {
+        "js_divergence": 0.4752
+      },
+      "Store_Mean": {
+        "js_divergence": 0.7071
+      },
+      "Store_Std": {
+        "js_divergence": 0.7071
+      },
+      "Demand_vs_Store_Mean": {
+        "js_divergence": 0.7071
+      },
+      "Store_CV": {
+        "js_divergence": 0.7071
+      },
+      "Product_Mean": {
+        "js_divergence": 0.7071
+      },
+      "Product_Std": {
+        "js_divergence": 0.7071
+      },
+      "Demand_vs_Product_Mean": {
+        "js_divergence": 0.7071
+      },
+      "Product_CV": {
+        "js_divergence": 0.7071
+      },
+      "Price_x_Promo": {
+        "js_divergence": 0.1536
+      },
+      "Lag_1_x_Price": {
+        "js_divergence": 0.2095
+      },
+      "Lag_1_x_Promo": {
+        "js_divergence": 0.2367
+      },
+      "Lag_2_x_Price": {
+        "js_divergence": 0.1946
+      },
+      "Lag_2_x_Promo": {
+        "js_divergence": 0.225
+      },
+      "Lag_3_x_Price": {
+        "js_divergence": 0.1798
+      },
+      "Lag_3_x_Promo": {
+        "js_divergence": 0.213
+      },
+      "Rolling_Mean_3_x_Price": {
+        "js_divergence": 0.2272
+      },
+      "Rolling_Mean_3_x_Promo": {
+        "js_divergence": 0.2308
+      },
+      "Rolling_Mean_4_x_Price": {
+        "js_divergence": 0.2157
+      },
+      "Rolling_Mean_4_x_Promo": {
+        "js_divergence": 0.2194
+      }
+    },
+    "month": "2023-02"
+  },
+  {
+    "severity": "severe",
+    "severe_features": 133,
+    "mild_features": 4,
+    "total_features": 70,
+    "error_trend": {
+      "baseline_error": 25.54,
+      "current_error": 80.31,
+      "error_increase": 2.1447,
+      "drift": true
+    },
+    "wasserstein": {
+      "Price": {
+        "wasserstein": 3.3105
+      },
+      "Promo": {
+        "wasserstein": 0.0608
+      },
+      "Month": {
+        "wasserstein": 3.8035
+      },
+      "Quarter": {
+        "wasserstein": 1.358
+      },
+      "Year": {
+        "wasserstein": 2.9718
+      },
+      "DayOfYear": {
+        "wasserstein": 109.4067
+      },
+      "WeekOfYear": {
+        "wasserstein": 15.9739
+      },
+      "Is_Q1": {
+        "wasserstein": 0.6765
+      },
+      "Is_Q2": {
+        "wasserstein": 0.2231
+      },
+      "Is_Q3": {
+        "wasserstein": 0.2253
+      },
+      "Is_Q4": {
+        "wasserstein": 0.2281
+      },
+      "Month_Sin": {
+        "wasserstein": 0.952
+      },
+      "Month_Cos": {
+        "wasserstein": 0.6493
+      },
+      "Quarter_Sin": {
+        "wasserstein": 0.9019
+      },
+      "Quarter_Cos": {
+        "wasserstein": 0.4512
+      },
+      "Week_Sin": {
+        "wasserstein": 0.9244
+      },
+      "Week_Cos": {
+        "wasserstein": 0.5171
+      },
+      "Near_Holiday": {
+        "wasserstein": 0.1476
+      },
+      "Is_Summer": {
+        "wasserstein": 0.2242
+      },
+      "Is_Winter": {
+        "wasserstein": 0.3231
+      },
+      "Lag_1": {
+        "wasserstein": 108.5635
+      },
+      "Lag_2": {
+        "wasserstein": 103.3186
+      },
+      "Lag_3": {
+        "wasserstein": 98.1473
+      },
+      "Lag_4": {
+        "wasserstein": 93.4064
+      },
+      "Lag_6": {
+        "wasserstein": 82.3844
+      },
+      "Lag_8": {
+        "wasserstein": 58.1982
+      },
+      "Lag_12": {
+        "wasserstein": 61.0921
+      },
+      "Rolling_Mean_3": {
+        "wasserstein": 112.5807
+      },
+      "Rolling_Std_3": {
+        "wasserstein": 10.8184
+      },
+      "Rolling_Max_3": {
+        "wasserstein": 104.7039
+      },
+      "Rolling_Min_3": {
+        "wasserstein": 121.2632
+      },
+      "Rolling_Mean_4": {
+        "wasserstein": 109.7491
+      },
+      "Rolling_Std_4": {
+        "wasserstein": 13.2774
+      },
+      "Rolling_Max_4": {
+        "wasserstein": 99.3577
+      },
+      "Rolling_Min_4": {
+        "wasserstein": 121.5492
+      },
+      "Rolling_Mean_6": {
+        "wasserstein": 104.0135
+      },
+      "Rolling_Std_6": {
+        "wasserstein": 14.6021
+      },
+      "Rolling_Max_6": {
+        "wasserstein": 93.2271
+      },
+      "Rolling_Min_6": {
+        "wasserstein": 116.7033
+      },
+      "Rolling_Mean_8": {
+        "wasserstein": 96.382
+      },
+      "Rolling_Std_8": {
+        "wasserstein": 11.1416
+      },
+      "Rolling_Max_8": {
+        "wasserstein": 90.7206
+      },
+      "Rolling_Min_8": {
+        "wasserstein": 96.6601
+      },
+      "Rolling_Mean_12": {
+        "wasserstein": 85.6062
+      },
+      "Rolling_Std_12": {
+        "wasserstein": 8.6886
+      },
+      "Rolling_Max_12": {
+        "wasserstein": 89.152
+      },
+      "Rolling_Min_12": {
+        "wasserstein": 46.6533
+      },
+      "Momentum_3": {
+        "wasserstein": 0.1468
+      },
+      "Momentum_6": {
+        "wasserstein": 0.183
+      },
+      "Volatility_4": {
+        "wasserstein": 0.1053
+      },
+      "Volatility_8": {
+        "wasserstein": 0.0975
+      },
+      "Store_Mean": {
+        "wasserstein": 169.7487
+      },
+      "Store_Std": {
+        "wasserstein": 74.0463
+      },
+      "Demand_vs_Store_Mean": {
+        "wasserstein": 0.8727
+      },
+      "Store_CV": {
+        "wasserstein": 0.381
+      },
+      "Product_Mean": {
+        "wasserstein": 169.2617
+      },
+      "Product_Std": {
+        "wasserstein": 42.7177
+      },
+      "Demand_vs_Product_Mean": {
+        "wasserstein": 0.8748
+      },
+      "Product_CV": {
+        "wasserstein": 0.2215
+      },
+      "Price_x_Promo": {
+        "wasserstein": 6.1812
+      },
+      "Lag_1_x_Price": {
+        "wasserstein": 5745.9675
+      },
+      "Lag_1_x_Promo": {
+        "wasserstein": 56.3237
+      },
+      "Lag_2_x_Price": {
+        "wasserstein": 5460.4071
+      },
+      "Lag_2_x_Promo": {
+        "wasserstein": 53.8404
+      },
+      "Lag_3_x_Price": {
+        "wasserstein": 5177.1047
+      },
+      "Lag_3_x_Promo": {
+        "wasserstein": 51.0216
+      },
+      "Rolling_Mean_3_x_Price": {
+        "wasserstein": 5965.1936
+      },
+      "Rolling_Mean_3_x_Promo": {
+        "wasserstein": 56.9812
+      },
+      "Rolling_Mean_4_x_Price": {
+        "wasserstein": 5812.373
+      },
+      "Rolling_Mean_4_x_Promo": {
+        "wasserstein": 55.502
+      }
+    },
+    "js_divergence": {
+      "Price": {
+        "js_divergence": 0.1359
+      },
+      "Promo": {
+        "js_divergence": 0.0432
+      },
+      "Month": {
+        "js_divergence": 0.746
+      },
+      "Quarter": {
+        "js_divergence": 0.5702
+      },
+      "Year": {
+        "js_divergence": 0.8326
+      },
+      "DayOfYear": {
+        "js_divergence": 0.7376
+      },
+      "WeekOfYear": {
+        "js_divergence": 0.7358
+      },
+      "Is_Q1": {
+        "js_divergence": 0.5702
+      },
+      "Is_Q2": {
+        "js_divergence": 0.2904
+      },
+      "Is_Q3": {
+        "js_divergence": 0.292
+      },
+      "Is_Q4": {
+        "js_divergence": 0.2939
+      },
+      "Month_Sin": {
+        "js_divergence": 0.746
+      },
+      "Month_Cos": {
+        "js_divergence": 0.746
+      },
+      "Quarter_Sin": {
+        "js_divergence": 0.5702
+      },
+      "Quarter_Cos": {
+        "js_divergence": 0.5702
+      },
+      "Week_Sin": {
+        "js_divergence": 0.6603
+      },
+      "Week_Cos": {
+        "js_divergence": 0.6687
+      },
+      "Near_Holiday": {
+        "js_divergence": 0.2326
+      },
+      "Is_Summer": {
+        "js_divergence": 0.2912
+      },
+      "Is_Winter": {
+        "js_divergence": 0.3573
+      },
+      "Lag_1": {
+        "js_divergence": 0.3813
+      },
+      "Lag_2": {
+        "js_divergence": 0.37
+      },
+      "Lag_3": {
+        "js_divergence": 0.3598
+      },
+      "Lag_4": {
+        "js_divergence": 0.3511
+      },
+      "Lag_6": {
+        "js_divergence": 0.3303
+      },
+      "Lag_8": {
+        "js_divergence": 0.2644
+      },
+      "Lag_12": {
+        "js_divergence": 0.2862
+      },
+      "Rolling_Mean_3": {
+        "js_divergence": 0.4028
+      },
+      "Rolling_Std_3": {
+        "js_divergence": 0.2724
+      },
+      "Rolling_Max_3": {
+        "js_divergence": 0.3607
+      },
+      "Rolling_Min_3": {
+        "js_divergence": 0.4352
+      },
+      "Rolling_Mean_4": {
+        "js_divergence": 0.4022
+      },
+      "Rolling_Std_4": {
+        "js_divergence": 0.3529
+      },
+      "Rolling_Max_4": {
+        "js_divergence": 0.3483
+      },
+      "Rolling_Min_4": {
+        "js_divergence": 0.4467
+      },
+      "Rolling_Mean_6": {
+        "js_divergence": 0.3964
+      },
+      "Rolling_Std_6": {
+        "js_divergence": 0.4393
+      },
+      "Rolling_Max_6": {
+        "js_divergence": 0.3346
+      },
+      "Rolling_Min_6": {
+        "js_divergence": 0.4507
+      },
+      "Rolling_Mean_8": {
+        "js_divergence": 0.3817
+      },
+      "Rolling_Std_8": {
+        "js_divergence": 0.3827
+      },
+      "Rolling_Max_8": {
+        "js_divergence": 0.3285
+      },
+      "Rolling_Min_8": {
+        "js_divergence": 0.4002
+      },
+      "Rolling_Mean_12": {
+        "js_divergence": 0.3599
+      },
+      "Rolling_Std_12": {
+        "js_divergence": 0.3285
+      },
+      "Rolling_Max_12": {
+        "js_divergence": 0.3245
+      },
+      "Rolling_Min_12": {
+        "js_divergence": 0.3052
+      },
+      "Momentum_3": {
+        "js_divergence": 0.4303
+      },
+      "Momentum_6": {
+        "js_divergence": 0.4892
+      },
+      "Volatility_4": {
+        "js_divergence": 0.5368
+      },
+      "Volatility_8": {
+        "js_divergence": 0.6092
+      },
+      "Store_Mean": {
+        "js_divergence": 0.7071
+      },
+      "Store_Std": {
+        "js_divergence": 0.7071
+      },
+      "Demand_vs_Store_Mean": {
+        "js_divergence": 0.7071
+      },
+      "Store_CV": {
+        "js_divergence": 0.7071
+      },
+      "Product_Mean": {
+        "js_divergence": 0.7071
+      },
+      "Product_Std": {
+        "js_divergence": 0.7071
+      },
+      "Demand_vs_Product_Mean": {
+        "js_divergence": 0.7071
+      },
+      "Product_CV": {
+        "js_divergence": 0.7071
+      },
+      "Price_x_Promo": {
+        "js_divergence": 0.1583
+      },
+      "Lag_1_x_Price": {
+        "js_divergence": 0.2467
+      },
+      "Lag_1_x_Promo": {
+        "js_divergence": 0.2661
+      },
+      "Lag_2_x_Price": {
+        "js_divergence": 0.2378
+      },
+      "Lag_2_x_Promo": {
+        "js_divergence": 0.2582
+      },
+      "Lag_3_x_Price": {
+        "js_divergence": 0.2307
+      },
+      "Lag_3_x_Promo": {
+        "js_divergence": 0.2552
+      },
+      "Rolling_Mean_3_x_Price": {
+        "js_divergence": 0.2672
+      },
+      "Rolling_Mean_3_x_Promo": {
+        "js_divergence": 0.2675
+      },
+      "Rolling_Mean_4_x_Price": {
+        "js_divergence": 0.2641
+      },
+      "Rolling_Mean_4_x_Promo": {
+        "js_divergence": 0.2694
+      }
+    },
+    "month": "2023-03"
+  },
+  {
+    "severity": "severe",
+    "severe_features": 133,
+    "mild_features": 4,
+    "total_features": 70,
+    "error_trend": {
+      "baseline_error": 25.54,
+      "current_error": 74.34,
+      "error_increase": 1.9111,
+      "drift": true
+    },
+    "wasserstein": {
+      "Price": {
+        "wasserstein": 3.288
+      },
+      "Promo": {
+        "wasserstein": 0.0633
+      },
+      "Month": {
+        "wasserstein": 3.4504
+      },
+      "Quarter": {
+        "wasserstein": 1.005
+      },
+      "Year": {
+        "wasserstein": 2.9718
+      },
+      "DayOfYear": {
+        "wasserstein": 99.2213
+      },
+      "WeekOfYear": {
+        "wasserstein": 14.4042
+      },
+      "Is_Q1": {
+        "wasserstein": 0.3235
+      },
+      "Is_Q2": {
+        "wasserstein": 0.7769
+      },
+      "Is_Q3": {
+        "wasserstein": 0.2253
+      },
+      "Is_Q4": {
+        "wasserstein": 0.2281
+      },
+      "Month_Sin": {
+        "wasserstein": 0.8383
+      },
+      "Month_Cos": {
+        "wasserstein": 0.7711
+      },
+      "Quarter_Sin": {
+        "wasserstein": 0.5488
+      },
+      "Quarter_Cos": {
+        "wasserstein": 1.005
+      },
+      "Week_Sin": {
+        "wasserstein": 0.9139
+      },
+      "Week_Cos": {
+        "wasserstein": 0.6241
+      },
+      "Near_Holiday": {
+        "wasserstein": 0.1476
+      },
+      "Is_Summer": {
+        "wasserstein": 0.2242
+      },
+      "Is_Winter": {
+        "wasserstein": 0.3231
+      },
+      "Lag_1": {
+        "wasserstein": 116.3852
+      },
+      "Lag_2": {
+        "wasserstein": 115.1872
+      },
+      "Lag_3": {
+        "wasserstein": 113.9909
+      },
+      "Lag_4": {
+        "wasserstein": 112.7857
+      },
+      "Lag_6": {
+        "wasserstein": 108.5496
+      },
+      "Lag_8": {
+        "wasserstein": 100.2981
+      },
+      "Lag_12": {
+        "wasserstein": 83.4373
+      },
+      "Rolling_Mean_3": {
+        "wasserstein": 124.4253
+      },
+      "Rolling_Std_3": {
+        "wasserstein": 10.8174
+      },
+      "Rolling_Max_3": {
+        "wasserstein": 116.7186
+      },
+      "Rolling_Min_3": {
+        "wasserstein": 133.1895
+      },
+      "Rolling_Mean_4": {
+        "wasserstein": 123.4774
+      },
+      "Rolling_Std_4": {
+        "wasserstein": 13.6141
+      },
+      "Rolling_Max_4": {
+        "wasserstein": 112.943
+      },
+      "Rolling_Min_4": {
+        "wasserstein": 136.1048
+      },
+      "Rolling_Mean_6": {
+        "wasserstein": 121.3145
+      },
+      "Rolling_Std_6": {
+        "wasserstein": 16.0147
+      },
+      "Rolling_Max_6": {
+        "wasserstein": 108.8734
+      },
+      "Rolling_Min_6": {
+        "wasserstein": 137.4501
+      },
+      "Rolling_Mean_8": {
+        "wasserstein": 118.2195
+      },
+      "Rolling_Std_8": {
+        "wasserstein": 15.9516
+      },
+      "Rolling_Max_8": {
+        "wasserstein": 107.3214
+      },
+      "Rolling_Min_8": {
+        "wasserstein": 133.1599
+      },
+      "Rolling_Mean_12": {
+        "wasserstein": 108.7537
+      },
+      "Rolling_Std_12": {
+        "wasserstein": 12.6966
+      },
+      "Rolling_Max_12": {
+        "wasserstein": 106.0991
+      },
+      "Rolling_Min_12": {
+        "wasserstein": 112.3529
+      },
+      "Momentum_3": {
+        "wasserstein": 0.1428
+      },
+      "Momentum_6": {
+        "wasserstein": 0.1725
+      },
+      "Volatility_4": {
+        "wasserstein": 0.1093
+      },
+      "Volatility_8": {
+        "wasserstein": 0.1221
+      },
+      "Store_Mean": {
+        "wasserstein": 169.7487
+      },
+      "Store_Std": {
+        "wasserstein": 74.0463
+      },
+      "Demand_vs_Store_Mean": {
+        "wasserstein": 0.8727
+      },
+      "Store_CV": {
+        "wasserstein": 0.381
+      },
+      "Product_Mean": {
+        "wasserstein": 169.2617
+      },
+      "Product_Std": {
+        "wasserstein": 42.7177
+      },
+      "Demand_vs_Product_Mean": {
+        "wasserstein": 0.8748
+      },
+      "Product_CV": {
+        "wasserstein": 0.2215
+      },
+      "Price_x_Promo": {
+        "wasserstein": 6.37
+      },
+      "Lag_1_x_Price": {
+        "wasserstein": 6168.8355
+      },
+      "Lag_1_x_Promo": {
+        "wasserstein": 59.5991
+      },
+      "Lag_2_x_Price": {
+        "wasserstein": 6102.9204
+      },
+      "Lag_2_x_Promo": {
+        "wasserstein": 59.0637
+      },
+      "Lag_3_x_Price": {
+        "wasserstein": 6033.9129
+      },
+      "Lag_3_x_Promo": {
+        "wasserstein": 58.4487
+      },
+      "Rolling_Mean_3_x_Price": {
+        "wasserstein": 6605.9234
+      },
+      "Rolling_Mean_3_x_Promo": {
+        "wasserstein": 62.236
+      },
+      "Rolling_Mean_4_x_Price": {
+        "wasserstein": 6553.1937
+      },
+      "Rolling_Mean_4_x_Promo": {
+        "wasserstein": 61.7415
+      }
+    },
+    "js_divergence": {
+      "Price": {
+        "js_divergence": 0.1331
+      },
+      "Promo": {
+        "js_divergence": 0.045
+      },
+      "Month": {
+        "js_divergence": 0.7454
+      },
+      "Quarter": {
+        "js_divergence": 0.6345
+      },
+      "Year": {
+        "js_divergence": 0.8326
+      },
+      "DayOfYear": {
+        "js_divergence": 0.731
+      },
+      "WeekOfYear": {
+        "js_divergence": 0.7265
+      },
+      "Is_Q1": {
+        "js_divergence": 0.3575
+      },
+      "Is_Q2": {
+        "js_divergence": 0.6345
+      },
+      "Is_Q3": {
+        "js_divergence": 0.292
+      },
+      "Is_Q4": {
+        "js_divergence": 0.2939
+      },
+      "Month_Sin": {
+        "js_divergence": 0.6903
+      },
+      "Month_Cos": {
+        "js_divergence": 0.7454
+      },
+      "Quarter_Sin": {
+        "js_divergence": 0.6345
+      },
+      "Quarter_Cos": {
+        "js_divergence": 0.6345
+      },
+      "Week_Sin": {
+        "js_divergence": 0.658
+      },
+      "Week_Cos": {
+        "js_divergence": 0.6935
+      },
+      "Near_Holiday": {
+        "js_divergence": 0.2326
+      },
+      "Is_Summer": {
+        "js_divergence": 0.2912
+      },
+      "Is_Winter": {
+        "js_divergence": 0.3573
+      },
+      "Lag_1": {
+        "js_divergence": 0.3961
+      },
+      "Lag_2": {
+        "js_divergence": 0.3938
+      },
+      "Lag_3": {
+        "js_divergence": 0.3928
+      },
+      "Lag_4": {
+        "js_divergence": 0.3927
+      },
+      "Lag_6": {
+        "js_divergence": 0.3907
+      },
+      "Lag_8": {
+        "js_divergence": 0.375
+      },
+      "Lag_12": {
+        "js_divergence": 0.3349
+      },
+      "Rolling_Mean_3": {
+        "js_divergence": 0.4252
+      },
+      "Rolling_Std_3": {
+        "js_divergence": 0.2735
+      },
+      "Rolling_Max_3": {
+        "js_divergence": 0.3837
+      },
+      "Rolling_Min_3": {
+        "js_divergence": 0.4584
+      },
+      "Rolling_Mean_4": {
+        "js_divergence": 0.4291
+      },
+      "Rolling_Std_4": {
+        "js_divergence": 0.3619
+      },
+      "Rolling_Max_4": {
+        "js_divergence": 0.3748
+      },
+      "Rolling_Min_4": {
+        "js_divergence": 0.4724
+      },
+      "Rolling_Mean_6": {
+        "js_divergence": 0.4325
+      },
+      "Rolling_Std_6": {
+        "js_divergence": 0.4654
+      },
+      "Rolling_Max_6": {
+        "js_divergence": 0.3663
+      },
+      "Rolling_Min_6": {
+        "js_divergence": 0.4872
+      },
+      "Rolling_Mean_8": {
+        "js_divergence": 0.4294
+      },
+      "Rolling_Std_8": {
+        "js_divergence": 0.4887
+      },
+      "Rolling_Max_8": {
+        "js_divergence": 0.3629
+      },
+      "Rolling_Min_8": {
+        "js_divergence": 0.4842
+      },
+      "Rolling_Mean_12": {
+        "js_divergence": 0.4122
+      },
+      "Rolling_Std_12": {
+        "js_divergence": 0.4462
+      },
+      "Rolling_Max_12": {
+        "js_divergence": 0.3594
+      },
+      "Rolling_Min_12": {
+        "js_divergence": 0.4497
+      },
+      "Momentum_3": {
+        "js_divergence": 0.4311
+      },
+      "Momentum_6": {
+        "js_divergence": 0.4819
+      },
+      "Volatility_4": {
+        "js_divergence": 0.5501
+      },
+      "Volatility_8": {
+        "js_divergence": 0.6809
+      },
+      "Store_Mean": {
+        "js_divergence": 0.7071
+      },
+      "Store_Std": {
+        "js_divergence": 0.7071
+      },
+      "Demand_vs_Store_Mean": {
+        "js_divergence": 0.7071
+      },
+      "Store_CV": {
+        "js_divergence": 0.7071
+      },
+      "Product_Mean": {
+        "js_divergence": 0.7071
+      },
+      "Product_Std": {
+        "js_divergence": 0.7071
+      },
+      "Demand_vs_Product_Mean": {
+        "js_divergence": 0.7071
+      },
+      "Product_CV": {
+        "js_divergence": 0.7071
+      },
+      "Price_x_Promo": {
+        "js_divergence": 0.1562
+      },
+      "Lag_1_x_Price": {
+        "js_divergence": 0.259
+      },
+      "Lag_1_x_Promo": {
+        "js_divergence": 0.2792
+      },
+      "Lag_2_x_Price": {
+        "js_divergence": 0.2563
+      },
+      "Lag_2_x_Promo": {
+        "js_divergence": 0.2756
+      },
+      "Lag_3_x_Price": {
+        "js_divergence": 0.2547
+      },
+      "Lag_3_x_Promo": {
+        "js_divergence": 0.2749
+      },
+      "Rolling_Mean_3_x_Price": {
+        "js_divergence": 0.2834
+      },
+      "Rolling_Mean_3_x_Promo": {
+        "js_divergence": 0.2838
+      },
+      "Rolling_Mean_4_x_Price": {
+        "js_divergence": 0.2838
+      },
+      "Rolling_Mean_4_x_Promo": {
+        "js_divergence": 0.2883
+      }
+    },
+    "month": "2023-04"
+  },
+  {
+    "severity": "severe",
+    "severe_features": 133,
+    "mild_features": 3,
+    "total_features": 70,
+    "error_trend": {
+      "baseline_error": 25.54,
+      "current_error": 59.97,
+      "error_increase": 1.3481,
+      "drift": true
+    },
+    "wasserstein": {
+      "Price": {
+        "wasserstein": 3.3023
+      },
+      "Promo": {
+        "wasserstein": 0.0481
+      },
+      "Month": {
+        "wasserstein": 3.2497
+      },
+      "Quarter": {
+        "wasserstein": 1.005
+      },
+      "Year": {
+        "wasserstein": 2.9718
+      },
+      "DayOfYear": {
+        "wasserstein": 93.2378
+      },
+      "WeekOfYear": {
+        "wasserstein": 13.4586
+      },
+      "Is_Q1": {
+        "wasserstein": 0.3235
+      },
+      "Is_Q2": {
+        "wasserstein": 0.7769
+      },
+      "Is_Q3": {
+        "wasserstein": 0.2253
+      },
+      "Is_Q4": {
+        "wasserstein": 0.2281
+      },
+      "Month_Sin": {
+        "wasserstein": 0.6331
+      },
+      "Month_Cos": {
+        "wasserstein": 0.9711
+      },
+      "Quarter_Sin": {
+        "wasserstein": 0.5488
+      },
+      "Quarter_Cos": {
+        "wasserstein": 1.005
+      },
+      "Week_Sin": {
+        "wasserstein": 0.7089
+      },
+      "Week_Cos": {
+        "wasserstein": 0.8388
+      },
+      "Near_Holiday": {
+        "wasserstein": 0.1476
+      },
+      "Is_Summer": {
+        "wasserstein": 0.2242
+      },
+      "Is_Winter": {
+        "wasserstein": 0.3231
+      },
+      "Lag_1": {
+        "wasserstein": 107.2039
+      },
+      "Lag_2": {
+        "wasserstein": 109.8058
+      },
+      "Lag_3": {
+        "wasserstein": 112.2539
+      },
+      "Lag_4": {
+        "wasserstein": 114.8638
+      },
+      "Lag_6": {
+        "wasserstein": 117.9094
+      },
+      "Lag_8": {
+        "wasserstein": 116.5022
+      },
+      "Lag_12": {
+        "wasserstein": 110.6443
+      },
+      "Rolling_Mean_3": {
+        "wasserstein": 118.9921
+      },
+      "Rolling_Std_3": {
+        "wasserstein": 10.8766
+      },
+      "Rolling_Max_3": {
+        "wasserstein": 111.1145
+      },
+      "Rolling_Min_3": {
+        "wasserstein": 127.7356
+      },
+      "Rolling_Mean_4": {
+        "wasserstein": 119.922
+      },
+      "Rolling_Std_4": {
+        "wasserstein": 13.5538
+      },
+      "Rolling_Max_4": {
+        "wasserstein": 109.2403
+      },
+      "Rolling_Min_4": {
+        "wasserstein": 132.3218
+      },
+      "Rolling_Mean_6": {
+        "wasserstein": 121.4978
+      },
+      "Rolling_Std_6": {
+        "wasserstein": 15.9842
+      },
+      "Rolling_Max_6": {
+        "wasserstein": 108.845
+      },
+      "Rolling_Min_6": {
+        "wasserstein": 137.6385
+      },
+      "Rolling_Mean_8": {
+        "wasserstein": 122.0049
+      },
+      "Rolling_Std_8": {
+        "wasserstein": 16.6106
+      },
+      "Rolling_Max_8": {
+        "wasserstein": 110.0112
+      },
+      "Rolling_Min_8": {
+        "wasserstein": 139.1091
+      },
+      "Rolling_Mean_12": {
+        "wasserstein": 119.1106
+      },
+      "Rolling_Std_12": {
+        "wasserstein": 16.1847
+      },
+      "Rolling_Max_12": {
+        "wasserstein": 110.9272
+      },
+      "Rolling_Min_12": {
+        "wasserstein": 133.3703
+      },
+      "Momentum_3": {
+        "wasserstein": 0.1405
+      },
+      "Momentum_6": {
+        "wasserstein": 0.1677
+      },
+      "Volatility_4": {
+        "wasserstein": 0.1087
+      },
+      "Volatility_8": {
+        "wasserstein": 0.1256
+      },
+      "Store_Mean": {
+        "wasserstein": 169.7487
+      },
+      "Store_Std": {
+        "wasserstein": 74.0463
+      },
+      "Demand_vs_Store_Mean": {
+        "wasserstein": 0.8727
+      },
+      "Store_CV": {
+        "wasserstein": 0.381
+      },
+      "Product_Mean": {
+        "wasserstein": 169.2617
+      },
+      "Product_Std": {
+        "wasserstein": 42.7177
+      },
+      "Demand_vs_Product_Mean": {
+        "wasserstein": 0.8748
+      },
+      "Product_CV": {
+        "wasserstein": 0.2215
+      },
+      "Price_x_Promo": {
+        "wasserstein": 5.5806
+      },
+      "Lag_1_x_Price": {
+        "wasserstein": 5658.7918
+      },
+      "Lag_1_x_Promo": {
+        "wasserstein": 58.6584
+      },
+      "Lag_2_x_Price": {
+        "wasserstein": 5798.373
+      },
+      "Lag_2_x_Promo": {
+        "wasserstein": 60.1681
+      },
+      "Lag_3_x_Price": {
+        "wasserstein": 5935.5864
+      },
+      "Lag_3_x_Promo": {
+        "wasserstein": 61.4526
+      },
+      "Rolling_Mean_3_x_Price": {
+        "wasserstein": 6301.6176
+      },
+      "Rolling_Mean_3_x_Promo": {
+        "wasserstein": 63.6155
+      },
+      "Rolling_Mean_4_x_Price": {
+        "wasserstein": 6352.6125
+      },
+      "Rolling_Mean_4_x_Promo": {
+        "wasserstein": 64.1498
+      }
+    },
+    "js_divergence": {
+      "Price": {
+        "js_divergence": 0.1351
+      },
+      "Promo": {
+        "js_divergence": 0.0342
+      },
+      "Month": {
+        "js_divergence": 0.7439
+      },
+      "Quarter": {
+        "js_divergence": 0.6345
+      },
+      "Year": {
+        "js_divergence": 0.8326
+      },
+      "DayOfYear": {
+        "js_divergence": 0.7414
+      },
+      "WeekOfYear": {
+        "js_divergence": 0.7388
+      },
+      "Is_Q1": {
+        "js_divergence": 0.3575
+      },
+      "Is_Q2": {
+        "js_divergence": 0.6345
+      },
+      "Is_Q3": {
+        "js_divergence": 0.292
+      },
+      "Is_Q4": {
+        "js_divergence": 0.2939
+      },
+      "Month_Sin": {
+        "js_divergence": 0.6117
+      },
+      "Month_Cos": {
+        "js_divergence": 0.6803
+      },
+      "Quarter_Sin": {
+        "js_divergence": 0.6345
+      },
+      "Quarter_Cos": {
+        "js_divergence": 0.6345
+      },
+      "Week_Sin": {
+        "js_divergence": 0.6652
+      },
+      "Week_Cos": {
+        "js_divergence": 0.6735
+      },
+      "Near_Holiday": {
+        "js_divergence": 0.2326
+      },
+      "Is_Summer": {
+        "js_divergence": 0.2912
+      },
+      "Is_Winter": {
+        "js_divergence": 0.3573
+      },
+      "Lag_1": {
+        "js_divergence": 0.3775
+      },
+      "Lag_2": {
+        "js_divergence": 0.3827
+      },
+      "Lag_3": {
+        "js_divergence": 0.3898
+      },
+      "Lag_4": {
+        "js_divergence": 0.3977
+      },
+      "Lag_6": {
+        "js_divergence": 0.4082
+      },
+      "Lag_8": {
+        "js_divergence": 0.4083
+      },
+      "Lag_12": {
+        "js_divergence": 0.3944
+      },
+      "Rolling_Mean_3": {
+        "js_divergence": 0.4152
+      },
+      "Rolling_Std_3": {
+        "js_divergence": 0.2766
+      },
+      "Rolling_Max_3": {
+        "js_divergence": 0.3725
+      },
+      "Rolling_Min_3": {
+        "js_divergence": 0.4487
+      },
+      "Rolling_Mean_4": {
+        "js_divergence": 0.4225
+      },
+      "Rolling_Std_4": {
+        "js_divergence": 0.3596
+      },
+      "Rolling_Max_4": {
+        "js_divergence": 0.3673
+      },
+      "Rolling_Min_4": {
+        "js_divergence": 0.468
+      },
+      "Rolling_Mean_6": {
+        "js_divergence": 0.4317
+      },
+      "Rolling_Std_6": {
+        "js_divergence": 0.461
+      },
+      "Rolling_Max_6": {
+        "js_divergence": 0.3659
+      },
+      "Rolling_Min_6": {
+        "js_divergence": 0.4885
+      },
+      "Rolling_Mean_8": {
+        "js_divergence": 0.4366
+      },
+      "Rolling_Std_8": {
+        "js_divergence": 0.5011
+      },
+      "Rolling_Max_8": {
+        "js_divergence": 0.3691
+      },
+      "Rolling_Min_8": {
+        "js_divergence": 0.494
+      },
+      "Rolling_Mean_12": {
+        "js_divergence": 0.4333
+      },
+      "Rolling_Std_12": {
+        "js_divergence": 0.517
+      },
+      "Rolling_Max_12": {
+        "js_divergence": 0.3709
+      },
+      "Rolling_Min_12": {
+        "js_divergence": 0.4869
+      },
+      "Momentum_3": {
+        "js_divergence": 0.4343
+      },
+      "Momentum_6": {
+        "js_divergence": 0.468
+      },
+      "Volatility_4": {
+        "js_divergence": 0.5481
+      },
+      "Volatility_8": {
+        "js_divergence": 0.681
+      },
+      "Store_Mean": {
+        "js_divergence": 0.7071
+      },
+      "Store_Std": {
+        "js_divergence": 0.7071
+      },
+      "Demand_vs_Store_Mean": {
+        "js_divergence": 0.7071
+      },
+      "Store_CV": {
+        "js_divergence": 0.7071
+      },
+      "Product_Mean": {
+        "js_divergence": 0.7071
+      },
+      "Product_Std": {
+        "js_divergence": 0.7071
+      },
+      "Demand_vs_Product_Mean": {
+        "js_divergence": 0.7071
+      },
+      "Product_CV": {
+        "js_divergence": 0.7071
+      },
+      "Price_x_Promo": {
+        "js_divergence": 0.1582
+      },
+      "Lag_1_x_Price": {
+        "js_divergence": 0.2444
+      },
+      "Lag_1_x_Promo": {
+        "js_divergence": 0.2644
+      },
+      "Lag_2_x_Price": {
+        "js_divergence": 0.2482
+      },
+      "Lag_2_x_Promo": {
+        "js_divergence": 0.2682
+      },
+      "Lag_3_x_Price": {
+        "js_divergence": 0.2528
+      },
+      "Lag_3_x_Promo": {
+        "js_divergence": 0.2769
+      },
+      "Rolling_Mean_3_x_Price": {
+        "js_divergence": 0.2749
+      },
+      "Rolling_Mean_3_x_Promo": {
+        "js_divergence": 0.2802
+      },
+      "Rolling_Mean_4_x_Price": {
+        "js_divergence": 0.2774
+      },
+      "Rolling_Mean_4_x_Promo": {
+        "js_divergence": 0.2862
+      }
+    },
+    "month": "2023-05"
+  },
+  {
+    "severity": "severe",
+    "severe_features": 131,
+    "mild_features": 5,
+    "total_features": 70,
+    "error_trend": {
+      "baseline_error": 25.54,
+      "current_error": 38.52,
+      "error_increase": 0.5086,
+      "drift": true
+    },
+    "wasserstein": {
+      "Price": {
+        "wasserstein": 3.291
+      },
+      "Promo": {
+        "wasserstein": 0.0636
+      },
+      "Month": {
+        "wasserstein": 3.2047
+      },
+      "Quarter": {
+        "wasserstein": 1.005
+      },
+      "Year": {
+        "wasserstein": 2.9718
+      },
+      "DayOfYear": {
+        "wasserstein": 89.6747
+      },
+      "WeekOfYear": {
+        "wasserstein": 12.8355
+      },
+      "Is_Q1": {
+        "wasserstein": 0.3235
+      },
+      "Is_Q2": {
+        "wasserstein": 0.7769
+      },
+      "Is_Q3": {
+        "wasserstein": 0.2253
+      },
+      "Is_Q4": {
+        "wasserstein": 0.2281
+      },
+      "Month_Sin": {
+        "wasserstein": 0.6106
+      },
+      "Month_Cos": {
+        "wasserstein": 1.0866
+      },
+      "Quarter_Sin": {
+        "wasserstein": 0.5488
+      },
+      "Quarter_Cos": {
+        "wasserstein": 1.005
+      },
+      "Week_Sin": {
+        "wasserstein": 0.4618
+      },
+      "Week_Cos": {
+        "wasserstein": 1.0553
+      },
+      "Near_Holiday": {
+        "wasserstein": 0.1476
+      },
+      "Is_Summer": {
+        "wasserstein": 0.7758
+      },
+      "Is_Winter": {
+        "wasserstein": 0.3231
+      },
+      "Lag_1": {
+        "wasserstein": 80.9454
+      },
+      "Lag_2": {
+        "wasserstein": 86.8238
+      },
+      "Lag_3": {
+        "wasserstein": 93.0849
+      },
+      "Lag_4": {
+        "wasserstein": 99.465
+      },
+      "Lag_6": {
+        "wasserstein": 110.5086
+      },
+      "Lag_8": {
+        "wasserstein": 117.3823
+      },
+      "Lag_12": {
+        "wasserstein": 127.5335
+      },
+      "Rolling_Mean_3": {
+        "wasserstein": 96.1889
+      },
+      "Rolling_Std_3": {
+        "wasserstein": 10.7632
+      },
+      "Rolling_Max_3": {
+        "wasserstein": 88.5028
+      },
+      "Rolling_Min_3": {
+        "wasserstein": 104.6329
+      },
+      "Rolling_Mean_4": {
+        "wasserstein": 98.9699
+      },
+      "Rolling_Std_4": {
+        "wasserstein": 12.9362
+      },
+      "Rolling_Max_4": {
+        "wasserstein": 89.133
+      },
+      "Rolling_Min_4": {
+        "wasserstein": 110.136
+      },
+      "Rolling_Mean_6": {
+        "wasserstein": 104.3503
+      },
+      "Rolling_Std_6": {
+        "wasserstein": 14.458
+      },
+      "Rolling_Max_6": {
+        "wasserstein": 93.8798
+      },
+      "Rolling_Min_6": {
+        "wasserstein": 116.8633
+      },
+      "Rolling_Mean_8": {
+        "wasserstein": 108.8467
+      },
+      "Rolling_Std_8": {
+        "wasserstein": 14.3749
+      },
+      "Rolling_Max_8": {
+        "wasserstein": 100.0308
+      },
+      "Rolling_Min_8": {
+        "wasserstein": 119.8952
+      },
+      "Rolling_Mean_12": {
+        "wasserstein": 114.0526
+      },
+      "Rolling_Std_12": {
+        "wasserstein": 14.1464
+      },
+      "Rolling_Max_12": {
+        "wasserstein": 108.7564
+      },
+      "Rolling_Min_12": {
+        "wasserstein": 122.0043
+      },
+      "Momentum_3": {
+        "wasserstein": 0.139
+      },
+      "Momentum_6": {
+        "wasserstein": 0.1691
+      },
+      "Volatility_4": {
+        "wasserstein": 0.102
+      },
+      "Volatility_8": {
+        "wasserstein": 0.1147
+      },
+      "Store_Mean": {
+        "wasserstein": 169.7487
+      },
+      "Store_Std": {
+        "wasserstein": 74.0463
+      },
+      "Demand_vs_Store_Mean": {
+        "wasserstein": 0.8727
+      },
+      "Store_CV": {
+        "wasserstein": 0.381
+      },
+      "Product_Mean": {
+        "wasserstein": 169.2617
+      },
+      "Product_Std": {
+        "wasserstein": 42.7177
+      },
+      "Demand_vs_Product_Mean": {
+        "wasserstein": 0.8748
+      },
+      "Product_CV": {
+        "wasserstein": 0.2215
+      },
+      "Price_x_Promo": {
+        "wasserstein": 6.2879
+      },
+      "Lag_1_x_Price": {
+        "wasserstein": 4264.8188
+      },
+      "Lag_1_x_Promo": {
+        "wasserstein": 41.1457
+      },
+      "Lag_2_x_Price": {
+        "wasserstein": 4578.573
+      },
+      "Lag_2_x_Promo": {
+        "wasserstein": 44.2312
+      },
+      "Lag_3_x_Price": {
+        "wasserstein": 4908.7438
+      },
+      "Lag_3_x_Promo": {
+        "wasserstein": 47.4284
+      },
+      "Rolling_Mean_3_x_Price": {
+        "wasserstein": 5088.079
+      },
+      "Rolling_Mean_3_x_Promo": {
+        "wasserstein": 47.4618
+      },
+      "Rolling_Mean_4_x_Price": {
+        "wasserstein": 5236.3682
+      },
+      "Rolling_Mean_4_x_Promo": {
+        "wasserstein": 48.8996
+      }
+    },
+    "js_divergence": {
+      "Price": {
+        "js_divergence": 0.1372
+      },
+      "Promo": {
+        "js_divergence": 0.0452
+      },
+      "Month": {
+        "js_divergence": 0.7518
+      },
+      "Quarter": {
+        "js_divergence": 0.6345
+      },
+      "Year": {
+        "js_divergence": 0.8326
+      },
+      "DayOfYear": {
+        "js_divergence": 0.7379
+      },
+      "WeekOfYear": {
+        "js_divergence": 0.7371
+      },
+      "Is_Q1": {
+        "js_divergence": 0.3575
+      },
+      "Is_Q2": {
+        "js_divergence": 0.6345
+      },
+      "Is_Q3": {
+        "js_divergence": 0.292
+      },
+      "Is_Q4": {
+        "js_divergence": 0.2939
+      },
+      "Month_Sin": {
+        "js_divergence": 0.7518
+      },
+      "Month_Cos": {
+        "js_divergence": 0.7518
+      },
+      "Quarter_Sin": {
+        "js_divergence": 0.6345
+      },
+      "Quarter_Cos": {
+        "js_divergence": 0.6345
+      },
+      "Week_Sin": {
+        "js_divergence": 0.6244
+      },
+      "Week_Cos": {
+        "js_divergence": 0.663
+      },
+      "Near_Holiday": {
+        "js_divergence": 0.2326
+      },
+      "Is_Summer": {
+        "js_divergence": 0.6338
+      },
+      "Is_Winter": {
+        "js_divergence": 0.3573
+      },
+      "Lag_1": {
+        "js_divergence": 0.3204
+      },
+      "Lag_2": {
+        "js_divergence": 0.3325
+      },
+      "Lag_3": {
+        "js_divergence": 0.3482
+      },
+      "Lag_4": {
+        "js_divergence": 0.3644
+      },
+      "Lag_6": {
+        "js_divergence": 0.3929
+      },
+      "Lag_8": {
+        "js_divergence": 0.4117
+      },
+      "Lag_12": {
+        "js_divergence": 0.4282
+      },
+      "Rolling_Mean_3": {
+        "js_divergence": 0.3673
+      },
+      "Rolling_Std_3": {
+        "js_divergence": 0.2747
+      },
+      "Rolling_Max_3": {
+        "js_divergence": 0.3278
+      },
+      "Rolling_Min_3": {
+        "js_divergence": 0.4029
+      },
+      "Rolling_Mean_4": {
+        "js_divergence": 0.3783
+      },
+      "Rolling_Std_4": {
+        "js_divergence": 0.349
+      },
+      "Rolling_Max_4": {
+        "js_divergence": 0.3266
+      },
+      "Rolling_Min_4": {
+        "js_divergence": 0.4246
+      },
+      "Rolling_Mean_6": {
+        "js_divergence": 0.3967
+      },
+      "Rolling_Std_6": {
+        "js_divergence": 0.4345
+      },
+      "Rolling_Max_6": {
+        "js_divergence": 0.335
+      },
+      "Rolling_Min_6": {
+        "js_divergence": 0.4517
+      },
+      "Rolling_Mean_8": {
+        "js_divergence": 0.4093
+      },
+      "Rolling_Std_8": {
+        "js_divergence": 0.4532
+      },
+      "Rolling_Max_8": {
+        "js_divergence": 0.3462
+      },
+      "Rolling_Min_8": {
+        "js_divergence": 0.4619
+      },
+      "Rolling_Mean_12": {
+        "js_divergence": 0.4233
+      },
+      "Rolling_Std_12": {
+        "js_divergence": 0.4703
+      },
+      "Rolling_Max_12": {
+        "js_divergence": 0.3653
+      },
+      "Rolling_Min_12": {
+        "js_divergence": 0.4687
+      },
+      "Momentum_3": {
+        "js_divergence": 0.4277
+      },
+      "Momentum_6": {
+        "js_divergence": 0.4601
+      },
+      "Volatility_4": {
+        "js_divergence": 0.5294
+      },
+      "Volatility_8": {
+        "js_divergence": 0.6776
+      },
+      "Store_Mean": {
+        "js_divergence": 0.7071
+      },
+      "Store_Std": {
+        "js_divergence": 0.7071
+      },
+      "Demand_vs_Store_Mean": {
+        "js_divergence": 0.7071
+      },
+      "Store_CV": {
+        "js_divergence": 0.7071
+      },
+      "Product_Mean": {
+        "js_divergence": 0.7071
+      },
+      "Product_Std": {
+        "js_divergence": 0.7071
+      },
+      "Demand_vs_Product_Mean": {
+        "js_divergence": 0.7071
+      },
+      "Product_CV": {
+        "js_divergence": 0.7071
+      },
+      "Price_x_Promo": {
+        "js_divergence": 0.1603
+      },
+      "Lag_1_x_Price": {
+        "js_divergence": 0.2018
+      },
+      "Lag_1_x_Promo": {
+        "js_divergence": 0.2289
+      },
+      "Lag_2_x_Price": {
+        "js_divergence": 0.2119
+      },
+      "Lag_2_x_Promo": {
+        "js_divergence": 0.2315
+      },
+      "Lag_3_x_Price": {
+        "js_divergence": 0.2219
+      },
+      "Lag_3_x_Promo": {
+        "js_divergence": 0.2396
+      },
+      "Rolling_Mean_3_x_Price": {
+        "js_divergence": 0.2422
+      },
+      "Rolling_Mean_3_x_Promo": {
+        "js_divergence": 0.2384
+      },
+      "Rolling_Mean_4_x_Price": {
+        "js_divergence": 0.2462
+      },
+      "Rolling_Mean_4_x_Promo": {
+        "js_divergence": 0.2494
+      }
+    },
+    "month": "2023-06"
+  },
+  {
+    "severity": "severe",
+    "severe_features": 122,
+    "mild_features": 6,
+    "total_features": 70,
+    "error_trend": {
+      "baseline_error": 25.54,
+      "current_error": 21.72,
+      "error_increase": -0.1494,
+      "drift": false
+    },
+    "wasserstein": {
+      "Price": {
+        "wasserstein": 3.3103
+      },
+      "Promo": {
+        "wasserstein": 0.0591
+      },
+      "Month": {
+        "wasserstein": 3.2978
+      },
+      "Quarter": {
+        "wasserstein": 1.0981
+      },
+      "Year": {
+        "wasserstein": 2.9718
+      },
+      "DayOfYear": {
+        "wasserstein": 94.9121
+      },
+      "WeekOfYear": {
+        "wasserstein": 13.4696
+      },
+      "Is_Q1": {
+        "wasserstein": 0.3235
+      },
+      "Is_Q2": {
+        "wasserstein": 0.2231
+      },
+      "Is_Q3": {
+        "wasserstein": 0.7747
+      },
+      "Is_Q4": {
+        "wasserstein": 0.2281
+      },
+      "Month_Sin": {
+        "wasserstein": 0.7323
+      },
+      "Month_Cos": {
+        "wasserstein": 0.9711
+      },
+      "Quarter_Sin": {
+        "wasserstein": 1.0981
+      },
+      "Quarter_Cos": {
+        "wasserstein": 0.4512
+      },
+      "Week_Sin": {
+        "wasserstein": 0.5617
+      },
+      "Week_Cos": {
+        "wasserstein": 1.0447
+      },
+      "Near_Holiday": {
+        "wasserstein": 0.1476
+      },
+      "Is_Summer": {
+        "wasserstein": 0.7758
+      },
+      "Is_Winter": {
+        "wasserstein": 0.3231
+      },
+      "Lag_1": {
+        "wasserstein": 46.8799
+      },
+      "Lag_2": {
+        "wasserstein": 53.2857
+      },
+      "Lag_3": {
+        "wasserstein": 60.7055
+      },
+      "Lag_4": {
+        "wasserstein": 69.2547
+      },
+      "Lag_6": {
+        "wasserstein": 86.3246
+      },
+      "Lag_8": {
+        "wasserstein": 100.8292
+      },
+      "Lag_12": {
+        "wasserstein": 127.0922
+      },
+      "Rolling_Mean_3": {
+        "wasserstein": 62.7583
+      },
+      "Rolling_Std_3": {
+        "wasserstein": 11.6165
+      },
+      "Rolling_Max_3": {
+        "wasserstein": 53.8336
+      },
+      "Rolling_Min_3": {
+        "wasserstein": 72.0756
+      },
+      "Rolling_Mean_4": {
+        "wasserstein": 66.3422
+      },
+      "Rolling_Std_4": {
+        "wasserstein": 13.4739
+      },
+      "Rolling_Max_4": {
+        "wasserstein": 55.518
+      },
+      "Rolling_Min_4": {
+        "wasserstein": 77.9057
+      },
+      "Rolling_Mean_6": {
+        "wasserstein": 74.0325
+      },
+      "Rolling_Std_6": {
+        "wasserstein": 13.7514
+      },
+      "Rolling_Max_6": {
+        "wasserstein": 64.6403
+      },
+      "Rolling_Min_6": {
+        "wasserstein": 84.8978
+      },
+      "Rolling_Mean_8": {
+        "wasserstein": 81.4726
+      },
+      "Rolling_Std_8": {
+        "wasserstein": 12.238
+      },
+      "Rolling_Max_8": {
+        "wasserstein": 76.8655
+      },
+      "Rolling_Min_8": {
+        "wasserstein": 88.0301
+      },
+      "Rolling_Mean_12": {
+        "wasserstein": 93.5562
+      },
+      "Rolling_Std_12": {
+        "wasserstein": 9.836
+      },
+      "Rolling_Max_12": {
+        "wasserstein": 96.8052
+      },
+      "Rolling_Min_12": {
+        "wasserstein": 90.4184
+      },
+      "Momentum_3": {
+        "wasserstein": 0.1382
+      },
+      "Momentum_6": {
+        "wasserstein": 0.1724
+      },
+      "Volatility_4": {
+        "wasserstein": 0.0959
+      },
+      "Volatility_8": {
+        "wasserstein": 0.1002
+      },
+      "Store_Mean": {
+        "wasserstein": 169.7487
+      },
+      "Store_Std": {
+        "wasserstein": 74.0463
+      },
+      "Demand_vs_Store_Mean": {
+        "wasserstein": 0.8727
+      },
+      "Store_CV": {
+        "wasserstein": 0.381
+      },
+      "Product_Mean": {
+        "wasserstein": 169.2617
+      },
+      "Product_Std": {
+        "wasserstein": 42.7177
+      },
+      "Demand_vs_Product_Mean": {
+        "wasserstein": 0.8748
+      },
+      "Product_CV": {
+        "wasserstein": 0.2215
+      },
+      "Price_x_Promo": {
+        "wasserstein": 6.0823
+      },
+      "Lag_1_x_Price": {
+        "wasserstein": 2418.2589
+      },
+      "Lag_1_x_Promo": {
+        "wasserstein": 24.6174
+      },
+      "Lag_2_x_Price": {
+        "wasserstein": 2775.5509
+      },
+      "Lag_2_x_Promo": {
+        "wasserstein": 28.0078
+      },
+      "Lag_3_x_Price": {
+        "wasserstein": 3175.6839
+      },
+      "Lag_3_x_Promo": {
+        "wasserstein": 31.8513
+      },
+      "Rolling_Mean_3_x_Price": {
+        "wasserstein": 3290.1771
+      },
+      "Rolling_Mean_3_x_Promo": {
+        "wasserstein": 31.3673
+      },
+      "Rolling_Mean_4_x_Price": {
+        "wasserstein": 3483.7711
+      },
+      "Rolling_Mean_4_x_Promo": {
+        "wasserstein": 33.2543
+      }
+    },
+    "js_divergence": {
+      "Price": {
+        "js_divergence": 0.1372
+      },
+      "Promo": {
+        "js_divergence": 0.042
+      },
+      "Month": {
+        "js_divergence": 0.7422
+      },
+      "Quarter": {
+        "js_divergence": 0.633
+      },
+      "Year": {
+        "js_divergence": 0.8326
+      },
+      "DayOfYear": {
+        "js_divergence": 0.733
+      },
+      "WeekOfYear": {
+        "js_divergence": 0.7271
+      },
+      "Is_Q1": {
+        "js_divergence": 0.3575
+      },
+      "Is_Q2": {
+        "js_divergence": 0.2904
+      },
+      "Is_Q3": {
+        "js_divergence": 0.633
+      },
+      "Is_Q4": {
+        "js_divergence": 0.2939
+      },
+      "Month_Sin": {
+        "js_divergence": 0.7422
+      },
+      "Month_Cos": {
+        "js_divergence": 0.6803
+      },
+      "Quarter_Sin": {
+        "js_divergence": 0.633
+      },
+      "Quarter_Cos": {
+        "js_divergence": 0.633
+      },
+      "Week_Sin": {
+        "js_divergence": 0.6949
+      },
+      "Week_Cos": {
+        "js_divergence": 0.6607
+      },
+      "Near_Holiday": {
+        "js_divergence": 0.2326
+      },
+      "Is_Summer": {
+        "js_divergence": 0.6338
+      },
+      "Is_Winter": {
+        "js_divergence": 0.3573
+      },
+      "Lag_1": {
+        "js_divergence": 0.2539
+      },
+      "Lag_2": {
+        "js_divergence": 0.2626
+      },
+      "Lag_3": {
+        "js_divergence": 0.2762
+      },
+      "Lag_4": {
+        "js_divergence": 0.2962
+      },
+      "Lag_6": {
+        "js_divergence": 0.3407
+      },
+      "Lag_8": {
+        "js_divergence": 0.3749
+      },
+      "Lag_12": {
+        "js_divergence": 0.428
+      },
+      "Rolling_Mean_3": {
+        "js_divergence": 0.2964
+      },
+      "Rolling_Std_3": {
+        "js_divergence": 0.2937
+      },
+      "Rolling_Max_3": {
+        "js_divergence": 0.2712
+      },
+      "Rolling_Min_3": {
+        "js_divergence": 0.3325
+      },
+      "Rolling_Mean_4": {
+        "js_divergence": 0.3044
+      },
+      "Rolling_Std_4": {
+        "js_divergence": 0.3671
+      },
+      "Rolling_Max_4": {
+        "js_divergence": 0.2687
+      },
+      "Rolling_Min_4": {
+        "js_divergence": 0.3543
+      },
+      "Rolling_Mean_6": {
+        "js_divergence": 0.3261
+      },
+      "Rolling_Std_6": {
+        "js_divergence": 0.4289
+      },
+      "Rolling_Max_6": {
+        "js_divergence": 0.2789
+      },
+      "Rolling_Min_6": {
+        "js_divergence": 0.382
+      },
+      "Rolling_Mean_8": {
+        "js_divergence": 0.3477
+      },
+      "Rolling_Std_8": {
+        "js_divergence": 0.4202
+      },
+      "Rolling_Max_8": {
+        "js_divergence": 0.3
+      },
+      "Rolling_Min_8": {
+        "js_divergence": 0.3945
+      },
+      "Rolling_Mean_12": {
+        "js_divergence": 0.3777
+      },
+      "Rolling_Std_12": {
+        "js_divergence": 0.3906
+      },
+      "Rolling_Max_12": {
+        "js_divergence": 0.3389
+      },
+      "Rolling_Min_12": {
+        "js_divergence": 0.4031
+      },
+      "Momentum_3": {
+        "js_divergence": 0.4185
+      },
+      "Momentum_6": {
+        "js_divergence": 0.4619
+      },
+      "Volatility_4": {
+        "js_divergence": 0.5162
+      },
+      "Volatility_8": {
+        "js_divergence": 0.6639
+      },
+      "Store_Mean": {
+        "js_divergence": 0.7071
+      },
+      "Store_Std": {
+        "js_divergence": 0.7071
+      },
+      "Demand_vs_Store_Mean": {
+        "js_divergence": 0.7071
+      },
+      "Store_CV": {
+        "js_divergence": 0.7071
+      },
+      "Product_Mean": {
+        "js_divergence": 0.7071
+      },
+      "Product_Std": {
+        "js_divergence": 0.7071
+      },
+      "Demand_vs_Product_Mean": {
+        "js_divergence": 0.7071
+      },
+      "Product_CV": {
+        "js_divergence": 0.7071
+      },
+      "Price_x_Promo": {
+        "js_divergence": 0.1604
+      },
+      "Lag_1_x_Price": {
+        "js_divergence": 0.1453
+      },
+      "Lag_1_x_Promo": {
+        "js_divergence": 0.1875
+      },
+      "Lag_2_x_Price": {
+        "js_divergence": 0.1546
+      },
+      "Lag_2_x_Promo": {
+        "js_divergence": 0.1924
+      },
+      "Lag_3_x_Price": {
+        "js_divergence": 0.1678
+      },
+      "Lag_3_x_Promo": {
+        "js_divergence": 0.2008
+      },
+      "Rolling_Mean_3_x_Price": {
+        "js_divergence": 0.1903
+      },
+      "Rolling_Mean_3_x_Promo": {
+        "js_divergence": 0.1988
+      },
+      "Rolling_Mean_4_x_Price": {
+        "js_divergence": 0.1958
+      },
+      "Rolling_Mean_4_x_Promo": {
+        "js_divergence": 0.2047
+      }
+    },
+    "month": "2023-07"
+  },
+  {
+    "severity": "severe",
+    "severe_features": 113,
+    "mild_features": 14,
+    "total_features": 70,
+    "error_trend": {
+      "baseline_error": 25.54,
+      "current_error": 14.81,
+      "error_increase": -0.4202,
+      "drift": false
+    },
+    "wasserstein": {
+      "Price": {
+        "wasserstein": 3.3231
+      },
+      "Promo": {
+        "wasserstein": 0.0513
+      },
+      "Month": {
+        "wasserstein": 3.5506
+      },
+      "Quarter": {
+        "wasserstein": 1.0981
+      },
+      "Year": {
+        "wasserstein": 2.9718
+      },
+      "DayOfYear": {
+        "wasserstein": 102.2814
+      },
+      "WeekOfYear": {
+        "wasserstein": 14.4296
+      },
+      "Is_Q1": {
+        "wasserstein": 0.3235
+      },
+      "Is_Q2": {
+        "wasserstein": 0.2231
+      },
+      "Is_Q3": {
+        "wasserstein": 0.7747
+      },
+      "Is_Q4": {
+        "wasserstein": 0.2281
+      },
+      "Month_Sin": {
+        "wasserstein": 0.9328
+      },
+      "Month_Cos": {
+        "wasserstein": 0.7711
+      },
+      "Quarter_Sin": {
+        "wasserstein": 1.0981
+      },
+      "Quarter_Cos": {
+        "wasserstein": 0.4512
+      },
+      "Week_Sin": {
+        "wasserstein": 0.7736
+      },
+      "Week_Cos": {
+        "wasserstein": 0.8388
+      },
+      "Near_Holiday": {
+        "wasserstein": 0.1476
+      },
+      "Is_Summer": {
+        "wasserstein": 0.7758
+      },
+      "Is_Winter": {
+        "wasserstein": 0.3231
+      },
+      "Lag_1": {
+        "wasserstein": 25.7176
+      },
+      "Lag_2": {
+        "wasserstein": 27.9416
+      },
+      "Lag_3": {
+        "wasserstein": 31.9903
+      },
+      "Lag_4": {
+        "wasserstein": 38.7976
+      },
+      "Lag_6": {
+        "wasserstein": 55.9915
+      },
+      "Lag_8": {
+        "wasserstein": 72.9712
+      },
+      "Lag_12": {
+        "wasserstein": 111.1754
+      },
+      "Rolling_Mean_3": {
+        "wasserstein": 34.9491
+      },
+      "Rolling_Std_3": {
+        "wasserstein": 12.5333
+      },
+      "Rolling_Max_3": {
+        "wasserstein": 32.8191
+      },
+      "Rolling_Min_3": {
+        "wasserstein": 43.995
+      },
+      "Rolling_Mean_4": {
+        "wasserstein": 36.8018
+      },
+      "Rolling_Std_4": {
+        "wasserstein": 14.4154
+      },
+      "Rolling_Max_4": {
+        "wasserstein": 32.3002
+      },
+      "Rolling_Min_4": {
+        "wasserstein": 49.1402
+      },
+      "Rolling_Mean_6": {
+        "wasserstein": 43.5316
+      },
+      "Rolling_Std_6": {
+        "wasserstein": 14.649
+      },
+      "Rolling_Max_6": {
+        "wasserstein": 35.1073
+      },
+      "Rolling_Min_6": {
+        "wasserstein": 55.8613
+      },
+      "Rolling_Mean_8": {
+        "wasserstein": 51.4121
+      },
+      "Rolling_Std_8": {
+        "wasserstein": 12.7003
+      },
+      "Rolling_Max_8": {
+        "wasserstein": 45.8488
+      },
+      "Rolling_Min_8": {
+        "wasserstein": 58.9823
+      },
+      "Rolling_Mean_12": {
+        "wasserstein": 66.5933
+      },
+      "Rolling_Std_12": {
+        "wasserstein": 8.842
+      },
+      "Rolling_Max_12": {
+        "wasserstein": 75.2778
+      },
+      "Rolling_Min_12": {
+        "wasserstein": 61.3748
+      },
+      "Momentum_3": {
+        "wasserstein": 0.1352
+      },
+      "Momentum_6": {
+        "wasserstein": 0.1715
+      },
+      "Volatility_4": {
+        "wasserstein": 0.0913
+      },
+      "Volatility_8": {
+        "wasserstein": 0.0923
+      },
+      "Store_Mean": {
+        "wasserstein": 169.7487
+      },
+      "Store_Std": {
+        "wasserstein": 74.0463
+      },
+      "Demand_vs_Store_Mean": {
+        "wasserstein": 0.8727
+      },
+      "Store_CV": {
+        "wasserstein": 0.381
+      },
+      "Product_Mean": {
+        "wasserstein": 169.2617
+      },
+      "Product_Std": {
+        "wasserstein": 42.7177
+      },
+      "Demand_vs_Product_Mean": {
+        "wasserstein": 0.8748
+      },
+      "Product_CV": {
+        "wasserstein": 0.2215
+      },
+      "Price_x_Promo": {
+        "wasserstein": 5.8113
+      },
+      "Lag_1_x_Price": {
+        "wasserstein": 1085.1414
+      },
+      "Lag_1_x_Promo": {
+        "wasserstein": 14.6141
+      },
+      "Lag_2_x_Price": {
+        "wasserstein": 1293.4243
+      },
+      "Lag_2_x_Promo": {
+        "wasserstein": 15.668
+      },
+      "Lag_3_x_Price": {
+        "wasserstein": 1576.8866
+      },
+      "Lag_3_x_Promo": {
+        "wasserstein": 17.5838
+      },
+      "Rolling_Mean_3_x_Price": {
+        "wasserstein": 1736.5975
+      },
+      "Rolling_Mean_3_x_Promo": {
+        "wasserstein": 17.8683
+      },
+      "Rolling_Mean_4_x_Price": {
+        "wasserstein": 1874.2182
+      },
+      "Rolling_Mean_4_x_Promo": {
+        "wasserstein": 18.7527
+      }
+    },
+    "js_divergence": {
+      "Price": {
+        "js_divergence": 0.1379
+      },
+      "Promo": {
+        "js_divergence": 0.0365
+      },
+      "Month": {
+        "js_divergence": 0.7462
+      },
+      "Quarter": {
+        "js_divergence": 0.633
+      },
+      "Year": {
+        "js_divergence": 0.8326
+      },
+      "DayOfYear": {
+        "js_divergence": 0.7393
+      },
+      "WeekOfYear": {
+        "js_divergence": 0.7364
+      },
+      "Is_Q1": {
+        "js_divergence": 0.3575
+      },
+      "Is_Q2": {
+        "js_divergence": 0.2904
+      },
+      "Is_Q3": {
+        "js_divergence": 0.633
+      },
+      "Is_Q4": {
+        "js_divergence": 0.2939
+      },
+      "Month_Sin": {
+        "js_divergence": 0.6817
+      },
+      "Month_Cos": {
+        "js_divergence": 0.7462
+      },
+      "Quarter_Sin": {
+        "js_divergence": 0.633
+      },
+      "Quarter_Cos": {
+        "js_divergence": 0.633
+      },
+      "Week_Sin": {
+        "js_divergence": 0.6733
+      },
+      "Week_Cos": {
+        "js_divergence": 0.6735
+      },
+      "Near_Holiday": {
+        "js_divergence": 0.2326
+      },
+      "Is_Summer": {
+        "js_divergence": 0.6338
+      },
+      "Is_Winter": {
+        "js_divergence": 0.3573
+      },
+      "Lag_1": {
+        "js_divergence": 0.2363
+      },
+      "Lag_2": {
+        "js_divergence": 0.2334
+      },
+      "Lag_3": {
+        "js_divergence": 0.2313
+      },
+      "Lag_4": {
+        "js_divergence": 0.2361
+      },
+      "Lag_6": {
+        "js_divergence": 0.2676
+      },
+      "Lag_8": {
+        "js_divergence": 0.3098
+      },
+      "Lag_12": {
+        "js_divergence": 0.3953
+      },
+      "Rolling_Mean_3": {
+        "js_divergence": 0.2632
+      },
+      "Rolling_Std_3": {
+        "js_divergence": 0.3137
+      },
+      "Rolling_Max_3": {
+        "js_divergence": 0.2703
+      },
+      "Rolling_Min_3": {
+        "js_divergence": 0.2849
+      },
+      "Rolling_Mean_4": {
+        "js_divergence": 0.2593
+      },
+      "Rolling_Std_4": {
+        "js_divergence": 0.3833
+      },
+      "Rolling_Max_4": {
+        "js_divergence": 0.2655
+      },
+      "Rolling_Min_4": {
+        "js_divergence": 0.2942
+      },
+      "Rolling_Mean_6": {
+        "js_divergence": 0.2641
+      },
+      "Rolling_Std_6": {
+        "js_divergence": 0.4507
+      },
+      "Rolling_Max_6": {
+        "js_divergence": 0.2572
+      },
+      "Rolling_Min_6": {
+        "js_divergence": 0.3156
+      },
+      "Rolling_Mean_8": {
+        "js_divergence": 0.2762
+      },
+      "Rolling_Std_8": {
+        "js_divergence": 0.4387
+      },
+      "Rolling_Max_8": {
+        "js_divergence": 0.2557
+      },
+      "Rolling_Min_8": {
+        "js_divergence": 0.3281
+      },
+      "Rolling_Mean_12": {
+        "js_divergence": 0.3114
+      },
+      "Rolling_Std_12": {
+        "js_divergence": 0.3676
+      },
+      "Rolling_Max_12": {
+        "js_divergence": 0.2962
+      },
+      "Rolling_Min_12": {
+        "js_divergence": 0.3379
+      },
+      "Momentum_3": {
+        "js_divergence": 0.4022
+      },
+      "Momentum_6": {
+        "js_divergence": 0.4518
+      },
+      "Volatility_4": {
+        "js_divergence": 0.4927
+      },
+      "Volatility_8": {
+        "js_divergence": 0.6415
+      },
+      "Store_Mean": {
+        "js_divergence": 0.7071
+      },
+      "Store_Std": {
+        "js_divergence": 0.7071
+      },
+      "Demand_vs_Store_Mean": {
+        "js_divergence": 0.7071
+      },
+      "Store_CV": {
+        "js_divergence": 0.7071
+      },
+      "Product_Mean": {
+        "js_divergence": 0.7071
+      },
+      "Product_Std": {
+        "js_divergence": 0.7071
+      },
+      "Demand_vs_Product_Mean": {
+        "js_divergence": 0.7071
+      },
+      "Product_CV": {
+        "js_divergence": 0.7071
+      },
+      "Price_x_Promo": {
+        "js_divergence": 0.1579
+      },
+      "Lag_1_x_Price": {
+        "js_divergence": 0.1102
+      },
+      "Lag_1_x_Promo": {
+        "js_divergence": 0.1723
+      },
+      "Lag_2_x_Price": {
+        "js_divergence": 0.1135
+      },
+      "Lag_2_x_Promo": {
+        "js_divergence": 0.1711
+      },
+      "Lag_3_x_Price": {
+        "js_divergence": 0.1189
+      },
+      "Lag_3_x_Promo": {
+        "js_divergence": 0.1681
+      },
+      "Rolling_Mean_3_x_Price": {
+        "js_divergence": 0.1539
+      },
+      "Rolling_Mean_3_x_Promo": {
+        "js_divergence": 0.1701
+      },
+      "Rolling_Mean_4_x_Price": {
+        "js_divergence": 0.1538
+      },
+      "Rolling_Mean_4_x_Promo": {
+        "js_divergence": 0.1683
+      }
+    },
+    "month": "2023-08"
+  },
+  {
+    "severity": "severe",
+    "severe_features": 110,
+    "mild_features": 19,
+    "total_features": 70,
+    "error_trend": {
+      "baseline_error": 25.54,
+      "current_error": 12.83,
+      "error_increase": -0.4977,
+      "drift": false
+    },
+    "wasserstein": {
+      "Price": {
+        "wasserstein": 3.3175
+      },
+      "Promo": {
+        "wasserstein": 0.0568
+      },
+      "Month": {
+        "wasserstein": 3.954
+      },
+      "Quarter": {
+        "wasserstein": 1.0981
+      },
+      "Year": {
+        "wasserstein": 2.9718
+      },
+      "DayOfYear": {
+        "wasserstein": 114.1712
+      },
+      "WeekOfYear": {
+        "wasserstein": 16.013
+      },
+      "Is_Q1": {
+        "wasserstein": 0.3235
+      },
+      "Is_Q2": {
+        "wasserstein": 0.2231
+      },
+      "Is_Q3": {
+        "wasserstein": 0.7747
+      },
+      "Is_Q4": {
+        "wasserstein": 0.2281
+      },
+      "Month_Sin": {
+        "wasserstein": 1.048
+      },
+      "Month_Cos": {
+        "wasserstein": 0.6493
+      },
+      "Quarter_Sin": {
+        "wasserstein": 1.0981
+      },
+      "Quarter_Cos": {
+        "wasserstein": 0.4512
+      },
+      "Week_Sin": {
+        "wasserstein": 0.9892
+      },
+      "Week_Cos": {
+        "wasserstein": 0.5762
+      },
+      "Near_Holiday": {
+        "wasserstein": 0.1476
+      },
+      "Is_Summer": {
+        "wasserstein": 0.2242
+      },
+      "Is_Winter": {
+        "wasserstein": 0.3231
+      },
+      "Lag_1": {
+        "wasserstein": 23.3789
+      },
+      "Lag_2": {
+        "wasserstein": 22.7168
+      },
+      "Lag_3": {
+        "wasserstein": 21.8543
+      },
+      "Lag_4": {
+        "wasserstein": 21.3796
+      },
+      "Lag_6": {
+        "wasserstein": 25.2272
+      },
+      "Lag_8": {
+        "wasserstein": 38.3386
+      },
+      "Lag_12": {
+        "wasserstein": 79.4179
+      },
+      "Rolling_Mean_3": {
+        "wasserstein": 27.5533
+      },
+      "Rolling_Std_3": {
+        "wasserstein": 14.2143
+      },
+      "Rolling_Max_3": {
+        "wasserstein": 35.2028
+      },
+      "Rolling_Min_3": {
+        "wasserstein": 27.7758
+      },
+      "Rolling_Mean_4": {
+        "wasserstein": 26.6028
+      },
+      "Rolling_Std_4": {
+        "wasserstein": 16.4787
+      },
+      "Rolling_Max_4": {
+        "wasserstein": 36.2566
+      },
+      "Rolling_Min_4": {
+        "wasserstein": 29.4749
+      },
+      "Rolling_Mean_6": {
+        "wasserstein": 25.5495
+      },
+      "Rolling_Std_6": {
+        "wasserstein": 17.2654
+      },
+      "Rolling_Max_6": {
+        "wasserstein": 34.345
+      },
+      "Rolling_Min_6": {
+        "wasserstein": 33.742
+      },
+      "Rolling_Mean_8": {
+        "wasserstein": 26.0461
+      },
+      "Rolling_Std_8": {
+        "wasserstein": 15.3698
+      },
+      "Rolling_Max_8": {
+        "wasserstein": 31.3635
+      },
+      "Rolling_Min_8": {
+        "wasserstein": 36.4038
+      },
+      "Rolling_Mean_12": {
+        "wasserstein": 35.1793
+      },
+      "Rolling_Std_12": {
+        "wasserstein": 10.0705
+      },
+      "Rolling_Max_12": {
+        "wasserstein": 40.2339
+      },
+      "Rolling_Min_12": {
+        "wasserstein": 38.6847
+      },
+      "Momentum_3": {
+        "wasserstein": 0.1308
+      },
+      "Momentum_6": {
+        "wasserstein": 0.1623
+      },
+      "Volatility_4": {
+        "wasserstein": 0.0918
+      },
+      "Volatility_8": {
+        "wasserstein": 0.0928
+      },
+      "Store_Mean": {
+        "wasserstein": 169.7487
+      },
+      "Store_Std": {
+        "wasserstein": 74.0463
+      },
+      "Demand_vs_Store_Mean": {
+        "wasserstein": 0.8727
+      },
+      "Store_CV": {
+        "wasserstein": 0.381
+      },
+      "Product_Mean": {
+        "wasserstein": 169.2617
+      },
+      "Product_Std": {
+        "wasserstein": 42.7177
+      },
+      "Demand_vs_Product_Mean": {
+        "wasserstein": 0.8748
+      },
+      "Product_CV": {
+        "wasserstein": 0.2215
+      },
+      "Price_x_Promo": {
+        "wasserstein": 6.0986
+      },
+      "Lag_1_x_Price": {
+        "wasserstein": 951.7682
+      },
+      "Lag_1_x_Promo": {
+        "wasserstein": 12.7803
+      },
+      "Lag_2_x_Price": {
+        "wasserstein": 901.228
+      },
+      "Lag_2_x_Promo": {
+        "wasserstein": 12.2522
+      },
+      "Lag_3_x_Price": {
+        "wasserstein": 840.85
+      },
+      "Lag_3_x_Promo": {
+        "wasserstein": 11.7541
+      },
+      "Rolling_Mean_3_x_Price": {
+        "wasserstein": 1119.2437
+      },
+      "Rolling_Mean_3_x_Promo": {
+        "wasserstein": 13.4178
+      },
+      "Rolling_Mean_4_x_Price": {
+        "wasserstein": 1085.7182
+      },
+      "Rolling_Mean_4_x_Promo": {
+        "wasserstein": 12.9047
+      }
+    },
+    "js_divergence": {
+      "Price": {
+        "js_divergence": 0.1374
+      },
+      "Promo": {
+        "js_divergence": 0.0404
+      },
+      "Month": {
+        "js_divergence": 0.7507
+      },
+      "Quarter": {
+        "js_divergence": 0.633
+      },
+      "Year": {
+        "js_divergence": 0.8326
+      },
+      "DayOfYear": {
+        "js_divergence": 0.736
+      },
+      "WeekOfYear": {
+        "js_divergence": 0.7355
+      },
+      "Is_Q1": {
+        "js_divergence": 0.3575
+      },
+      "Is_Q2": {
+        "js_divergence": 0.2904
+      },
+      "Is_Q3": {
+        "js_divergence": 0.633
+      },
+      "Is_Q4": {
+        "js_divergence": 0.2939
+      },
+      "Month_Sin": {
+        "js_divergence": 0.7507
+      },
+      "Month_Cos": {
+        "js_divergence": 0.7507
+      },
+      "Quarter_Sin": {
+        "js_divergence": 0.633
+      },
+      "Quarter_Cos": {
+        "js_divergence": 0.633
+      },
+      "Week_Sin": {
+        "js_divergence": 0.6606
+      },
+      "Week_Cos": {
+        "js_divergence": 0.6679
+      },
+      "Near_Holiday": {
+        "js_divergence": 0.2326
+      },
+      "Is_Summer": {
+        "js_divergence": 0.2912
+      },
+      "Is_Winter": {
+        "js_divergence": 0.3573
+      },
+      "Lag_1": {
+        "js_divergence": 0.2633
+      },
+      "Lag_2": {
+        "js_divergence": 0.2575
+      },
+      "Lag_3": {
+        "js_divergence": 0.247
+      },
+      "Lag_4": {
+        "js_divergence": 0.2347
+      },
+      "Lag_6": {
+        "js_divergence": 0.2212
+      },
+      "Lag_8": {
+        "js_divergence": 0.2318
+      },
+      "Lag_12": {
+        "js_divergence": 0.3263
+      },
+      "Rolling_Mean_3": {
+        "js_divergence": 0.2952
+      },
+      "Rolling_Std_3": {
+        "js_divergence": 0.3526
+      },
+      "Rolling_Max_3": {
+        "js_divergence": 0.3214
+      },
+      "Rolling_Min_3": {
+        "js_divergence": 0.2763
+      },
+      "Rolling_Mean_4": {
+        "js_divergence": 0.2868
+      },
+      "Rolling_Std_4": {
+        "js_divergence": 0.424
+      },
+      "Rolling_Max_4": {
+        "js_divergence": 0.3218
+      },
+      "Rolling_Min_4": {
+        "js_divergence": 0.2705
+      },
+      "Rolling_Mean_6": {
+        "js_divergence": 0.2695
+      },
+      "Rolling_Std_6": {
+        "js_divergence": 0.4934
+      },
+      "Rolling_Max_6": {
+        "js_divergence": 0.3063
+      },
+      "Rolling_Min_6": {
+        "js_divergence": 0.2727
+      },
+      "Rolling_Mean_8": {
+        "js_divergence": 0.2579
+      },
+      "Rolling_Std_8": {
+        "js_divergence": 0.4851
+      },
+      "Rolling_Max_8": {
+        "js_divergence": 0.2815
+      },
+      "Rolling_Min_8": {
+        "js_divergence": 0.2789
+      },
+      "Rolling_Mean_12": {
+        "js_divergence": 0.254
+      },
+      "Rolling_Std_12": {
+        "js_divergence": 0.4018
+      },
+      "Rolling_Max_12": {
+        "js_divergence": 0.2537
+      },
+      "Rolling_Min_12": {
+        "js_divergence": 0.2861
+      },
+      "Momentum_3": {
+        "js_divergence": 0.3787
+      },
+      "Momentum_6": {
+        "js_divergence": 0.425
+      },
+      "Volatility_4": {
+        "js_divergence": 0.4802
+      },
+      "Volatility_8": {
+        "js_divergence": 0.6325
+      },
+      "Store_Mean": {
+        "js_divergence": 0.7071
+      },
+      "Store_Std": {
+        "js_divergence": 0.7071
+      },
+      "Demand_vs_Store_Mean": {
+        "js_divergence": 0.7071
+      },
+      "Store_CV": {
+        "js_divergence": 0.7071
+      },
+      "Product_Mean": {
+        "js_divergence": 0.7071
+      },
+      "Product_Std": {
+        "js_divergence": 0.7071
+      },
+      "Demand_vs_Product_Mean": {
+        "js_divergence": 0.7071
+      },
+      "Product_CV": {
+        "js_divergence": 0.7071
+      },
+      "Price_x_Promo": {
+        "js_divergence": 0.1632
+      },
+      "Lag_1_x_Price": {
+        "js_divergence": 0.1165
+      },
+      "Lag_1_x_Promo": {
+        "js_divergence": 0.1912
+      },
+      "Lag_2_x_Price": {
+        "js_divergence": 0.1135
+      },
+      "Lag_2_x_Promo": {
+        "js_divergence": 0.1844
+      },
+      "Lag_3_x_Price": {
+        "js_divergence": 0.1082
+      },
+      "Lag_3_x_Promo": {
+        "js_divergence": 0.179
+      },
+      "Rolling_Mean_3_x_Price": {
+        "js_divergence": 0.1467
+      },
+      "Rolling_Mean_3_x_Promo": {
+        "js_divergence": 0.1937
+      },
+      "Rolling_Mean_4_x_Price": {
+        "js_divergence": 0.1447
+      },
+      "Rolling_Mean_4_x_Promo": {
+        "js_divergence": 0.1884
+      }
+    },
+    "month": "2023-09"
+  },
+  {
+    "severity": "severe",
+    "severe_features": 112,
+    "mild_features": 20,
+    "total_features": 70,
+    "error_trend": {
+      "baseline_error": 25.54,
+      "current_error": 20.49,
+      "error_increase": -0.1977,
+      "drift": false
+    },
+    "wasserstein": {
+      "Price": {
+        "wasserstein": 3.3154
+      },
+      "Promo": {
+        "wasserstein": 0.059
+      },
+      "Month": {
+        "wasserstein": 4.4978
+      },
+      "Quarter": {
+        "wasserstein": 1.642
+      },
+      "Year": {
+        "wasserstein": 2.9718
+      },
+      "DayOfYear": {
+        "wasserstein": 134.2861
+      },
+      "WeekOfYear": {
+        "wasserstein": 18.7722
+      },
+      "Is_Q1": {
+        "wasserstein": 0.3235
+      },
+      "Is_Q2": {
+        "wasserstein": 0.2231
+      },
+      "Is_Q3": {
+        "wasserstein": 0.2253
+      },
+      "Is_Q4": {
+        "wasserstein": 0.7719
+      },
+      "Month_Sin": {
+        "wasserstein": 0.9328
+      },
+      "Month_Cos": {
+        "wasserstein": 0.6733
+      },
+      "Quarter_Sin": {
+        "wasserstein": 0.5488
+      },
+      "Quarter_Cos": {
+        "wasserstein": 0.995
+      },
+      "Week_Sin": {
+        "wasserstein": 0.9787
+      },
+      "Week_Cos": {
+        "wasserstein": 0.5502
+      },
+      "Near_Holiday": {
+        "wasserstein": 0.1476
+      },
+      "Is_Summer": {
+        "wasserstein": 0.2242
+      },
+      "Is_Winter": {
+        "wasserstein": 0.3231
+      },
+      "Lag_1": {
+        "wasserstein": 26.087
+      },
+      "Lag_2": {
+        "wasserstein": 27.1419
+      },
+      "Lag_3": {
+        "wasserstein": 26.7419
+      },
+      "Lag_4": {
+        "wasserstein": 25.238
+      },
+      "Lag_6": {
+        "wasserstein": 21.3132
+      },
+      "Lag_8": {
+        "wasserstein": 20.2748
+      },
+      "Lag_12": {
+        "wasserstein": 44.8227
+      },
+      "Rolling_Mean_3": {
+        "wasserstein": 29.9798
+      },
+      "Rolling_Std_3": {
+        "wasserstein": 15.1172
+      },
+      "Rolling_Max_3": {
+        "wasserstein": 41.0223
+      },
+      "Rolling_Min_3": {
+        "wasserstein": 24.8445
+      },
+      "Rolling_Mean_4": {
+        "wasserstein": 29.4952
+      },
+      "Rolling_Std_4": {
+        "wasserstein": 17.9611
+      },
+      "Rolling_Max_4": {
+        "wasserstein": 44.388
+      },
+      "Rolling_Min_4": {
+        "wasserstein": 24.3456
+      },
+      "Rolling_Mean_6": {
+        "wasserstein": 28.2058
+      },
+      "Rolling_Std_6": {
+        "wasserstein": 20.1798
+      },
+      "Rolling_Max_6": {
+        "wasserstein": 46.3751
+      },
+      "Rolling_Min_6": {
+        "wasserstein": 25.5243
+      },
+      "Rolling_Mean_8": {
+        "wasserstein": 26.7931
+      },
+      "Rolling_Std_8": {
+        "wasserstein": 19.7338
+      },
+      "Rolling_Max_8": {
+        "wasserstein": 43.5879
+      },
+      "Rolling_Min_8": {
+        "wasserstein": 27.2388
+      },
+      "Rolling_Mean_12": {
+        "wasserstein": 25.1111
+      },
+      "Rolling_Std_12": {
+        "wasserstein": 15.2026
+      },
+      "Rolling_Max_12": {
+        "wasserstein": 32.7713
+      },
+      "Rolling_Min_12": {
+        "wasserstein": 29.15
+      },
+      "Momentum_3": {
+        "wasserstein": 0.1311
+      },
+      "Momentum_6": {
+        "wasserstein": 0.1547
+      },
+      "Volatility_4": {
+        "wasserstein": 0.0951
+      },
+      "Volatility_8": {
+        "wasserstein": 0.1059
+      },
+      "Store_Mean": {
+        "wasserstein": 169.7487
+      },
+      "Store_Std": {
+        "wasserstein": 74.0463
+      },
+      "Demand_vs_Store_Mean": {
+        "wasserstein": 0.8727
+      },
+      "Store_CV": {
+        "wasserstein": 0.381
+      },
+      "Product_Mean": {
+        "wasserstein": 169.2617
+      },
+      "Product_Std": {
+        "wasserstein": 42.7177
+      },
+      "Demand_vs_Product_Mean": {
+        "wasserstein": 0.8748
+      },
+      "Product_CV": {
+        "wasserstein": 0.2215
+      },
+      "Price_x_Promo": {
+        "wasserstein": 6.0167
+      },
+      "Lag_1_x_Price": {
+        "wasserstein": 1115.4104
+      },
+      "Lag_1_x_Promo": {
+        "wasserstein": 14.3804
+      },
+      "Lag_2_x_Price": {
+        "wasserstein": 1170.5192
+      },
+      "Lag_2_x_Promo": {
+        "wasserstein": 14.7192
+      },
+      "Lag_3_x_Price": {
+        "wasserstein": 1148.998
+      },
+      "Lag_3_x_Promo": {
+        "wasserstein": 14.7337
+      },
+      "Rolling_Mean_3_x_Price": {
+        "wasserstein": 1249.1112
+      },
+      "Rolling_Mean_3_x_Promo": {
+        "wasserstein": 14.9161
+      },
+      "Rolling_Mean_4_x_Price": {
+        "wasserstein": 1228.2667
+      },
+      "Rolling_Mean_4_x_Promo": {
+        "wasserstein": 14.6484
+      }
+    },
+    "js_divergence": {
+      "Price": {
+        "js_divergence": 0.1383
+      },
+      "Promo": {
+        "js_divergence": 0.0419
+      },
+      "Month": {
+        "js_divergence": 0.7416
+      },
+      "Quarter": {
+        "js_divergence": 0.6312
+      },
+      "Year": {
+        "js_divergence": 0.8326
+      },
+      "DayOfYear": {
+        "js_divergence": 0.7318
+      },
+      "WeekOfYear": {
+        "js_divergence": 0.7272
+      },
+      "Is_Q1": {
+        "js_divergence": 0.3575
+      },
+      "Is_Q2": {
+        "js_divergence": 0.2904
+      },
+      "Is_Q3": {
+        "js_divergence": 0.292
+      },
+      "Is_Q4": {
+        "js_divergence": 0.6312
+      },
+      "Month_Sin": {
+        "js_divergence": 0.6817
+      },
+      "Month_Cos": {
+        "js_divergence": 0.6871
+      },
+      "Quarter_Sin": {
+        "js_divergence": 0.6312
+      },
+      "Quarter_Cos": {
+        "js_divergence": 0.6312
+      },
+      "Week_Sin": {
+        "js_divergence": 0.6582
+      },
+      "Week_Cos": {
+        "js_divergence": 0.6943
+      },
+      "Near_Holiday": {
+        "js_divergence": 0.2326
+      },
+      "Is_Summer": {
+        "js_divergence": 0.2912
+      },
+      "Is_Winter": {
+        "js_divergence": 0.3573
+      },
+      "Lag_1": {
+        "js_divergence": 0.2772
+      },
+      "Lag_2": {
+        "js_divergence": 0.2813
+      },
+      "Lag_3": {
+        "js_divergence": 0.2805
+      },
+      "Lag_4": {
+        "js_divergence": 0.2738
+      },
+      "Lag_6": {
+        "js_divergence": 0.2532
+      },
+      "Lag_8": {
+        "js_divergence": 0.2321
+      },
+      "Lag_12": {
+        "js_divergence": 0.2642
+      },
+      "Rolling_Mean_3": {
+        "js_divergence": 0.323
+      },
+      "Rolling_Std_3": {
+        "js_divergence": 0.3769
+      },
+      "Rolling_Max_3": {
+        "js_divergence": 0.3565
+      },
+      "Rolling_Min_3": {
+        "js_divergence": 0.2877
+      },
+      "Rolling_Mean_4": {
+        "js_divergence": 0.3234
+      },
+      "Rolling_Std_4": {
+        "js_divergence": 0.4566
+      },
+      "Rolling_Max_4": {
+        "js_divergence": 0.3678
+      },
+      "Rolling_Min_4": {
+        "js_divergence": 0.2747
+      },
+      "Rolling_Mean_6": {
+        "js_divergence": 0.3147
+      },
+      "Rolling_Std_6": {
+        "js_divergence": 0.5457
+      },
+      "Rolling_Max_6": {
+        "js_divergence": 0.3723
+      },
+      "Rolling_Min_6": {
+        "js_divergence": 0.2655
+      },
+      "Rolling_Mean_8": {
+        "js_divergence": 0.3029
+      },
+      "Rolling_Std_8": {
+        "js_divergence": 0.5648
+      },
+      "Rolling_Max_8": {
+        "js_divergence": 0.3554
+      },
+      "Rolling_Min_8": {
+        "js_divergence": 0.2656
+      },
+      "Rolling_Mean_12": {
+        "js_divergence": 0.277
+      },
+      "Rolling_Std_12": {
+        "js_divergence": 0.4971
+      },
+      "Rolling_Max_12": {
+        "js_divergence": 0.295
+      },
+      "Rolling_Min_12": {
+        "js_divergence": 0.2694
+      },
+      "Momentum_3": {
+        "js_divergence": 0.3676
+      },
+      "Momentum_6": {
+        "js_divergence": 0.4093
+      },
+      "Volatility_4": {
+        "js_divergence": 0.4816
+      },
+      "Volatility_8": {
+        "js_divergence": 0.6388
+      },
+      "Store_Mean": {
+        "js_divergence": 0.7071
+      },
+      "Store_Std": {
+        "js_divergence": 0.7071
+      },
+      "Demand_vs_Store_Mean": {
+        "js_divergence": 0.7071
+      },
+      "Store_CV": {
+        "js_divergence": 0.7071
+      },
+      "Product_Mean": {
+        "js_divergence": 0.7071
+      },
+      "Product_Std": {
+        "js_divergence": 0.7071
+      },
+      "Demand_vs_Product_Mean": {
+        "js_divergence": 0.7071
+      },
+      "Product_CV": {
+        "js_divergence": 0.7071
+      },
+      "Price_x_Promo": {
+        "js_divergence": 0.1603
+      },
+      "Lag_1_x_Price": {
+        "js_divergence": 0.1265
+      },
+      "Lag_1_x_Promo": {
+        "js_divergence": 0.1993
+      },
+      "Lag_2_x_Price": {
+        "js_divergence": 0.1258
+      },
+      "Lag_2_x_Promo": {
+        "js_divergence": 0.2014
+      },
+      "Lag_3_x_Price": {
+        "js_divergence": 0.122
+      },
+      "Lag_3_x_Promo": {
+        "js_divergence": 0.2004
+      },
+      "Rolling_Mean_3_x_Price": {
+        "js_divergence": 0.1536
+      },
+      "Rolling_Mean_3_x_Promo": {
+        "js_divergence": 0.2131
+      },
+      "Rolling_Mean_4_x_Price": {
+        "js_divergence": 0.154
+      },
+      "Rolling_Mean_4_x_Promo": {
+        "js_divergence": 0.2134
+      }
+    },
+    "month": "2023-10"
+  },
+  {
+    "severity": "severe",
+    "severe_features": 112,
+    "mild_features": 19,
+    "total_features": 70,
+    "error_trend": {
+      "baseline_error": 25.54,
+      "current_error": 36.75,
+      "error_increase": 0.439,
+      "drift": true
+    },
+    "wasserstein": {
+      "Price": {
+        "wasserstein": 3.2992
+      },
+      "Promo": {
+        "wasserstein": 0.0618
+      },
+      "Month": {
+        "wasserstein": 5.2027
+      },
+      "Quarter": {
+        "wasserstein": 1.642
+      },
+      "Year": {
+        "wasserstein": 2.9718
+      },
+      "DayOfYear": {
+        "wasserstein": 155.2445
+      },
+      "WeekOfYear": {
+        "wasserstein": 21.675
+      },
+      "Is_Q1": {
+        "wasserstein": 0.3235
+      },
+      "Is_Q2": {
+        "wasserstein": 0.2231
+      },
+      "Is_Q3": {
+        "wasserstein": 0.2253
+      },
+      "Is_Q4": {
+        "wasserstein": 0.7719
+      },
+      "Month_Sin": {
+        "wasserstein": 0.7323
+      },
+      "Month_Cos": {
+        "wasserstein": 0.7995
+      },
+      "Quarter_Sin": {
+        "wasserstein": 0.5488
+      },
+      "Quarter_Cos": {
+        "wasserstein": 0.995
+      },
+      "Week_Sin": {
+        "wasserstein": 0.7736
+      },
+      "Week_Cos": {
+        "wasserstein": 0.6726
+      },
+      "Near_Holiday": {
+        "wasserstein": 0.8524
+      },
+      "Is_Summer": {
+        "wasserstein": 0.2242
+      },
+      "Is_Winter": {
+        "wasserstein": 0.3231
+      },
+      "Lag_1": {
+        "wasserstein": 22.6468
+      },
+      "Lag_2": {
+        "wasserstein": 23.5983
+      },
+      "Lag_3": {
+        "wasserstein": 25.0465
+      },
+      "Lag_4": {
+        "wasserstein": 25.5114
+      },
+      "Lag_6": {
+        "wasserstein": 24.954
+      },
+      "Lag_8": {
+        "wasserstein": 23.456
+      },
+      "Lag_12": {
+        "wasserstein": 29.0021
+      },
+      "Rolling_Mean_3": {
+        "wasserstein": 28.0417
+      },
+      "Rolling_Std_3": {
+        "wasserstein": 14.4556
+      },
+      "Rolling_Max_3": {
+        "wasserstein": 36.9194
+      },
+      "Rolling_Min_3": {
+        "wasserstein": 26.6389
+      },
+      "Rolling_Mean_4": {
+        "wasserstein": 27.7779
+      },
+      "Rolling_Std_4": {
+        "wasserstein": 17.2624
+      },
+      "Rolling_Max_4": {
+        "wasserstein": 40.772
+      },
+      "Rolling_Min_4": {
+        "wasserstein": 26.0708
+      },
+      "Rolling_Mean_6": {
+        "wasserstein": 27.7349
+      },
+      "Rolling_Std_6": {
+        "wasserstein": 19.8555
+      },
+      "Rolling_Max_6": {
+        "wasserstein": 44.9948
+      },
+      "Rolling_Min_6": {
+        "wasserstein": 25.8977
+      },
+      "Rolling_Mean_8": {
+        "wasserstein": 27.6418
+      },
+      "Rolling_Std_8": {
+        "wasserstein": 20.5616
+      },
+      "Rolling_Max_8": {
+        "wasserstein": 46.1424
+      },
+      "Rolling_Min_8": {
+        "wasserstein": 26.3498
+      },
+      "Rolling_Mean_12": {
+        "wasserstein": 26.5855
+      },
+      "Rolling_Std_12": {
+        "wasserstein": 19.9431
+      },
+      "Rolling_Max_12": {
+        "wasserstein": 42.9202
+      },
+      "Rolling_Min_12": {
+        "wasserstein": 27.59
+      },
+      "Momentum_3": {
+        "wasserstein": 0.1398
+      },
+      "Momentum_6": {
+        "wasserstein": 0.1716
+      },
+      "Volatility_4": {
+        "wasserstein": 0.0929
+      },
+      "Volatility_8": {
+        "wasserstein": 0.1091
+      },
+      "Store_Mean": {
+        "wasserstein": 169.7487
+      },
+      "Store_Std": {
+        "wasserstein": 74.0463
+      },
+      "Demand_vs_Store_Mean": {
+        "wasserstein": 0.8727
+      },
+      "Store_CV": {
+        "wasserstein": 0.381
+      },
+      "Product_Mean": {
+        "wasserstein": 169.2617
+      },
+      "Product_Std": {
+        "wasserstein": 42.7177
+      },
+      "Demand_vs_Product_Mean": {
+        "wasserstein": 0.8748
+      },
+      "Product_CV": {
+        "wasserstein": 0.2215
+      },
+      "Price_x_Promo": {
+        "wasserstein": 6.1549
+      },
+      "Lag_1_x_Price": {
+        "wasserstein": 866.9466
+      },
+      "Lag_1_x_Promo": {
+        "wasserstein": 12.4171
+      },
+      "Lag_2_x_Price": {
+        "wasserstein": 956.4836
+      },
+      "Lag_2_x_Promo": {
+        "wasserstein": 12.855
+      },
+      "Lag_3_x_Price": {
+        "wasserstein": 1054.6028
+      },
+      "Lag_3_x_Promo": {
+        "wasserstein": 13.8261
+      },
+      "Rolling_Mean_3_x_Price": {
+        "wasserstein": 1133.3434
+      },
+      "Rolling_Mean_3_x_Promo": {
+        "wasserstein": 13.6175
+      },
+      "Rolling_Mean_4_x_Price": {
+        "wasserstein": 1132.4885
+      },
+      "Rolling_Mean_4_x_Promo": {
+        "wasserstein": 13.5616
+      }
+    },
+    "js_divergence": {
+      "Price": {
+        "js_divergence": 0.1346
+      },
+      "Promo": {
+        "js_divergence": 0.0439
+      },
+      "Month": {
+        "js_divergence": 0.7487
+      },
+      "Quarter": {
+        "js_divergence": 0.6312
+      },
+      "Year": {
+        "js_divergence": 0.8326
+      },
+      "DayOfYear": {
+        "js_divergence": 0.7412
+      },
+      "WeekOfYear": {
+        "js_divergence": 0.7386
+      },
+      "Is_Q1": {
+        "js_divergence": 0.3575
+      },
+      "Is_Q2": {
+        "js_divergence": 0.2904
+      },
+      "Is_Q3": {
+        "js_divergence": 0.292
+      },
+      "Is_Q4": {
+        "js_divergence": 0.6312
+      },
+      "Month_Sin": {
+        "js_divergence": 0.7487
+      },
+      "Month_Cos": {
+        "js_divergence": 0.6152
+      },
+      "Quarter_Sin": {
+        "js_divergence": 0.6312
+      },
+      "Quarter_Cos": {
+        "js_divergence": 0.6312
+      },
+      "Week_Sin": {
+        "js_divergence": 0.6733
+      },
+      "Week_Cos": {
+        "js_divergence": 0.6574
+      },
+      "Near_Holiday": {
+        "js_divergence": 0.6877
+      },
+      "Is_Summer": {
+        "js_divergence": 0.2912
+      },
+      "Is_Winter": {
+        "js_divergence": 0.3573
+      },
+      "Lag_1": {
+        "js_divergence": 0.2536
+      },
+      "Lag_2": {
+        "js_divergence": 0.264
+      },
+      "Lag_3": {
+        "js_divergence": 0.2708
+      },
+      "Lag_4": {
+        "js_divergence": 0.2756
+      },
+      "Lag_6": {
+        "js_divergence": 0.2727
+      },
+      "Lag_8": {
+        "js_divergence": 0.2665
+      },
+      "Lag_12": {
+        "js_divergence": 0.2736
+      },
+      "Rolling_Mean_3": {
+        "js_divergence": 0.303
+      },
+      "Rolling_Std_3": {
+        "js_divergence": 0.3597
+      },
+      "Rolling_Max_3": {
+        "js_divergence": 0.332
+      },
+      "Rolling_Min_3": {
+        "js_divergence": 0.274
+      },
+      "Rolling_Mean_4": {
+        "js_divergence": 0.3075
+      },
+      "Rolling_Std_4": {
+        "js_divergence": 0.4421
+      },
+      "Rolling_Max_4": {
+        "js_divergence": 0.3476
+      },
+      "Rolling_Min_4": {
+        "js_divergence": 0.2687
+      },
+      "Rolling_Mean_6": {
+        "js_divergence": 0.3108
+      },
+      "Rolling_Std_6": {
+        "js_divergence": 0.5439
+      },
+      "Rolling_Max_6": {
+        "js_divergence": 0.3644
+      },
+      "Rolling_Min_6": {
+        "js_divergence": 0.2629
+      },
+      "Rolling_Mean_8": {
+        "js_divergence": 0.3114
+      },
+      "Rolling_Std_8": {
+        "js_divergence": 0.5846
+      },
+      "Rolling_Max_8": {
+        "js_divergence": 0.3686
+      },
+      "Rolling_Min_8": {
+        "js_divergence": 0.2634
+      },
+      "Rolling_Mean_12": {
+        "js_divergence": 0.3042
+      },
+      "Rolling_Std_12": {
+        "js_divergence": 0.6019
+      },
+      "Rolling_Max_12": {
+        "js_divergence": 0.3516
+      },
+      "Rolling_Min_12": {
+        "js_divergence": 0.2654
+      },
+      "Momentum_3": {
+        "js_divergence": 0.3807
+      },
+      "Momentum_6": {
+        "js_divergence": 0.4389
+      },
+      "Volatility_4": {
+        "js_divergence": 0.4791
+      },
+      "Volatility_8": {
+        "js_divergence": 0.6402
+      },
+      "Store_Mean": {
+        "js_divergence": 0.7071
+      },
+      "Store_Std": {
+        "js_divergence": 0.7071
+      },
+      "Demand_vs_Store_Mean": {
+        "js_divergence": 0.7071
+      },
+      "Store_CV": {
+        "js_divergence": 0.7071
+      },
+      "Product_Mean": {
+        "js_divergence": 0.7071
+      },
+      "Product_Std": {
+        "js_divergence": 0.7071
+      },
+      "Demand_vs_Product_Mean": {
+        "js_divergence": 0.7071
+      },
+      "Product_CV": {
+        "js_divergence": 0.7071
+      },
+      "Price_x_Promo": {
+        "js_divergence": 0.1557
+      },
+      "Lag_1_x_Price": {
+        "js_divergence": 0.116
+      },
+      "Lag_1_x_Promo": {
+        "js_divergence": 0.1836
+      },
+      "Lag_2_x_Price": {
+        "js_divergence": 0.1182
+      },
+      "Lag_2_x_Promo": {
+        "js_divergence": 0.1873
+      },
+      "Lag_3_x_Price": {
+        "js_divergence": 0.1236
+      },
+      "Lag_3_x_Promo": {
+        "js_divergence": 0.1925
+      },
+      "Rolling_Mean_3_x_Price": {
+        "js_divergence": 0.1513
+      },
+      "Rolling_Mean_3_x_Promo": {
+        "js_divergence": 0.1971
+      },
+      "Rolling_Mean_4_x_Price": {
+        "js_divergence": 0.1511
+      },
+      "Rolling_Mean_4_x_Promo": {
+        "js_divergence": 0.2004
+      }
+    },
+    "month": "2023-11"
+  },
+  {
+    "severity": "severe",
+    "severe_features": 108,
+    "mild_features": 19,
+    "total_features": 70,
+    "error_trend": {
+      "baseline_error": 25.54,
+      "current_error": 55.81,
+      "error_increase": 1.1853,
+      "drift": true
+    },
+    "wasserstein": {
+      "Price": {
+        "wasserstein": 3.3104
+      },
+      "Promo": {
+        "wasserstein": 0.0517
+      },
+      "Month": {
+        "wasserstein": 6.0524
+      },
+      "Quarter": {
+        "wasserstein": 1.642
+      },
+      "Year": {
+        "wasserstein": 2.9718
+      },
+      "DayOfYear": {
+        "wasserstein": 183.3103
+      },
+      "WeekOfYear": {
+        "wasserstein": 25.5696
+      },
+      "Is_Q1": {
+        "wasserstein": 0.3235
+      },
+      "Is_Q2": {
+        "wasserstein": 0.2231
+      },
+      "Is_Q3": {
+        "wasserstein": 0.2253
+      },
+      "Is_Q4": {
+        "wasserstein": 0.7719
+      },
+      "Month_Sin": {
+        "wasserstein": 0.6106
+      },
+      "Month_Cos": {
+        "wasserstein": 0.9134
+      },
+      "Quarter_Sin": {
+        "wasserstein": 0.5488
+      },
+      "Quarter_Cos": {
+        "wasserstein": 0.995
+      },
+      "Week_Sin": {
+        "wasserstein": 0.5137
+      },
+      "Week_Cos": {
+        "wasserstein": 0.8584
+      },
+      "Near_Holiday": {
+        "wasserstein": 0.8524
+      },
+      "Is_Summer": {
+        "wasserstein": 0.2242
+      },
+      "Is_Winter": {
+        "wasserstein": 0.6769
+      },
+      "Lag_1": {
+        "wasserstein": 30.471
+      },
+      "Lag_2": {
+        "wasserstein": 25.4838
+      },
+      "Lag_3": {
+        "wasserstein": 22.5237
+      },
+      "Lag_4": {
+        "wasserstein": 21.2692
+      },
+      "Lag_6": {
+        "wasserstein": 20.9339
+      },
+      "Lag_8": {
+        "wasserstein": 23.0486
+      },
+      "Lag_12": {
+        "wasserstein": 29.8769
+      },
+      "Rolling_Mean_3": {
+        "wasserstein": 32.1075
+      },
+      "Rolling_Std_3": {
+        "wasserstein": 12.6511
+      },
+      "Rolling_Max_3": {
+        "wasserstein": 31.447
+      },
+      "Rolling_Min_3": {
+        "wasserstein": 40.308
+      },
+      "Rolling_Mean_4": {
+        "wasserstein": 29.1767
+      },
+      "Rolling_Std_4": {
+        "wasserstein": 14.9515
+      },
+      "Rolling_Max_4": {
+        "wasserstein": 31.0883
+      },
+      "Rolling_Min_4": {
+        "wasserstein": 39.5968
+      },
+      "Rolling_Mean_6": {
+        "wasserstein": 25.9658
+      },
+      "Rolling_Std_6": {
+        "wasserstein": 16.4519
+      },
+      "Rolling_Max_6": {
+        "wasserstein": 32.3657
+      },
+      "Rolling_Min_6": {
+        "wasserstein": 36.2798
+      },
+      "Rolling_Mean_8": {
+        "wasserstein": 25.0615
+      },
+      "Rolling_Std_8": {
+        "wasserstein": 16.2826
+      },
+      "Rolling_Max_8": {
+        "wasserstein": 33.3028
+      },
+      "Rolling_Min_8": {
+        "wasserstein": 32.4919
+      },
+      "Rolling_Mean_12": {
+        "wasserstein": 25.2043
+      },
+      "Rolling_Std_12": {
+        "wasserstein": 16.0054
+      },
+      "Rolling_Max_12": {
+        "wasserstein": 34.0825
+      },
+      "Rolling_Min_12": {
+        "wasserstein": 28.5413
+      },
+      "Momentum_3": {
+        "wasserstein": 0.1494
+      },
+      "Momentum_6": {
+        "wasserstein": 0.1957
+      },
+      "Volatility_4": {
+        "wasserstein": 0.0896
+      },
+      "Volatility_8": {
+        "wasserstein": 0.0941
+      },
+      "Store_Mean": {
+        "wasserstein": 169.7487
+      },
+      "Store_Std": {
+        "wasserstein": 74.0463
+      },
+      "Demand_vs_Store_Mean": {
+        "wasserstein": 0.8727
+      },
+      "Store_CV": {
+        "wasserstein": 0.381
+      },
+      "Product_Mean": {
+        "wasserstein": 169.2617
+      },
+      "Product_Std": {
+        "wasserstein": 42.7177
+      },
+      "Demand_vs_Product_Mean": {
+        "wasserstein": 0.8748
+      },
+      "Product_CV": {
+        "wasserstein": 0.2215
+      },
+      "Price_x_Promo": {
+        "wasserstein": 5.8272
+      },
+      "Lag_1_x_Price": {
+        "wasserstein": 1465.0972
+      },
+      "Lag_1_x_Promo": {
+        "wasserstein": 16.884
+      },
+      "Lag_2_x_Price": {
+        "wasserstein": 1124.636
+      },
+      "Lag_2_x_Promo": {
+        "wasserstein": 14.0942
+      },
+      "Lag_3_x_Price": {
+        "wasserstein": 897.7901
+      },
+      "Lag_3_x_Promo": {
+        "wasserstein": 12.6094
+      },
+      "Rolling_Mean_3_x_Price": {
+        "wasserstein": 1553.3545
+      },
+      "Rolling_Mean_3_x_Promo": {
+        "wasserstein": 16.357
+      },
+      "Rolling_Mean_4_x_Price": {
+        "wasserstein": 1384.4064
+      },
+      "Rolling_Mean_4_x_Promo": {
+        "wasserstein": 14.8023
+      }
+    },
+    "js_divergence": {
+      "Price": {
+        "js_divergence": 0.1371
+      },
+      "Promo": {
+        "js_divergence": 0.0368
+      },
+      "Month": {
+        "js_divergence": 0.7463
+      },
+      "Quarter": {
+        "js_divergence": 0.6312
+      },
+      "Year": {
+        "js_divergence": 0.8326
+      },
+      "DayOfYear": {
+        "js_divergence": 0.7322
+      },
+      "WeekOfYear": {
+        "js_divergence": 0.7289
+      },
+      "Is_Q1": {
+        "js_divergence": 0.3575
+      },
+      "Is_Q2": {
+        "js_divergence": 0.2904
+      },
+      "Is_Q3": {
+        "js_divergence": 0.292
+      },
+      "Is_Q4": {
+        "js_divergence": 0.6312
+      },
+      "Month_Sin": {
+        "js_divergence": 0.7463
+      },
+      "Month_Cos": {
+        "js_divergence": 0.7463
+      },
+      "Quarter_Sin": {
+        "js_divergence": 0.6312
+      },
+      "Quarter_Cos": {
+        "js_divergence": 0.6312
+      },
+      "Week_Sin": {
+        "js_divergence": 0.6841
+      },
+      "Week_Cos": {
+        "js_divergence": 0.5935
+      },
+      "Near_Holiday": {
+        "js_divergence": 0.6877
+      },
+      "Is_Summer": {
+        "js_divergence": 0.2912
+      },
+      "Is_Winter": {
+        "js_divergence": 0.5705
+      },
+      "Lag_1": {
+        "js_divergence": 0.2288
+      },
+      "Lag_2": {
+        "js_divergence": 0.2263
+      },
+      "Lag_3": {
+        "js_divergence": 0.2297
+      },
+      "Lag_4": {
+        "js_divergence": 0.233
+      },
+      "Lag_6": {
+        "js_divergence": 0.2475
+      },
+      "Lag_8": {
+        "js_divergence": 0.2638
+      },
+      "Lag_12": {
+        "js_divergence": 0.3097
+      },
+      "Rolling_Mean_3": {
+        "js_divergence": 0.2619
+      },
+      "Rolling_Std_3": {
+        "js_divergence": 0.3183
+      },
+      "Rolling_Max_3": {
+        "js_divergence": 0.2721
+      },
+      "Rolling_Min_3": {
+        "js_divergence": 0.2745
+      },
+      "Rolling_Mean_4": {
+        "js_divergence": 0.2594
+      },
+      "Rolling_Std_4": {
+        "js_divergence": 0.3923
+      },
+      "Rolling_Max_4": {
+        "js_divergence": 0.2794
+      },
+      "Rolling_Min_4": {
+        "js_divergence": 0.2769
+      },
+      "Rolling_Mean_6": {
+        "js_divergence": 0.2612
+      },
+      "Rolling_Std_6": {
+        "js_divergence": 0.4816
+      },
+      "Rolling_Max_6": {
+        "js_divergence": 0.2919
+      },
+      "Rolling_Min_6": {
+        "js_divergence": 0.2742
+      },
+      "Rolling_Mean_8": {
+        "js_divergence": 0.2673
+      },
+      "Rolling_Std_8": {
+        "js_divergence": 0.4994
+      },
+      "Rolling_Max_8": {
+        "js_divergence": 0.2982
+      },
+      "Rolling_Min_8": {
+        "js_divergence": 0.2687
+      },
+      "Rolling_Mean_12": {
+        "js_divergence": 0.2822
+      },
+      "Rolling_Std_12": {
+        "js_divergence": 0.5093
+      },
+      "Rolling_Max_12": {
+        "js_divergence": 0.3021
+      },
+      "Rolling_Min_12": {
+        "js_divergence": 0.2663
+      },
+      "Momentum_3": {
+        "js_divergence": 0.405
+      },
+      "Momentum_6": {
+        "js_divergence": 0.4862
+      },
+      "Volatility_4": {
+        "js_divergence": 0.4822
+      },
+      "Volatility_8": {
+        "js_divergence": 0.6261
+      },
+      "Store_Mean": {
+        "js_divergence": 0.7071
+      },
+      "Store_Std": {
+        "js_divergence": 0.7071
+      },
+      "Demand_vs_Store_Mean": {
+        "js_divergence": 0.7071
+      },
+      "Store_CV": {
+        "js_divergence": 0.7071
+      },
+      "Product_Mean": {
+        "js_divergence": 0.7071
+      },
+      "Product_Std": {
+        "js_divergence": 0.7071
+      },
+      "Demand_vs_Product_Mean": {
+        "js_divergence": 0.7071
+      },
+      "Product_CV": {
+        "js_divergence": 0.7071
+      },
+      "Price_x_Promo": {
+        "js_divergence": 0.1596
+      },
+      "Lag_1_x_Price": {
+        "js_divergence": 0.1178
+      },
+      "Lag_1_x_Promo": {
+        "js_divergence": 0.1676
+      },
+      "Lag_2_x_Price": {
+        "js_divergence": 0.1102
+      },
+      "Lag_2_x_Promo": {
+        "js_divergence": 0.1628
+      },
+      "Lag_3_x_Price": {
+        "js_divergence": 0.1058
+      },
+      "Lag_3_x_Promo": {
+        "js_divergence": 0.1671
+      },
+      "Rolling_Mean_3_x_Price": {
+        "js_divergence": 0.1485
+      },
+      "Rolling_Mean_3_x_Promo": {
+        "js_divergence": 0.1698
+      },
+      "Rolling_Mean_4_x_Price": {
+        "js_divergence": 0.1448
+      },
+      "Rolling_Mean_4_x_Promo": {
+        "js_divergence": 0.1677
+      }
+    },
+    "month": "2023-12"
+  },
+  {
+    "severity": "severe",
+    "severe_features": 126,
+    "mild_features": 6,
+    "total_features": 70,
+    "error_trend": {
+      "baseline_error": 25.54,
+      "current_error": 80.98,
+      "error_increase": 2.171,
+      "drift": true
+    },
+    "wasserstein": {
+      "Price": {
+        "wasserstein": 3.3317
+      },
+      "Promo": {
+        "wasserstein": 0.309
+      },
+      "Month": {
+        "wasserstein": 4.9476
+      },
+      "Quarter": {
+        "wasserstein": 1.358
+      },
+      "Year": {
+        "wasserstein": 3.9718
+      },
+      "DayOfYear": {
+        "wasserstein": 160.8584
+      },
+      "WeekOfYear": {
+        "wasserstein": 23.4484
+      },
+      "Is_Q1": {
+        "wasserstein": 0.6765
+      },
+      "Is_Q2": {
+        "wasserstein": 0.2231
+      },
+      "Is_Q3": {
+        "wasserstein": 0.2253
+      },
+      "Is_Q4": {
+        "wasserstein": 0.2281
+      },
+      "Month_Sin": {
+        "wasserstein": 0.6331
+      },
+      "Month_Cos": {
+        "wasserstein": 0.7995
+      },
+      "Quarter_Sin": {
+        "wasserstein": 0.9019
+      },
+      "Quarter_Cos": {
+        "wasserstein": 0.4512
+      },
+      "Week_Sin": {
+        "wasserstein": 0.595
+      },
+      "Week_Cos": {
+        "wasserstein": 0.8945
+      },
+      "Near_Holiday": {
+        "wasserstein": 0.1476
+      },
+      "Is_Summer": {
+        "wasserstein": 0.2242
+      },
+      "Is_Winter": {
+        "wasserstein": 0.6769
+      },
+      "Lag_1": {
+        "wasserstein": 51.3104
+      },
+      "Lag_2": {
+        "wasserstein": 42.2811
+      },
+      "Lag_3": {
+        "wasserstein": 34.9981
+      },
+      "Lag_4": {
+        "wasserstein": 29.5117
+      },
+      "Lag_6": {
+        "wasserstein": 21.6824
+      },
+      "Lag_8": {
+        "wasserstein": 20.4502
+      },
+      "Lag_12": {
+        "wasserstein": 30.9312
+      },
+      "Rolling_Mean_3": {
+        "wasserstein": 51.4277
+      },
+      "Rolling_Std_3": {
+        "wasserstein": 11.5525
+      },
+      "Rolling_Max_3": {
+        "wasserstein": 43.5452
+      },
+      "Rolling_Min_3": {
+        "wasserstein": 60.5675
+      },
+      "Rolling_Mean_4": {
+        "wasserstein": 47.027
+      },
+      "Rolling_Std_4": {
+        "wasserstein": 13.6458
+      },
+      "Rolling_Max_4": {
+        "wasserstein": 37.9358
+      },
+      "Rolling_Min_4": {
+        "wasserstein": 58.4343
+      },
+      "Rolling_Mean_6": {
+        "wasserstein": 39.4081
+      },
+      "Rolling_Std_6": {
+        "wasserstein": 14.4272
+      },
+      "Rolling_Max_6": {
+        "wasserstein": 33.1739
+      },
+      "Rolling_Min_6": {
+        "wasserstein": 51.5613
+      },
+      "Rolling_Mean_8": {
+        "wasserstein": 33.2185
+      },
+      "Rolling_Std_8": {
+        "wasserstein": 13.3259
+      },
+      "Rolling_Max_8": {
+        "wasserstein": 32.2172
+      },
+      "Rolling_Min_8": {
+        "wasserstein": 42.7431
+      },
+      "Rolling_Mean_12": {
+        "wasserstein": 26.4764
+      },
+      "Rolling_Std_12": {
+        "wasserstein": 11.5809
+      },
+      "Rolling_Max_12": {
+        "wasserstein": 31.9619
+      },
+      "Rolling_Min_12": {
+        "wasserstein": 31.8276
+      },
+      "Momentum_3": {
+        "wasserstein": 0.1515
+      },
+      "Momentum_6": {
+        "wasserstein": 0.2035
+      },
+      "Volatility_4": {
+        "wasserstein": 0.0906
+      },
+      "Volatility_8": {
+        "wasserstein": 0.0877
+      },
+      "Store_Mean": {
+        "wasserstein": 169.7487
+      },
+      "Store_Std": {
+        "wasserstein": 74.0463
+      },
+      "Demand_vs_Store_Mean": {
+        "wasserstein": 0.8727
+      },
+      "Store_CV": {
+        "wasserstein": 0.381
+      },
+      "Product_Mean": {
+        "wasserstein": 169.2617
+      },
+      "Product_Std": {
+        "wasserstein": 42.7177
+      },
+      "Demand_vs_Product_Mean": {
+        "wasserstein": 0.8748
+      },
+      "Product_CV": {
+        "wasserstein": 0.2215
+      },
+      "Price_x_Promo": {
+        "wasserstein": 19.216
+      },
+      "Lag_1_x_Price": {
+        "wasserstein": 2670.4691
+      },
+      "Lag_1_x_Promo": {
+        "wasserstein": 32.7087
+      },
+      "Lag_2_x_Price": {
+        "wasserstein": 2164.6086
+      },
+      "Lag_2_x_Promo": {
+        "wasserstein": 35.3688
+      },
+      "Lag_3_x_Price": {
+        "wasserstein": 1742.1439
+      },
+      "Lag_3_x_Promo": {
+        "wasserstein": 37.5265
+      },
+      "Rolling_Mean_3_x_Price": {
+        "wasserstein": 2679.4155
+      },
+      "Rolling_Mean_3_x_Promo": {
+        "wasserstein": 30.2958
+      },
+      "Rolling_Mean_4_x_Price": {
+        "wasserstein": 2441.4408
+      },
+      "Rolling_Mean_4_x_Promo": {
+        "wasserstein": 31.4615
+      }
+    },
+    "js_divergence": {
+      "Price": {
+        "js_divergence": 0.1383
+      },
+      "Promo": {
+        "js_divergence": 0.2231
+      },
+      "Month": {
+        "js_divergence": 0.6642
+      },
+      "Quarter": {
+        "js_divergence": 0.5702
+      },
+      "Year": {
+        "js_divergence": 0.8326
+      },
+      "DayOfYear": {
+        "js_divergence": 0.7164
+      },
+      "WeekOfYear": {
+        "js_divergence": 0.7128
+      },
+      "Is_Q1": {
+        "js_divergence": 0.5702
+      },
+      "Is_Q2": {
+        "js_divergence": 0.2904
+      },
+      "Is_Q3": {
+        "js_divergence": 0.292
+      },
+      "Is_Q4": {
+        "js_divergence": 0.2939
+      },
+      "Month_Sin": {
+        "js_divergence": 0.6117
+      },
+      "Month_Cos": {
+        "js_divergence": 0.6152
+      },
+      "Quarter_Sin": {
+        "js_divergence": 0.5702
+      },
+      "Quarter_Cos": {
+        "js_divergence": 0.5702
+      },
+      "Week_Sin": {
+        "js_divergence": 0.7575
+      },
+      "Week_Cos": {
+        "js_divergence": 0.655
+      },
+      "Near_Holiday": {
+        "js_divergence": 0.2326
+      },
+      "Is_Summer": {
+        "js_divergence": 0.2912
+      },
+      "Is_Winter": {
+        "js_divergence": 0.5705
+      },
+      "Lag_1": {
+        "js_divergence": 0.2597
+      },
+      "Lag_2": {
+        "js_divergence": 0.2473
+      },
+      "Lag_3": {
+        "js_divergence": 0.2345
+      },
+      "Lag_4": {
+        "js_divergence": 0.2283
+      },
+      "Lag_6": {
+        "js_divergence": 0.2241
+      },
+      "Lag_8": {
+        "js_divergence": 0.2453
+      },
+      "Lag_12": {
+        "js_divergence": 0.3165
+      },
+      "Rolling_Mean_3": {
+        "js_divergence": 0.2771
+      },
+      "Rolling_Std_3": {
+        "js_divergence": 0.2921
+      },
+      "Rolling_Max_3": {
+        "js_divergence": 0.2644
+      },
+      "Rolling_Min_3": {
+        "js_divergence": 0.3122
+      },
+      "Rolling_Mean_4": {
+        "js_divergence": 0.2694
+      },
+      "Rolling_Std_4": {
+        "js_divergence": 0.3729
+      },
+      "Rolling_Max_4": {
+        "js_divergence": 0.2596
+      },
+      "Rolling_Min_4": {
+        "js_divergence": 0.3158
+      },
+      "Rolling_Mean_6": {
+        "js_divergence": 0.2582
+      },
+      "Rolling_Std_6": {
+        "js_divergence": 0.4477
+      },
+      "Rolling_Max_6": {
+        "js_divergence": 0.2612
+      },
+      "Rolling_Min_6": {
+        "js_divergence": 0.3078
+      },
+      "Rolling_Mean_8": {
+        "js_divergence": 0.2548
+      },
+      "Rolling_Std_8": {
+        "js_divergence": 0.4535
+      },
+      "Rolling_Max_8": {
+        "js_divergence": 0.2631
+      },
+      "Rolling_Min_8": {
+        "js_divergence": 0.2932
+      },
+      "Rolling_Mean_12": {
+        "js_divergence": 0.2607
+      },
+      "Rolling_Std_12": {
+        "js_divergence": 0.4328
+      },
+      "Rolling_Max_12": {
+        "js_divergence": 0.2651
+      },
+      "Rolling_Min_12": {
+        "js_divergence": 0.2697
+      },
+      "Momentum_3": {
+        "js_divergence": 0.4162
+      },
+      "Momentum_6": {
+        "js_divergence": 0.5054
+      },
+      "Volatility_4": {
+        "js_divergence": 0.4975
+      },
+      "Volatility_8": {
+        "js_divergence": 0.6182
+      },
+      "Store_Mean": {
+        "js_divergence": 0.7071
+      },
+      "Store_Std": {
+        "js_divergence": 0.7071
+      },
+      "Demand_vs_Store_Mean": {
+        "js_divergence": 0.7071
+      },
+      "Store_CV": {
+        "js_divergence": 0.7071
+      },
+      "Product_Mean": {
+        "js_divergence": 0.7071
+      },
+      "Product_Std": {
+        "js_divergence": 0.7071
+      },
+      "Demand_vs_Product_Mean": {
+        "js_divergence": 0.7071
+      },
+      "Product_CV": {
+        "js_divergence": 0.7071
+      },
+      "Price_x_Promo": {
+        "js_divergence": 0.2625
+      },
+      "Lag_1_x_Price": {
+        "js_divergence": 0.1571
+      },
+      "Lag_1_x_Promo": {
+        "js_divergence": 0.2395
+      },
+      "Lag_2_x_Price": {
+        "js_divergence": 0.1369
+      },
+      "Lag_2_x_Promo": {
+        "js_divergence": 0.2341
+      },
+      "Lag_3_x_Price": {
+        "js_divergence": 0.1263
+      },
+      "Lag_3_x_Promo": {
+        "js_divergence": 0.2313
+      },
+      "Rolling_Mean_3_x_Price": {
+        "js_divergence": 0.174
+      },
+      "Rolling_Mean_3_x_Promo": {
+        "js_divergence": 0.2245
+      },
+      "Rolling_Mean_4_x_Price": {
+        "js_divergence": 0.1664
+      },
+      "Rolling_Mean_4_x_Promo": {
+        "js_divergence": 0.2196
+      }
+    },
     "month": "2024-01"
   }
 ]

@@ -1,5 +1,0 @@
-Store,Product,Date,Demand,Predicted
-store_1,item_1,2024-01-05,152,54.52
-store_1,item_2,2024-01-05,89,54.0
-store_2,item_1,2024-01-12,167,54.52
-store_2,item_2,2024-01-12,95,54.03
