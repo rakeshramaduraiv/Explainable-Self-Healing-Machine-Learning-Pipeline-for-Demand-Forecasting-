@@ -20,10 +20,11 @@ except ImportError:
 class ModelTrainer:
     def __init__(self):
         self.model       = None
-        self.best_params = None
+        self.best_params = {}
         self.metrics     = {}
-        self.version     = None
+        self.version     = ""
         self.version_history = []
+        self._model_name = "XGB"
 
     def tune_hyperparameters(self, X_train, y_train):
         # EFFICIENT FULL DATASET: Optimized hyperparameter search on complete data
@@ -53,16 +54,22 @@ class ModelTrainer:
             }
             estimator = GradientBoostingRegressor(random_state=42)
 
-        # SPEED OPTIMIZED: Reduced iterations but full dataset coverage
-        cv = TimeSeriesSplit(n_splits=2)  # Reduced from 3 to 2
+        # SPEED OPTIMIZED: Use a representative sample for tuning to save time
+        # For 500k+ rows, 50k is usually enough to find good hyperparameters
+        tune_size = min(len(X_arr), 50_000)
+        indices = np.random.choice(len(X_arr), tune_size, replace=False)
+        X_tune, y_tune = X_arr[indices], y_train.iloc[indices] if hasattr(y_train, "iloc") else y_train[indices]
+
+        cv = TimeSeriesSplit(n_splits=2)
+        # n_iter=5 is plenty for this small grid
         search = RandomizedSearchCV(
-            estimator, param_dist, n_iter=10, cv=cv,  # Reduced from 18 to 10
+            estimator, param_dist, n_iter=5, cv=cv,
             scoring='neg_mean_absolute_error', n_jobs=-1, random_state=42,
-            verbose=1  # Show progress
+            verbose=1
         )
         
-        log.info(f"🎯 SPEED OPTIMIZED: 10 iterations × 2 folds = 20 model fits on full dataset")
-        search.fit(X_arr, y_train)
+        log.info(f"🎯 SPEED TUNING: Tuning on {tune_size:,} samples (5 iterations)")
+        search.fit(X_tune, y_tune)
         
         self.best_params = search.best_params_
         log.info(f"🎯 BEST PARAMETERS FOUND: {self.best_params}")
@@ -92,12 +99,18 @@ class ModelTrainer:
                 warnings.simplefilter("ignore")
                 model.fit(X_arr, y_arr)
 
-        # Speed-optimized Random Forest
-        rf = RandomForestRegressor(n_estimators=100, max_depth=8, random_state=42, n_jobs=-1)
-        log.info(f"🌲 Training Random Forest (100 trees) on {len(X_arr):,} samples")
+        # Speed-optimized Random Forest (used for confidence intervals)
+        # Training RF on 500k+ samples is a massive bottleneck.
+        # We use a 100k sample for RF to provide reliable intervals without blocking for 10+ minutes.
+        rf_sample_size = min(len(X_arr), 100_000)
+        rf_indices = np.random.choice(len(X_arr), rf_sample_size, replace=False)
+        X_rf, y_rf = X_arr[rf_indices], y_arr[rf_indices]
+        
+        rf = RandomForestRegressor(n_estimators=30, max_depth=8, random_state=42, n_jobs=-1)
+        log.info(f"🌲 Training Random Forest Confidence Model (30 trees) on {rf_sample_size:,} samples")
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
-            rf.fit(X_arr, y_arr)
+            rf.fit(X_rf, y_rf)
 
         self.model = model
         self._rf   = rf
@@ -107,13 +120,16 @@ class ModelTrainer:
         return self.model
 
     def evaluate(self, X, y, split="train"):
+        if self.model is None:
+            log.warning("Evaluate called but no model trained.")
+            return {}
         preds    = self.model.predict(X)
         y_arr    = np.asarray(y)
         rmse     = round(float(np.sqrt(mean_squared_error(y_arr, preds))))
         mae      = round(float(mean_absolute_error(y_arr, preds)))
         r2       = round(float(r2_score(y_arr, preds)) * 100)
-        mask     = y_arr != 0
-        mape     = round(float(np.mean(np.abs((y_arr[mask] - preds[mask]) / y_arr[mask])) * 100)) if mask.any() else 0
+        mask     = (y_arr != 0)
+        mape     = round(float(np.mean(np.abs((y_arr[mask] - preds[mask]) / y_arr[mask])) * 100)) if np.any(mask) else 0
         wmape    = round(float(np.sum(np.abs(y_arr - preds)) / (np.sum(np.abs(y_arr)) + 1e-9) * 100))
         accuracy = 100 - mape
         self.metrics[split] = {

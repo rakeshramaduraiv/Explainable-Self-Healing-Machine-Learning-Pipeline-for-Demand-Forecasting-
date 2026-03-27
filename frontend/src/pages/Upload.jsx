@@ -127,6 +127,22 @@ export default function Upload() {
     }
   }, [drift])
 
+  // Memoized drift severity chart data (moved out of JSX to fix React error #310)
+  const driftChartData = useMemo(() => {
+    const sevMap = { none: 0, mild: 1, severe: 2 }
+    return drift.map(d => {
+      const h = healMap[d.month]
+      return {
+        month: d.month,
+        'Drift Level': sevMap[d.severity] ?? 0,
+        severity: d.severity,
+        action: h?.action || 'monitor',
+        updated: h?.model_updated || false,
+        improvement: h ? +(h.improvement * 100).toFixed(1) : 0,
+      }
+    })
+  }, [drift, healMap])
+
   // Memoized chart data
   const chartData = useMemo(() => {
     if (!drift.length) return { maeTrendData: [], featureData: [], errorIncreaseData: [], salesData: [] }
@@ -353,70 +369,48 @@ export default function Upload() {
 
               {/* ── Drift Severity + Healing Action Chart ── */}
               <SectionCard title="Drift Detection — Severity Level & Self-Healing Actions">
-                {useMemo(() => {
-                  const sevMap = { none: 0, mild: 1, severe: 2 }
-                  const chartData = drift.map(d => {
-                    const h = healMap[d.month]
-                    return {
-                      month: d.month,
-                      'Drift Level': sevMap[d.severity] ?? 0,
-                      severity: d.severity,
-                      action: h?.action || 'monitor',
-                      updated: h?.model_updated || false,
-                      improvement: h ? +(h.improvement * 100).toFixed(1) : 0,
-                    }
-                  })
-                  const DriftDot = (props) => {
-                    const { cx, cy, payload } = props
-                    if (!cx || !cy) return null
-                    const c = sevColor(payload.severity)
-                    const isHeal = payload.action === 'fine_tune'
-                    const isRoll = payload.action === 'rollback'
-                    return (
-                      <g>
-                        <circle cx={cx} cy={cy} r={6} fill={c} stroke="#fff" strokeWidth={2} />
-                        {isHeal && <text x={cx} y={cy - 12} textAnchor="middle" fontSize={11} fill="#7c3aed" fontWeight={700}>✓</text>}
-                        {isRoll && <text x={cx} y={cy - 12} textAnchor="middle" fontSize={11} fill="#94a3b8" fontWeight={700}>↩</text>}
-                      </g>
-                    )
-                  }
-                  const DriftTip = ({ active, payload, label }) => {
-                    if (!active || !payload?.length) return null
-                    const d = payload[0]?.payload
-                    if (!d) return null
-                    const actionLabel = d.action === 'fine_tune' ? '✓ Fine-tuned' : d.action === 'rollback' ? '↩ Rolled back' : '— Monitor'
-                    return (
-                      <div style={{ background: '#fff', border: '1px solid var(--border2)', borderRadius: 8, padding: '10px 14px', fontSize: 12, boxShadow: '0 4px 20px rgba(37,99,235,0.12)' }}>
-                        <div style={{ fontWeight: 700, marginBottom: 4 }}>{d.month}</div>
-                        <div>Drift: <strong style={{ color: sevColor(d.severity) }}>{d.severity.toUpperCase()}</strong></div>
-                        <div>Action: <strong>{actionLabel}</strong></div>
-                        {d.improvement > 0 && <div>Improvement: <strong style={{ color: '#7c3aed' }}>{d.improvement}%</strong></div>}
-                      </div>
-                    )
-                  }
-                  return (
-                    <>
-                      <ResponsiveContainer width="100%" height={220}>
-                        <LineChart data={chartData} margin={{ top: 16, right: 12, bottom: 0, left: 0 }}>
-                          <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
-                          <XAxis dataKey="month" tick={{ fontSize: 10 }} />
-                          <YAxis domain={[0, 2]} ticks={[0, 1, 2]} tick={{ fontSize: 10 }} tickFormatter={v => ['None', 'Mild', 'Severe'][v] || ''} />
-                          <Tooltip content={<DriftTip />} />
-                          <ReferenceLine y={1} stroke="#d97706" strokeDasharray="4 2" />
-                          <ReferenceLine y={2} stroke="#dc2626" strokeDasharray="4 2" />
-                          <Line type="stepAfter" dataKey="Drift Level" stroke="#6366f1" strokeWidth={2.5} dot={<DriftDot />} />
-                        </LineChart>
-                      </ResponsiveContainer>
-                      <div style={{ display: 'flex', gap: 16, justifyContent: 'center', marginTop: 8, fontSize: 11, color: 'var(--text3)' }}>
-                        <span><span style={{ display: 'inline-block', width: 10, height: 10, borderRadius: '50%', background: '#059669', marginRight: 4 }} />None</span>
-                        <span><span style={{ display: 'inline-block', width: 10, height: 10, borderRadius: '50%', background: '#d97706', marginRight: 4 }} />Mild</span>
-                        <span><span style={{ display: 'inline-block', width: 10, height: 10, borderRadius: '50%', background: '#dc2626', marginRight: 4 }} />Severe</span>
-                        <span style={{ color: '#7c3aed', fontWeight: 700 }}>✓ Fine-tuned</span>
-                        <span style={{ color: '#94a3b8', fontWeight: 700 }}>↩ Rolled back</span>
-                      </div>
-                    </>
-                  )
-                }, [drift, healMap])}
+                <ResponsiveContainer width="100%" height={220}>
+                  <LineChart data={driftChartData} margin={{ top: 16, right: 12, bottom: 0, left: 0 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
+                    <XAxis dataKey="month" tick={{ fontSize: 10 }} />
+                    <YAxis domain={[0, 2]} ticks={[0, 1, 2]} tick={{ fontSize: 10 }} tickFormatter={v => ['None', 'Mild', 'Severe'][v] || ''} />
+                    <Tooltip content={({ active, payload }) => {
+                      if (!active || !payload?.length) return null
+                      const d = payload[0]?.payload
+                      if (!d) return null
+                      const actionLabel = d.action === 'fine_tune' ? '✓ Fine-tuned' : d.action === 'rollback' ? '↩ Rolled back' : '— Monitor'
+                      return (
+                        <div style={{ background: '#fff', border: '1px solid var(--border2)', borderRadius: 8, padding: '10px 14px', fontSize: 12, boxShadow: '0 4px 20px rgba(37,99,235,0.12)' }}>
+                          <div style={{ fontWeight: 700, marginBottom: 4 }}>{d.month}</div>
+                          <div>Drift: <strong style={{ color: sevColor(d.severity) }}>{d.severity?.toUpperCase()}</strong></div>
+                          <div>Action: <strong>{actionLabel}</strong></div>
+                          {d.improvement > 0 && <div>Improvement: <strong style={{ color: '#7c3aed' }}>{d.improvement}%</strong></div>}
+                        </div>
+                      )
+                    }} />
+                    <ReferenceLine y={1} stroke="#d97706" strokeDasharray="4 2" />
+                    <ReferenceLine y={2} stroke="#dc2626" strokeDasharray="4 2" />
+                    <Line type="stepAfter" dataKey="Drift Level" stroke="#6366f1" strokeWidth={2.5} dot={(props) => {
+                      const { cx, cy, payload } = props
+                      if (!cx || !cy) return null
+                      const c = sevColor(payload.severity)
+                      return (
+                        <g key={`dot-${payload.month}`}>
+                          <circle cx={cx} cy={cy} r={6} fill={c} stroke="#fff" strokeWidth={2} />
+                          {payload.action === 'fine_tune' && <text x={cx} y={cy - 12} textAnchor="middle" fontSize={11} fill="#7c3aed" fontWeight={700}>✓</text>}
+                          {payload.action === 'rollback' && <text x={cx} y={cy - 12} textAnchor="middle" fontSize={11} fill="#94a3b8" fontWeight={700}>↩</text>}
+                        </g>
+                      )
+                    }} />
+                  </LineChart>
+                </ResponsiveContainer>
+                <div style={{ display: 'flex', gap: 16, justifyContent: 'center', marginTop: 8, fontSize: 11, color: 'var(--text3)' }}>
+                  <span><span style={{ display: 'inline-block', width: 10, height: 10, borderRadius: '50%', background: '#059669', marginRight: 4 }} />None</span>
+                  <span><span style={{ display: 'inline-block', width: 10, height: 10, borderRadius: '50%', background: '#d97706', marginRight: 4 }} />Mild</span>
+                  <span><span style={{ display: 'inline-block', width: 10, height: 10, borderRadius: '50%', background: '#dc2626', marginRight: 4 }} />Severe</span>
+                  <span style={{ color: '#7c3aed', fontWeight: 700 }}>✓ Fine-tuned</span>
+                  <span style={{ color: '#94a3b8', fontWeight: 700 }}>↩ Rolled back</span>
+                </div>
               </SectionCard>
 
               {/* ── Row 2: Drifted Features + Test Set vs Predicted ── */}

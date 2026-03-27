@@ -106,7 +106,7 @@ class DriftDetector:
             if len(current) < 5:
                 continue
             dist = float(wasserstein_distance(self.baseline_distributions[col], current))
-            results[col] = {"wasserstein": round(dist, 4)}
+            results[col] = {"wasserstein": round(float(dist), 4)}
         return results
 
     def js_divergence_drift(self, X_current, top_n=None, bins=20):
@@ -133,7 +133,7 @@ class DriftDetector:
             with warnings.catch_warnings():
                 warnings.simplefilter("ignore")
                 js = float(jensenshannon(p, q))
-            results[col] = {"js_divergence": round(js if np.isfinite(js) else 0.0, 4)}
+            results[col] = {"js_divergence": round(float(js) if np.isfinite(js) else 0.0, 4)}
         return results
 
     def track_error_trend(self, current_errors):
@@ -145,8 +145,8 @@ class DriftDetector:
         baseline_mean = float(np.mean(np.abs(self.baseline_errors)))
         increase = (current_mean - baseline_mean) / (baseline_mean + 1e-9)
         return {
-            "baseline_error": round(baseline_mean, 2),
-            "current_error": round(current_mean, 2),
+            "baseline_error": round(float(baseline_mean), 2),
+            "current_error": round(float(current_mean), 2),
             "error_increase": round(float(increase), 4),
             "drift": bool(increase > 0.10)
         }

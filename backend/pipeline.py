@@ -171,8 +171,8 @@ class Phase1Pipeline:
         import json
         os.makedirs("logs", exist_ok=True)
         entry = {"timestamp": datetime.now().isoformat(), "month": month,
-                 "count": len(y), "mean_pred": round(float(preds.mean()), 2),
-                 "mean_actual": round(float(y.mean()), 2)}
+                 "count": len(y), "mean_pred": np.round(float(preds.mean()), 2),
+                 "mean_actual": np.round(float(y.mean()), 2)}
         path = "logs/prediction_batches.json"
         existing = json.load(open(path)) if os.path.exists(path) else []
         existing.append(entry)
@@ -224,7 +224,7 @@ class Phase1Pipeline:
             "months_monitored": len(self.drift_reports),
             "severity_counts": {s: severities.count(s) for s in ["severe", "mild", "none"]},
             "healing_stats": healing_stats,
-            "avg_improvement": round(avg_improvement, 4),
+            "avg_improvement": float(np.round(avg_improvement, 4)),
             "train_metrics": self.trainer.metrics.get("train", {}),
             "feature_names": self.feature_names,
         })

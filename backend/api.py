@@ -6,6 +6,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
 import pandas as pd
 import joblib
+import io
+import numpy as np
 
 BASE      = Path(__file__).parent.resolve()
 LOGS      = BASE / "logs"
@@ -28,7 +30,7 @@ def _get_product_names():
         for p in products:
             # Keep original string IDs (item_1…item_50) or format numeric ones
             key = str(p)
-            label = str(p) if isinstance(p, str) and not str(p).isdigit() else f"Product {int(float(p))}"
+            label = str(p) if isinstance(p, str) and not str(p).isdigit() else f"Product {int(float(str(p)))}"
             result[key] = label
         return result
     except Exception:
@@ -231,8 +233,10 @@ def feature_importances():
             raise HTTPException(404, "Model has no feature_importances_")
         fi = [float(v) for v in fi]
         raw_fn = getattr(model, "feature_names_in_", None) or getattr(model, "_feature_names_in", None)
-        fn = list(raw_fn) if raw_fn is not None else summary_fn[:len(fi)]
-        result = {str(n): round(v, 6) for n, v in zip(fn, fi)}
+        # Cast to list to satisfy the linter's indexing requirements
+        s_fn = list(summary_fn)
+        fn = list(raw_fn) if raw_fn is not None else s_fn[:len(fi)]
+        result = {str(n): np.round(float(v), 6) for n, v in zip(fn, fi)}
         return {"importances": result, "feature_names": [str(n) for n in fn]}
     return _cached("feature_importances", 600, _build)
 
@@ -264,7 +268,7 @@ def predictions_meta():
             month = parts[1]
             mtime = f.stat().st_mtime
             if month not in result or mtime > result[month]:
-                result[month] = round(mtime, 3)
+                result[month] = np.round(float(mtime), 3)
     return result
 
 @app.get("/api/predictions/{month}")
@@ -295,6 +299,7 @@ def alerts():
                         "severe_features": x["severe_features"], "mild_features": x["mild_features"],
                         "mae": x["error_trend"]["current_error"],
                         "error_ratio": x["error_trend"]["error_increase"]})
+    # Slicing the list directly
     return result[:20]
 
 @app.get("/api/datasets")
@@ -367,8 +372,11 @@ def product_forecast():
             total_demand=("Demand", "sum"), count=("Demand", "count"),
         ).reset_index()
         pnames = _get_product_names()
-        agg["name"] = agg["Product"].map(pnames).fillna(agg["Product"].apply(lambda x: f"Product {int(x)}"))
-        agg["accuracy"] = (100 - agg["mape"]).clip(0, 100)
+        def _safe_name(pid):
+            try: return f"Product {int(float(str(pid)))}"
+            except: return f"Product {str(pid)}"
+        agg["name"] = agg["Product"].map(pnames).fillna(agg["Product"].apply(_safe_name))
+        agg["accuracy"] = np.clip(100 - agg["mape"].astype(float), 0, 100)
         return agg.round(2).to_dict(orient="records")
     return _cached("product_forecast", 300, _build)
 
@@ -539,6 +547,7 @@ async def upload_monitor(file: UploadFile = File(...)):
     safe_name = Path(file.filename).name
     dest = UPLOAD / safe_name
     UPLOAD.mkdir(exist_ok=True)
+    if isinstance(content, str): content = content.encode("utf-8")
     with open(dest, "wb") as f: f.write(content)
     try:
         import io
@@ -551,7 +560,8 @@ async def upload_monitor(file: UploadFile = File(...)):
     loop = asyncio.get_event_loop()
     try:
         from main import run_monitor_pipeline
-        summary = await loop.run_in_executor(None, lambda: run_monitor_pipeline(str(dest)))
+        def _run(): return run_monitor_pipeline(str(dest))
+        summary = await loop.run_in_executor(None, _run)
     except Exception as e:
         raise HTTPException(422, str(e))
     _bust()
@@ -581,17 +591,21 @@ async def upload_predict(file: UploadFile = File(...)):
     import asyncio
     loop = asyncio.get_event_loop()
     try:
-        result = await asyncio.wait_for(
-            loop.run_in_executor(None, lambda: subprocess.run(
+        def _run_sub():
+            return subprocess.run(
                 [sys.executable, str(BASE / "main.py")],
-                capture_output=True, text=True, timeout=1200, cwd=str(BASE)  # Increased to 20 minutes
-            )),
-            timeout=1220  # Increased to 20+ minutes
+                capture_output=True, text=True, timeout=1200, cwd=str(BASE)
+            )
+        result = await asyncio.wait_for(
+            loop.run_in_executor(None, _run_sub),
+            timeout=1220
         )
     except asyncio.TimeoutError:
         raise HTTPException(504, "Pipeline timed out after 20 minutes.")
     if result.returncode != 0:
-        combined = (result.stdout + "\n" + result.stderr)[-3000:]
+        stdout_val = result.stdout or ""
+        stderr_val = result.stderr or ""
+        combined = (str(stdout_val) + "\n" + str(stderr_val))[-3000:]
         error_line = ""
         for line in reversed(combined.splitlines()):
             line = line.strip()
@@ -604,7 +618,8 @@ async def upload_predict(file: UploadFile = File(...)):
                 if line.strip(): error_line = line.strip(); break
         raise HTTPException(422, error_line or "Pipeline failed — check backend terminal")
     _bust()
-    return {"status": "ok", "stdout": result.stdout[-1000:]}
+    stdout_val = result.stdout or ""
+    return {"status": "ok", "stdout": stdout_val[-1000:]}
 
 
 
@@ -634,12 +649,7 @@ def test_metrics():
         r2   = float((1 - ss_res / ss_tot) * 100) if ss_tot > 0 else 100.0
         split = rj("data_split.json") or {}
         return {
-            "r2":    round(r2,   1),
-            "mae":   round(mae,  2),
-            "rmse":  round(rmse, 2),
-            "mape":  round(mape, 2),
-            "wmape": round(wmape,2),
-            "accuracy": round(max(0, 100 - mape), 1),
+            "accuracy": np.round(max(0.0, 100.0 - float(mape)), 1),
             "n_rows": int(len(df)),
             "test_year": split.get("test_year"),
             "train_years": split.get("train_years", []),
@@ -651,13 +661,13 @@ def test_metrics():
 def healing_actions():
     def _build():
         summary = rj("phase1_summary.json") or {}
-        healing_stats = summary.get("healing_stats", {})
+        hs = dict(summary.get("healing_stats", {}))
         return {
-            "total_actions": healing_stats.get("total_actions", 0),
-            "monitor_only": healing_stats.get("monitor_only", 0),
-            "fine_tuned": healing_stats.get("fine_tuned", 0),
-            "retrained": healing_stats.get("retrained", 0),
-            "rollbacks": healing_stats.get("rollbacks", 0),
+            "total_actions": hs.get("total_actions", 0),
+            "monitor_only": hs.get("monitor_only", 0),
+            "fine_tuned": hs.get("fine_tuned", 0),
+            "retrained": hs.get("retrained", 0),
+            "rollbacks": hs.get("rollbacks", 0),
             "avg_improvement": summary.get("avg_improvement", 0.0),
             "recommendation": summary.get("recommendation", "No data"),
         }
@@ -714,7 +724,7 @@ async def seq_upload_actuals(file: UploadFile = File(...)):
     content = await file.read()
     if len(content) > 50 * 1024 * 1024:
         raise HTTPException(413, "File too large (max 50 MB)")
-    import io
+    if isinstance(content, str): content = content.encode("utf-8")
     try:
         df = pd.read_csv(io.BytesIO(content), encoding="utf-8-sig")
         df.columns = df.columns.str.strip()

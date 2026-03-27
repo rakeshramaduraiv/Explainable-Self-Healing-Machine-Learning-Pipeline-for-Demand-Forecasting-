@@ -119,8 +119,13 @@ def run_monitor_pipeline(data_path: str) -> dict:
             with open(split_path) as f:
                 split_info = json.load(f)
             train_years = split_info.get("train_years", [])
-            train_raw = pd.read_csv(train_data_path)
+            train_raw = pd.read_csv(train_data_path, low_memory=False)
             train_raw.columns = train_raw.columns.str.strip()
+            # Ensure Store and Product are strings to prevent merge type conflicts
+            if "Store" in train_raw.columns:
+                train_raw["Store"] = train_raw["Store"].astype(str)
+            if "Product" in train_raw.columns:
+                train_raw["Product"] = train_raw["Product"].astype(str)
             if train_years:
                 train_raw["Date"] = pd.to_datetime(train_raw["Date"], dayfirst=True, errors="coerce")
                 train_raw = train_raw[train_raw["Date"].dt.year.isin(train_years)]
