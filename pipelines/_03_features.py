@@ -1,21 +1,72 @@
 from pipelines.utils import logger, RAW_DIR, PROCESSED_DIR
+from pipelines._drift import save_feature_schema, validate_feature_schema
 import pandas as pd
 import numpy as np
 from sklearn.preprocessing import LabelEncoder
+import joblib
+import os
+
+ENCODER_PATH = os.path.join(PROCESSED_DIR, "encoders.pkl")
+CAT_COLS     = ["item_id", "dept_id", "cat_id", "store_id", "state_id"]
+LAG_COLS     = [1, 7, 14, 28]
+ROLL_WINDOWS = [7, 14, 28]
+CAL_COLS     = ["date", "wm_yr_wk", "snap_CA", "snap_TX", "snap_WI"]
 
 
-def create_features():
-    df = pd.read_parquet(f"{PROCESSED_DIR}/raw_merged.parquet")
-    df = df.sort_values(["id", "date"])
-    logger.info("🧠 Creating time-based features...")
+# ── Fix 2: correct M5 id parsing ─────────────────────────
+def _parse_id(df):
+    if "item_id" not in df.columns and "id" in df.columns:
+        parts          = df["id"].str.split("_")
+        df["cat_id"]   = parts.str[0]
+        df["dept_id"]  = parts.str[0] + "_" + parts.str[1]
+        df["item_id"]  = parts.str[0] + "_" + parts.str[1] + "_" + parts.str[2]
+        df["state_id"] = parts.str[3]
+        df["store_id"] = parts.str[3] + "_" + parts.str[4]
+    return df
 
-    for lag in [1, 7, 14, 28]:
-        df[f"lag_{lag}"] = df.groupby("id")["sales"].shift(lag)
-    for w in [7, 14, 28]:
-        grp = df.groupby("id")["sales"]
+
+# ── Fix 1: save encoders fitted on training data ──────────
+def _fit_and_save_encoders(df):
+    encoders = {}
+    for col in CAT_COLS:
+        if col in df.columns:
+            le = LabelEncoder()
+            df[col] = le.fit_transform(df[col].astype(str))
+            encoders[col] = le
+    joblib.dump(encoders, ENCODER_PATH)
+    logger.info(f"✅ Encoders saved → {ENCODER_PATH}")
+    return df
+
+
+# ── Fix 1: apply saved encoders on new data ───────────────
+def _apply_encoders(df):
+    if not os.path.exists(ENCODER_PATH):
+        raise FileNotFoundError("encoders.pkl not found — run create_features() first")
+    encoders = joblib.load(ENCODER_PATH)
+    for col in CAT_COLS:
+        if col in df.columns and df[col].dtype == object:
+            le = encoders[col]
+            # handle unseen labels gracefully
+            known = set(le.classes_)
+            df[col] = df[col].astype(str).apply(lambda x: x if x in known else le.classes_[0])
+            df[col] = le.transform(df[col])
+    return df
+
+
+# ── Shared: lag + rolling features ───────────────────────
+def _add_lag_roll(df):
+    df = df.sort_values(["id", "date"]).reset_index(drop=True)  # Fix 7
+    grp = df.groupby("id")["sales"]
+    for lag in LAG_COLS:
+        df[f"lag_{lag}"] = grp.shift(lag)
+    for w in ROLL_WINDOWS:
         df[f"rmean_{w}"] = grp.shift(1).rolling(w).mean()
         df[f"rstd_{w}"]  = grp.shift(1).rolling(w).std()
+    return df
 
+
+# ── Shared: date + price features ────────────────────────
+def _add_date_price_features(df):
     df["month"]      = df["date"].dt.month
     df["year"]       = df["date"].dt.year
     df["dayofweek"]  = df["date"].dt.dayofweek
@@ -23,115 +74,121 @@ def create_features():
     df["dow_sin"]    = np.sin(2 * np.pi * df["dayofweek"] / 7)
     df["dow_cos"]    = np.cos(2 * np.pi * df["dayofweek"] / 7)
 
-    df["price_max"]  = df.groupby(["store_id","item_id"])["sell_price"].transform("max")
-    df["price_min"]  = df.groupby(["store_id","item_id"])["sell_price"].transform("min")
+    df["price_max"]  = df.groupby(["store_id", "item_id"])["sell_price"].transform("max")
+    df["price_min"]  = df.groupby(["store_id", "item_id"])["sell_price"].transform("min")
     df["price_norm"] = (df["sell_price"] - df["price_min"]) / (df["price_max"] - df["price_min"] + 1e-9)
-
-    for col in ["item_id","dept_id","cat_id","store_id","state_id"]:
-        le = LabelEncoder()
-        df[col] = le.fit_transform(df[col])
-
-    df = df.dropna(subset=["lag_28"]).fillna(0)
-    out = f"{PROCESSED_DIR}/features.parquet"
-    df.to_parquet(out, index=False)
-    logger.info(f"✅ Feature file saved → {out}")
-    return out
-
-
-def _parse_id(df):
-    """Extract item_id and store_id from id column if not present."""
-    if "item_id" not in df.columns and "id" in df.columns:
-        parts = df["id"].str.rsplit("_", n=2)
-        df["store_id"] = parts.str[-2] + "_" + parts.str[-1].str.replace("_validation","")
-        df["item_id"]  = parts.str[:-2].str.join("_")
     return df
 
 
+def create_features():
+    df = pd.read_parquet(f"{PROCESSED_DIR}/raw_merged.parquet")
+    logger.info(f"🧠 Creating features — {df.shape}")
+
+    # Fix 8: downcast early to reduce memory
+    df["sales"]      = df["sales"].astype("float32")
+    df["sell_price"] = df["sell_price"].astype("float32")
+
+    df = _add_lag_roll(df)
+    df = _add_date_price_features(df)
+
+    # Fix 1: fit + save encoders
+    df = _fit_and_save_encoders(df)
+
+    # Fix 5: drop lag_28 nulls only, fill sell_price only — no blanket fillna
+    df = df.dropna(subset=["lag_28"])
+    df["sell_price"] = df["sell_price"].fillna(0)
+
+    # Fix 9: empty result guard
+    if df.empty:
+        raise ValueError("Feature dataframe is empty after dropna — check raw data")
+
+    out = f"{PROCESSED_DIR}/features.parquet"
+    df.to_parquet(out, index=False)
+
+    # Fix 6: save feature schema for retrain validation
+    feat_cols = [c for c in df.columns if c not in ["id", "date", "sales"]
+                 and df[c].dtype != object]
+    save_feature_schema(feat_cols)
+
+    logger.info(f"✅ Features saved → {out} | {len(df):,} rows | {len(feat_cols)} features")
+    return out
+
+
 def create_features_for_new_data(df_new):
-    """
-    FIX 1: Robust feature reconstruction for any upload format.
-    Works for both 3-column (id, date, sales) and 14-column uploads.
-    Steps: parse_id → merge history → merge calendar → merge prices → lags → filter new rows
-    """
     df_new = df_new.copy()
     df_new["date"] = pd.to_datetime(df_new["date"])
 
-    # STEP 1: parse id → extract item_id, store_id if missing
+    # Fix 2: correct id parsing
     df_new = _parse_id(df_new)
 
-    # STEP 2: combine with history (only id, date, sales for continuity)
-    hist = pd.read_parquet(f"{PROCESSED_DIR}/features.parquet")[["id","date","sales","item_id","dept_id","cat_id","store_id","state_id","wm_yr_wk","sell_price"]]
+    # combine with history
+    hist_cols = ["id", "date", "sales", "item_id", "dept_id", "cat_id",
+                 "store_id", "state_id", "wm_yr_wk", "sell_price"]
+    hist = pd.read_parquet(f"{PROCESSED_DIR}/features.parquet")[
+        [c for c in hist_cols if c in pd.read_parquet(f"{PROCESSED_DIR}/features.parquet").columns]
+    ]
     hist["date"] = pd.to_datetime(hist["date"])
 
-    # Keep only columns that exist in both for concat
-    shared_cols = [c for c in ["id","date","sales","item_id","dept_id","cat_id","store_id","state_id","wm_yr_wk","sell_price"] if c in df_new.columns]
-    combined = pd.concat([hist, df_new[shared_cols]], ignore_index=True)
-    combined = combined.drop_duplicates(subset=["id","date"]).sort_values(["id","date"])
+    shared = [c for c in hist_cols if c in df_new.columns]
+    combined = pd.concat([hist, df_new[shared]], ignore_index=True)
+    combined = combined.drop_duplicates(subset=["id", "date"]).sort_values(["id", "date"]).reset_index(drop=True)
 
-    # STEP 3: FIX 3 — always merge calendar to get wm_yr_wk for new rows
-    calendar = pd.read_csv(f"{RAW_DIR}/calendar.csv", usecols=["date","wm_yr_wk","snap_CA","snap_TX","snap_WI"])
+    # Fix 3: calendar merge — only needed columns
+    calendar = pd.read_csv(f"{RAW_DIR}/calendar.csv", usecols=CAL_COLS)
     calendar["date"] = pd.to_datetime(calendar["date"])
-    # only fill wm_yr_wk where missing (new rows won't have it from 3-col upload)
-    new_mask = combined["date"].isin(df_new["date"].unique())
-    combined = combined.merge(calendar.rename(columns={"wm_yr_wk":"wm_yr_wk_cal","snap_CA":"snap_CA_cal","snap_TX":"snap_TX_cal","snap_WI":"snap_WI_cal"}), on="date", how="left")
-    if "wm_yr_wk" not in combined.columns:
-        combined["wm_yr_wk"] = combined["wm_yr_wk_cal"]
-    else:
-        combined["wm_yr_wk"] = combined["wm_yr_wk"].fillna(combined["wm_yr_wk_cal"])
-    for snap in ["snap_CA","snap_TX","snap_WI"]:
-        if snap not in combined.columns:
-            combined[snap] = combined[f"{snap}_cal"]
+    combined = combined.merge(
+        calendar.rename(columns={c: f"{c}_cal" for c in CAL_COLS if c != "date"}),
+        on="date", how="left"
+    )
+    for col in ["wm_yr_wk", "snap_CA", "snap_TX", "snap_WI"]:
+        cal_col = f"{col}_cal"
+        if col not in combined.columns:
+            combined[col] = combined[cal_col]
         else:
-            combined[snap] = combined[snap].fillna(combined[f"{snap}_cal"])
-    combined.drop(columns=[c for c in combined.columns if c.endswith("_cal")], inplace=True)
+            combined[col] = combined[col].fillna(combined[cal_col])
+        combined.drop(columns=[cal_col], inplace=True, errors="ignore")
 
-    # STEP 4: merge prices if sell_price missing
-    if "sell_price" not in combined.columns or combined["sell_price"].isna().all():
+    # Fix 4: merge prices if ANY sell_price is missing (not just all)
+    if "sell_price" not in combined.columns or combined["sell_price"].isna().sum() > 0:
         prices = pd.read_csv(f"{RAW_DIR}/sell_prices.csv")
-        combined = combined.merge(prices, on=["store_id","item_id","wm_yr_wk"], how="left", suffixes=("","_price"))
+        combined = combined.merge(prices, on=["store_id", "item_id", "wm_yr_wk"],
+                                  how="left", suffixes=("", "_price"))
         if "sell_price_price" in combined.columns:
-            combined["sell_price"] = combined["sell_price"].fillna(combined["sell_price_price"])
-            combined.drop(columns=["sell_price_price"], inplace=True)
+            combined["sell_price"] = combined["sell_price"].fillna(combined.pop("sell_price_price"))
 
-    combined["sell_price"] = combined["sell_price"].fillna(combined.groupby(["store_id","item_id"])["sell_price"].transform("median"))
+    combined["sell_price"] = combined.groupby(["store_id", "item_id"])["sell_price"].ffill()
     combined["sell_price"] = combined["sell_price"].fillna(0)
 
-    # STEP 5: lag + rolling features
-    combined = combined.sort_values(["id","date"])
-    for lag in [1, 7, 14, 28]:
-        combined[f"lag_{lag}"] = combined.groupby("id")["sales"].shift(lag)
-    for w in [7, 14, 28]:
-        grp = combined.groupby("id")["sales"]
-        combined[f"rmean_{w}"] = grp.shift(1).rolling(w).mean()
-        combined[f"rstd_{w}"]  = grp.shift(1).rolling(w).std()
+    # Fix 8: downcast
+    combined["sales"]      = combined["sales"].astype("float32")
+    combined["sell_price"] = combined["sell_price"].astype("float32")
 
-    combined["month"]      = combined["date"].dt.month
-    combined["year"]       = combined["date"].dt.year
-    combined["dayofweek"]  = combined["date"].dt.dayofweek
-    combined["is_weekend"] = (combined["dayofweek"] >= 5).astype(int)
-    combined["dow_sin"]    = np.sin(2 * np.pi * combined["dayofweek"] / 7)
-    combined["dow_cos"]    = np.cos(2 * np.pi * combined["dayofweek"] / 7)
+    combined = _add_lag_roll(combined)
+    combined = _add_date_price_features(combined)
 
-    combined["price_max"]  = combined.groupby(["store_id","item_id"])["sell_price"].transform("max")
-    combined["price_min"]  = combined.groupby(["store_id","item_id"])["sell_price"].transform("min")
-    combined["price_norm"] = (combined["sell_price"] - combined["price_min"]) / (combined["price_max"] - combined["price_min"] + 1e-9)
+    # Fix 1: apply saved encoders (consistent with training)
+    combined = _apply_encoders(combined)
 
-    for col in ["item_id","dept_id","cat_id","store_id","state_id"]:
-        if col in combined.columns and combined[col].dtype == object:
-            le = LabelEncoder()
-            combined[col] = le.fit_transform(combined[col].astype(str))
-
-    # STEP 6: filter only new month rows
+    # filter to new month rows only
     new_dates = df_new["date"].unique()
     result = combined[combined["date"].isin(new_dates)].copy()
-    result = result.dropna(subset=["lag_28"]).fillna(0)
+    result = result.dropna(subset=["lag_28"])
 
-    for col in result.select_dtypes(include="object").columns:
-        result[col] = result[col].astype(str)
+    # Fix 5: targeted fill only — no blanket fillna(0)
+    result["sell_price"] = result["sell_price"].fillna(0)
 
-    # STEP 7: save
+    # Fix 9: empty result guard
+    if result.empty:
+        raise ValueError("No valid rows after feature generation — check upload date range")
+
+    # Fix 6: validate schema matches training
+    feat_cols = [c for c in result.columns if c not in ["id", "date", "sales"]
+                 and result[c].dtype != object]
+    if not validate_feature_schema(feat_cols):
+        raise ValueError("Feature schema mismatch — new data features don't match training schema")
+
     result.to_parquet(f"{PROCESSED_DIR}/actual_month_features.parquet", index=False)
-    logger.info(f"✅ New month features saved → {len(result):,} rows")
+    logger.info(f"✅ New month features saved → {len(result):,} rows | {len(feat_cols)} features")
     return result
 
 
