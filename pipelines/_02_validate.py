@@ -1,6 +1,10 @@
 from pipelines.utils import logger, PROCESSED_DIR
 import pandas as pd
 
+CRITICAL_COLS = ["sales", "date", "id"]
+MIN_SKUS      = 30_000
+MIN_DATE      = pd.Timestamp("2011-01-01")
+
 
 def validate_data():
     logger.info("🔍 Validating merged data...")
@@ -8,58 +12,91 @@ def validate_data():
 
     errors = []
 
-    # 1. Negative sales
-    if not df["sales"].ge(0).all():
-        errors.append(f"Negative sales found: {df[df['sales'] < 0].shape[0]} rows")
+    # Fix 1: critical columns only (sell_price / event cols can be null)
+    nulls = df[CRITICAL_COLS].isnull().sum()
+    if nulls.sum() > 0:
+        errors.append(f"Critical nulls: {nulls[nulls > 0].to_dict()}")
 
-    # 2. Null values
-    null_counts = df.isnull().sum()
-    critical_nulls = null_counts[null_counts > 0]
-    if len(critical_nulls) > 0:
-        errors.append(f"Null values found: {critical_nulls.to_dict()}")
+    # negative sales
+    if df["sales"].lt(0).any():
+        errors.append(f"Negative sales: {df['sales'].lt(0).sum():,} rows")
 
-    # 3. Duplicate rows
+    # duplicates
     dupes = df.duplicated(["id", "date"]).sum()
     if dupes > 0:
-        errors.append(f"Duplicate (id, date) rows: {dupes}")
+        errors.append(f"{dupes:,} duplicate (id, date) rows")
 
-    # 4. Date gaps per SKU
-    df_sorted = df.sort_values(["id", "date"])
-    gaps = df_sorted.groupby("id")["date"].diff().dropna().dt.days
-    max_gap = gaps.max()
-    if max_gap > 1:
-        logger.warning(f"⚠️ Max date gap across SKUs: {max_gap} days — may affect lag features")
+    # Fix 2: date range sanity
+    if df["date"].min() < MIN_DATE:
+        errors.append(f"Dates before {MIN_DATE.date()} detected")
+    if df["date"].max() > pd.Timestamp.today():
+        errors.append("Future dates detected")
+
+    # Fix 4: SKU count sanity
+    n_skus = df["id"].nunique()
+    if n_skus < MIN_SKUS:
+        errors.append(f"Only {n_skus:,} SKUs — expected ≥ {MIN_SKUS:,} (ingestion may be incomplete)")
+
+    # Fix 3: gap check — warn only, don't fail (M5 has some legitimate gaps)
+    gaps = df.sort_values(["id", "date"]).groupby("id")["date"].diff().dropna().dt.days
+    irregular = (gaps > 1).sum()
+    if irregular > 0:
+        logger.warning(f"⚠️ {irregular:,} date gaps > 1 day detected across SKUs")
 
     if errors:
         for e in errors:
             logger.error(f"❌ {e}")
-        raise ValueError(f"Validation failed with {len(errors)} error(s). See logs above.")
+        raise ValueError(f"Validation failed with {len(errors)} error(s)")
 
-    logger.info(f"✅ Validation passed — {len(df):,} rows | {df['id'].nunique():,} SKUs | date range: {df['date'].min().date()} → {df['date'].max().date()}")
+    logger.info(
+        f"✅ Validation passed — {len(df):,} rows | {n_skus:,} SKUs | "
+        f"{df['date'].min().date()} → {df['date'].max().date()}"
+    )
 
 
 def validate_upload(actual_df, reference_ids):
-    """Validate user-uploaded actual month data against known SKU IDs."""
     errors = []
 
-    # 1. Date nulls
-    if actual_df["date"].isna().any():
-        errors.append("Invalid dates found — use YYYY-MM-DD format")
+    # Fix 7: type check before anything else
+    if not pd.api.types.is_numeric_dtype(actual_df["sales"]):
+        errors.append("Sales column must be numeric")
+        return errors  # can't continue safely
 
-    # 2. Negative sales
+    # date nulls
+    if actual_df["date"].isna().any():
+        errors.append("Invalid dates — use YYYY-MM-DD format")
+
+    # Fix 2: date range sanity
+    if actual_df["date"].min() < MIN_DATE:
+        errors.append(f"Upload contains dates before {MIN_DATE.date()}")
+    if actual_df["date"].max() > pd.Timestamp.today():
+        errors.append("Upload contains future dates")
+
+    # negative sales
     if actual_df["sales"].lt(0).any():
         errors.append("Negative sales values found")
 
-    # 3. Unknown SKU IDs
+    # Fix 6: outlier warning (not a hard error)
+    p99 = actual_df["sales"].quantile(0.99)
+    if p99 > 1000:
+        logger.warning(f"⚠️ Extreme sales values detected (99th pct = {p99:.0f}) — possible anomaly")
+
+    # duplicates
+    if actual_df.duplicated(["id", "date"]).sum() > 0:
+        errors.append("Duplicate (id, date) rows found")
+
+    # Fix 5: date continuity — upload must be a continuous month
+    dates    = pd.to_datetime(actual_df["date"].unique())
+    expected = pd.date_range(dates.min(), dates.max())
+    missing  = len(expected) - len(dates)
+    if missing > 0:
+        errors.append(f"Upload is missing {missing} date(s) — must be a continuous date range")
+
+    # unknown SKU IDs
     if reference_ids is not None:
         unknown = set(actual_df["id"].unique()) - set(reference_ids)
         if unknown:
-            errors.append(f"{len(unknown)} unknown SKU IDs found — not in training data")
-
-    # 4. Duplicates
-    dupes = actual_df.duplicated(["id", "date"]).sum()
-    if dupes > 0:
-        errors.append(f"{dupes} duplicate (id, date) rows found")
+            errors.append(f"{len(unknown):,} unknown SKU IDs not in training data")
 
     return errors
 
