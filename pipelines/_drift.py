@@ -163,6 +163,11 @@ def run_drift_check():
     # Upgrade C: weighted score for stable decision
     level, drift_score = weighted_drift_score(psi, ks, error_level)
 
+    # Fix 5: high PSI → override to high drift (skip fine-tune)
+    if psi > 0.2 and level != "high":
+        logger.warning(f"⚠️ PSI={psi} > 0.2 → overriding level to HIGH (skip fine-tune)")
+        level = "high"
+
     logger.info(f"📊 PSI:{psi} | KS:{ks} | MAE:{current_mae} | Score:{drift_score} → {level.upper()}")
 
     result = {
