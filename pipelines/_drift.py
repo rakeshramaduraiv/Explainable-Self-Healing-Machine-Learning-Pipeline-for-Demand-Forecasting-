@@ -32,6 +32,14 @@ def load_feature_schema():
     return None
 
 
+def get_schema_feature_cols():
+    """Fix 1: always return the saved training feature list — never recompute from dtype."""
+    cols = load_feature_schema()
+    if cols is None:
+        raise FileNotFoundError("feature_schema.pkl not found — run train_and_predict() first")
+    return cols
+
+
 def validate_feature_schema(X_cols):
     expected = load_feature_schema()
     if expected is None:
