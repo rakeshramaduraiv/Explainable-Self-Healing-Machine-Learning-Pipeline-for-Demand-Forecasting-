@@ -6,20 +6,16 @@ import pandas as pd
 import numpy as np
 import joblib
 import os
-import json
 from datetime import date
 
-REPORT_DIR  = os.path.join(os.path.dirname(os.path.dirname(__file__)), "reports")
-DRIFT_LOG   = os.path.join(REPORT_DIR, "drift_history.csv")
-SCHEMA_PATH = os.path.join(MODEL_DIR, "feature_schema.pkl")
-
-# ── Thresholds ───────────────────────────────────────────
-KS_LOW  = 0.1;  KS_HIGH  = 0.3
-PSI_LOW = 0.1;  PSI_HIGH = 0.25
+REPORT_DIR     = os.path.join(os.path.dirname(os.path.dirname(__file__)), "reports")
+DRIFT_LOG      = os.path.join(REPORT_DIR, "drift_history.csv")
+SCHEMA_PATH    = os.path.join(MODEL_DIR, "feature_schema.pkl")
 DRIFT_FEATURES = ["sell_price", "lag_7", "lag_28", "rmean_7", "rmean_28"]
+MIN_SAMPLES    = 50   # Fix 7: minimum rows for reliable drift
 
 
-# ── Upgrade B: Feature Schema ────────────────────────────
+# ── Feature Schema ────────────────────────────────────────
 def save_feature_schema(feature_cols):
     os.makedirs(MODEL_DIR, exist_ok=True)
     joblib.dump(feature_cols, SCHEMA_PATH)
@@ -33,7 +29,6 @@ def load_feature_schema():
 
 
 def get_schema_feature_cols():
-    """Fix 1: always return the saved training feature list — never recompute from dtype."""
     cols = load_feature_schema()
     if cols is None:
         raise FileNotFoundError("feature_schema.pkl not found — run train_and_predict() first")
@@ -45,15 +40,15 @@ def validate_feature_schema(X_cols):
     if expected is None:
         logger.warning("⚠️ No feature schema found — skipping schema check")
         return True
-    missing  = set(expected) - set(X_cols)
-    extra    = set(X_cols) - set(expected)
+    missing = set(expected) - set(X_cols)
+    extra   = set(X_cols) - set(expected)
     if missing or extra:
         logger.error(f"❌ Feature mismatch — missing: {missing} | extra: {extra}")
         return False
     return True
 
 
-# ── Upgrade C: Baseline MAE ──────────────────────────────
+# ── Baseline MAE ──────────────────────────────────────────
 def _get_baseline_mae():
     try:
         m = pd.read_csv(os.path.join(REPORT_DIR, "metrics_summary.csv"))
@@ -62,44 +57,47 @@ def _get_baseline_mae():
         return 1.0
 
 
-# ── Method 1: PSI ────────────────────────────────────────
+# ── Fix 1: PSI with percentile-based bins ────────────────
 def compute_psi(expected, actual, bins=10):
-    breakpoints      = np.linspace(0, 100, bins + 1)
-    expected_pct     = np.histogram(expected, breakpoints)[0] / len(expected)
-    actual_pct       = np.histogram(actual,   breakpoints)[0] / len(actual)
-    expected_pct     = np.where(expected_pct == 0, 1e-6, expected_pct)
-    actual_pct       = np.where(actual_pct   == 0, 1e-6, actual_pct)
+    expected = np.array(expected, dtype=float)
+    actual   = np.array(actual,   dtype=float)
+    # percentile bins from expected distribution — works for any scale
+    breakpoints  = np.unique(np.percentile(expected, np.linspace(0, 100, bins + 1)))
+    if len(breakpoints) < 2:
+        return 0.0
+    expected_pct = np.histogram(expected, breakpoints)[0] / len(expected)
+    actual_pct   = np.histogram(actual,   breakpoints)[0] / len(actual)
+    expected_pct = np.where(expected_pct == 0, 1e-6, expected_pct)
+    actual_pct   = np.where(actual_pct   == 0, 1e-6, actual_pct)
     psi = np.sum((expected_pct - actual_pct) * np.log(expected_pct / actual_pct))
     return round(float(psi), 4)
 
 
-# ── Method 2: KS Test with normalization ─────────────────
-def compute_ks(actual, predicted):
-    # Upgrade C: normalize before KS to fix integer vs float scale mismatch
-    scaler = MinMaxScaler()
-    a_scaled = scaler.fit_transform(actual.reshape(-1, 1)).flatten()
-    p_scaled = scaler.fit_transform(predicted.reshape(-1, 1)).flatten()
-    stat, _  = ks_2samp(a_scaled, p_scaled)
+# ── Fix 5: KS vs historical distribution (not vs predictions) ──
+def compute_ks(train_sales, actual_sales):
+    scaler   = MinMaxScaler()
+    t_scaled = scaler.fit_transform(train_sales.reshape(-1, 1)).flatten()
+    a_scaled = scaler.fit_transform(actual_sales.reshape(-1, 1)).flatten()
+    stat, _  = ks_2samp(t_scaled, a_scaled)
     return round(float(stat), 4)
 
 
-# ── Method 3: Error-Based Drift ──────────────────────────
+# ── Error-Based Drift ─────────────────────────────────────
 def compute_error_drift(y_true, y_pred):
     baseline_mae = _get_baseline_mae()
     current_mae  = mean_absolute_error(y_true, y_pred)
     if current_mae > baseline_mae * 1.2:
-        return "high", round(current_mae, 6)
+        return "high",   round(current_mae, 6)
     elif current_mae > baseline_mae * 1.1:
         return "medium", round(current_mae, 6)
     else:
-        return "low", round(current_mae, 6)
+        return "low",    round(current_mae, 6)
 
 
-# ── Upgrade C: Weighted Drift Score ──────────────────────
+# ── Fix 6: balanced weighted score ───────────────────────
 def weighted_drift_score(psi, ks, error_level):
-    """More stable than hard thresholds — weighted combination."""
     error_score = {"low": 0.0, "medium": 0.5, "high": 1.0}.get(error_level, 0.5)
-    score = round(0.4 * psi + 0.3 * ks + 0.3 * error_score, 4)
+    score = round(0.35 * psi + 0.35 * ks + 0.30 * error_score, 4)
     if score < 0.1:
         return "low",    score
     elif score < 0.3:
@@ -108,19 +106,19 @@ def weighted_drift_score(psi, ks, error_level):
         return "high",   score
 
 
-# ── Feature-wise PSI ─────────────────────────────────────
-def compute_feature_drift(train_df, new_df):
+# ── Fix 3+4: feature-wise PSI on engineered features ─────
+def compute_feature_drift(train_df, actual_feat_df):
     results = {}
     for col in DRIFT_FEATURES:
-        if col in train_df.columns and col in new_df.columns:
+        if col in train_df.columns and col in actual_feat_df.columns:
             t = train_df[col].dropna().values
-            n = new_df[col].dropna().values
+            n = actual_feat_df[col].dropna().values
             if len(t) > 0 and len(n) > 0:
                 results[col] = compute_psi(t, n)
     return results
 
 
-# ── Upgrade C: Drift History Logging ─────────────────────
+# ── Drift History Logging ─────────────────────────────────
 def _log_drift(result):
     os.makedirs(REPORT_DIR, exist_ok=True)
     row = {
@@ -132,49 +130,93 @@ def _log_drift(result):
         "drift_score": result.get("drift_score"),
         "level":       result.get("level"),
     }
-    # append feature PSI values
     for col, val in result.get("feature_drift", {}).items():
         row[f"psi_{col}"] = val
 
     df_row = pd.DataFrame([row])
     if os.path.exists(DRIFT_LOG):
-        existing = pd.read_csv(DRIFT_LOG)
-        pd.concat([existing, df_row], ignore_index=True).to_csv(DRIFT_LOG, index=False)
+        pd.concat([pd.read_csv(DRIFT_LOG), df_row], ignore_index=True).to_csv(DRIFT_LOG, index=False)
     else:
         df_row.to_csv(DRIFT_LOG, index=False)
     logger.info(f"📝 Drift logged → {DRIFT_LOG}")
 
 
+# ── Fix 9: drift trend analysis ──────────────────────────
+def _check_drift_trend():
+    if not os.path.exists(DRIFT_LOG):
+        return
+    history = pd.read_csv(DRIFT_LOG)
+    if len(history) >= 3 and history["drift_score"].tail(3).mean() > 0.25:
+        logger.warning("⚠️ Continuous drift trend detected (3-run avg > 0.25) — consider full retrain")
+
+
 # ── Main Entry Point ─────────────────────────────────────
 def run_drift_check():
-    actual = pd.read_parquet(f"{PROCESSED_DIR}/actual_month.parquet")
-    preds  = pd.read_parquet(f"{PROCESSED_DIR}/predictions.parquet")
-    train  = pd.read_parquet(f"{PROCESSED_DIR}/features.parquet")
+    actual      = pd.read_parquet(f"{PROCESSED_DIR}/actual_month.parquet")
+    preds       = pd.read_parquet(f"{PROCESSED_DIR}/predictions.parquet")
+    train       = pd.read_parquet(f"{PROCESSED_DIR}/features.parquet")
 
-    actual_sales = actual["sales"].dropna().values if "sales" in actual.columns else np.array([])
-    pred_sales   = preds["yhat"].dropna().values   if "yhat"  in preds.columns  else np.array([])
+    _EMPTY = {"ks_stat": None, "psi": None, "mae": None,
+              "error_level": None, "drift_score": None,
+              "feature_drift": {}, "level": "unknown"}
 
-    logger.info(f"actual_sales: {len(actual_sales)} | pred_sales: {len(pred_sales)}")
+    if "sales" not in actual.columns or "yhat" not in preds.columns:
+        logger.warning("⚠️ Missing sales or yhat column")
+        return _EMPTY
 
-    if len(actual_sales) == 0 or len(pred_sales) == 0:
-        logger.warning("⚠️ Empty data.")
-        return {"ks_stat": None, "psi": None, "mae": None,
-                "error_level": None, "drift_score": None,
-                "feature_drift": {}, "level": "unknown"}
+    # Fix 2: align actual + predictions by id + date before any comparison
+    merged = actual[["id", "date", "sales"]].merge(
+        preds[["id", "date", "yhat"]], on=["id", "date"], how="inner"
+    )
+    if len(merged) == 0:
+        logger.warning("⚠️ No matching (id, date) rows between actual and predictions")
+        return _EMPTY
 
-    psi         = compute_psi(train["sales"].dropna().values, actual_sales)
-    ks          = compute_ks(actual_sales, pred_sales)
-    min_len     = min(len(actual_sales), len(pred_sales))
-    error_level, current_mae = compute_error_drift(actual_sales[:min_len], pred_sales[:min_len])
-    feature_drift = compute_feature_drift(train, actual)
+    actual_sales = merged["sales"].values
+    pred_sales   = merged["yhat"].values
 
-    # Upgrade C: weighted score for stable decision
+    # Fix 7: minimum data guard
+    if len(actual_sales) < MIN_SAMPLES:
+        logger.warning(f"⚠️ Only {len(actual_sales)} aligned rows — too few for reliable drift")
+        return _EMPTY
+
+    logger.info(f"Aligned rows: {len(merged):,} | actual_sales: {len(actual_sales)} | pred_sales: {len(pred_sales)}")
+
+    # Fix 4: PSI averaged across key features (not just sales)
+    # Fix 3: use actual_month_features for feature drift (has lag/price cols)
+    actual_feat_path = f"{PROCESSED_DIR}/actual_month_features.parquet"
+    if os.path.exists(actual_feat_path):
+        actual_feat = pd.read_parquet(actual_feat_path)
+        psi_values  = []
+        for col in DRIFT_FEATURES:
+            if col in train.columns and col in actual_feat.columns:
+                psi_values.append(compute_psi(train[col].dropna().values, actual_feat[col].dropna().values))
+        psi           = round(float(np.mean(psi_values)), 4) if psi_values else compute_psi(train["sales"].dropna().values, actual_sales)
+        feature_drift = compute_feature_drift(train, actual_feat)
+    else:
+        # fallback: sales-only PSI if features not yet generated
+        psi           = compute_psi(train["sales"].dropna().values, actual_sales)
+        feature_drift = {}
+        logger.warning("⚠️ actual_month_features.parquet not found — using sales-only PSI")
+
+    # Fix 5: KS compares actual vs historical training distribution (not vs predictions)
+    train_tail = train["sales"].dropna().tail(len(actual_sales)).values
+    ks          = compute_ks(train_tail, actual_sales)
+
+    error_level, current_mae = compute_error_drift(actual_sales, pred_sales)
+
+    # Fix 6: balanced weights
     level, drift_score = weighted_drift_score(psi, ks, error_level)
 
-    # Fix 5: high PSI → override to high drift (skip fine-tune)
+    # PSI override: high data drift → force retrain regardless of weighted score
     if psi > 0.2 and level != "high":
-        logger.warning(f"⚠️ PSI={psi} > 0.2 → overriding level to HIGH (skip fine-tune)")
+        logger.warning(f"⚠️ PSI={psi} > 0.2 → overriding to HIGH")
         level = "high"
+
+    # Fix 8: log top drift features
+    if feature_drift:
+        top = sorted(feature_drift.items(), key=lambda x: x[1], reverse=True)[:3]
+        logger.info(f"🔥 Top drift features: {top}")
 
     logger.info(f"📊 PSI:{psi} | KS:{ks} | MAE:{current_mae} | Score:{drift_score} → {level.upper()}")
 
@@ -188,7 +230,7 @@ def run_drift_check():
         "level":         level,
     }
 
-    # Upgrade C: log to drift_history.csv
     _log_drift(result)
+    _check_drift_trend()  # Fix 9
 
     return result
