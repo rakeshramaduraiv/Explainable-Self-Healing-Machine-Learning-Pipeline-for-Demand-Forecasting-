@@ -102,7 +102,7 @@ EVENT_BOOST = {
 # ─────────────────────────────────────────────
 df       = pd.read_parquet("data/processed/features.parquet")
 merged   = pd.read_parquet("data/processed/raw_merged.parquet")
-all_ids  = df["id"].unique()[:20]  # use 20 SKUs
+all_ids  = df["id"].unique()  # use all SKUs for realistic drift detection
 sku_means = df.groupby("id")["sales"].mean().to_dict()
 
 # Walmart week number base (last known + increment)
@@ -155,8 +155,8 @@ for month_offset in range(12):
         freq="D"
     )
 
-    # Walmart week number (increment by ~4 per month)
-    wm_yr_wk = BASE_WM_YR_WK + (month_offset * 4)
+    # Walmart week number — compute correctly from actual date
+    wm_yr_wk = BASE_WM_YR_WK + (month_offset * 4) + (dates[0].isocalendar().week - pd.Timestamp(f"{base_year}-{base_month:02d}-01").isocalendar().week)
 
     # SNAP days for this month
     snap_days_count = SNAP_DAYS_PER_MONTH[month]
@@ -186,11 +186,13 @@ for month_offset in range(12):
         # Base demand from historical mean
         base_demand = max(sku_means.get(sku_id, CAT_BASE.get(cat_id, 0.8)), 0.1)
 
-        # Price for this SKU
+        # Price for this SKU — use actual historical price if available
+        hist_price = merged[merged["id"] == sku_id]["sell_price"].dropna()
         p_min, p_max, p_mean = PRICE_RANGE.get(dept_id, (1.0, 10.0, 5.0))
-        # Slight price variation month to month
+        if len(hist_price) > 0:
+            p_mean = float(hist_price.iloc[-1])  # use last known price as base
         sell_price = round(np.clip(
-            np.random.normal(p_mean, p_mean * 0.1),
+            np.random.normal(p_mean, p_mean * 0.05),  # tighter variation
             p_min, p_max
         ), 2)
 
