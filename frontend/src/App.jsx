@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { api } from "./api";
 
 // ─── Reusable Components ────────────────────────────────
@@ -84,13 +84,13 @@ function StepBar({ current }) {
   return (
     <div className="step-indicator">
       {steps.map((s, i) => (
-        <>
-          <div key={s} className={`step ${i < current ? "done" : i === current ? "active" : ""}`}>
+        <div key={s} style={{ display: "contents" }}>
+          <div className={`step ${i < current ? "done" : i === current ? "active" : ""}`}>
             <div className="step-num">{i < current ? "✓" : i + 1}</div>
             {s}
           </div>
-          {i < steps.length - 1 && <div key={`line-${i}`} className="step-line" />}
-        </>
+          {i < steps.length - 1 && <div className="step-line" />}
+        </div>
       ))}
     </div>
   );
@@ -631,9 +631,9 @@ export default function App() {
     api.status().then(r => setStatus(r.data)).catch(() => {});
   }, []);
 
-  const handleUpload = (data) => { setUploadData(data); setActiveStep(1); };
-  const handleDrift  = (lvl)  => { setDriftLevel(lvl);  setActiveStep(4); };
-  const handleRetrain= (log)  => { setRetrainLog(p => [...p, log]); setActiveStep(5); };
+  const handleUpload  = useCallback((data) => { setUploadData(data); setActiveStep(1); }, []);
+  const handleDrift   = useCallback((lvl)  => { setDriftLevel(lvl);  setActiveStep(4); }, []);
+  const handleRetrain = useCallback((log)  => { setRetrainLog(p => [...p, log]); setActiveStep(5); }, []);
 
   return (
     <div style={{ display: "flex" }}>
