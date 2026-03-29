@@ -156,6 +156,10 @@ def run_drift_check():
     preds       = pd.read_parquet(f"{PROCESSED_DIR}/predictions.parquet")
     train       = pd.read_parquet(f"{PROCESSED_DIR}/features.parquet")
 
+    actual["date"] = pd.to_datetime(actual["date"])
+    preds["date"]  = pd.to_datetime(preds["date"])
+    train["date"]  = pd.to_datetime(train["date"])
+
     _EMPTY = {"ks_stat": None, "psi": None, "mae": None,
               "error_level": None, "drift_score": None,
               "feature_drift": {}, "level": "unknown"}
@@ -164,12 +168,16 @@ def run_drift_check():
         logger.warning("⚠️ Missing sales or yhat column")
         return _EMPTY
 
-    # Fix 2: align actual + predictions by id + date before any comparison
-    merged = actual[["id", "date", "sales"]].merge(
-        preds[["id", "date", "yhat"]], on=["id", "date"], how="inner"
-    )
+    # Fix 2: align actual + predictions by id + date
+    # Normalise id — strip _validation suffix if present so both sides match
+    actual_clean = actual[["id", "date", "sales"]].copy()
+    preds_clean  = preds[["id", "date", "yhat"]].copy()
+    actual_clean["id"] = actual_clean["id"].str.replace("_validation$", "", regex=True)
+    preds_clean["id"]  = preds_clean["id"].str.replace("_validation$", "", regex=True)
+
+    merged = actual_clean.merge(preds_clean, on=["id", "date"], how="inner")
     if len(merged) == 0:
-        logger.warning("⚠️ No matching (id, date) rows between actual and predictions")
+        logger.warning("⚠️ No matching (id, date) rows between actual and predictions — check id format or date range")
         return _EMPTY
 
     actual_sales = merged["sales"].values
