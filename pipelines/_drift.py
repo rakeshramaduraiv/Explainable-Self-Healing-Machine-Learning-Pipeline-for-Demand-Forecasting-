@@ -12,7 +12,8 @@ REPORT_DIR     = os.path.join(os.path.dirname(os.path.dirname(__file__)), "repor
 DRIFT_LOG      = os.path.join(REPORT_DIR, "drift_history.csv")
 SCHEMA_PATH    = os.path.join(MODEL_DIR, "feature_schema.pkl")
 DRIFT_FEATURES = ["sell_price", "lag_7", "lag_28", "rmean_7", "rmean_28"]
-MIN_SAMPLES    = 50   # Fix 7: minimum rows for reliable drift
+MIN_SAMPLES    = 50
+MIN_UPLOAD_ROWS = 1_000  # minimum rows for reliable drift detection
 
 
 # ── Feature Schema ────────────────────────────────────────
@@ -190,11 +191,26 @@ def run_drift_check():
 
     logger.info(f"Aligned rows: {len(merged):,} | actual_sales: {len(actual_sales)} | pred_sales: {len(pred_sales)}")
 
-    # Fix 4: PSI averaged across key features (not just sales)
-    # Fix 3: use actual_month_features for feature drift (has lag/price cols)
+    # Feature consistency check — actual features must match training schema
     actual_feat_path = f"{PROCESSED_DIR}/actual_month_features.parquet"
     if os.path.exists(actual_feat_path):
         actual_feat = pd.read_parquet(actual_feat_path)
+
+        # Guard: empty feature output means feature generation failed
+        if actual_feat.empty:
+            logger.error("❌ actual_month_features.parquet is empty — feature generation failed")
+            return _EMPTY
+
+        # Guard: feature columns must match training schema
+        expected_schema = load_feature_schema()
+        if expected_schema is not None:
+            feat_cols   = [c for c in actual_feat.columns if c not in {"id", "date", "sales"}]
+            missing_fc  = set(expected_schema) - set(feat_cols)
+            extra_fc    = set(feat_cols) - set(expected_schema)
+            if missing_fc or extra_fc:
+                logger.error(f"❌ Feature schema mismatch in actual_month_features — missing: {missing_fc} | extra: {extra_fc}")
+                return _EMPTY
+
         psi_values  = []
         for col in DRIFT_FEATURES:
             if col in train.columns and col in actual_feat.columns:

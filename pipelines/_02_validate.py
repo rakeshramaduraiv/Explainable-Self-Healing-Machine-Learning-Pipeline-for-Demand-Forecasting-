@@ -58,6 +58,10 @@ def validate_data():
 def validate_upload(actual_df, reference_ids):
     errors = []
 
+    # Minimum upload size — too few rows makes drift metrics meaningless
+    if len(actual_df) < 1_000:
+        errors.append(f"Upload has only {len(actual_df):,} rows — minimum 1,000 required for reliable drift detection")
+
     # Fix 7: type check before anything else
     if not pd.api.types.is_numeric_dtype(actual_df["sales"]):
         errors.append("Sales column must be numeric")

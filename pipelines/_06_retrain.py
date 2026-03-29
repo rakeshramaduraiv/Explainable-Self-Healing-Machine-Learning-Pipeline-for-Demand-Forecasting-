@@ -13,6 +13,7 @@ REPORT_DIR          = os.path.join(os.path.dirname(os.path.dirname(__file__)), "
 WINDOW_MONTHS       = 6
 MAX_TREES           = 1500
 MAX_FINE_TUNE_ROUNDS = 3
+MAX_MODEL_VERSIONS   = 5   # keep only the last N versioned model files
 META_PATH           = os.path.join(MODEL_DIR, "meta.json")
 
 
@@ -101,6 +102,16 @@ def _save_version(model, metrics, X_cols, label):
     }
     with open(os.path.join(MODEL_DIR, "metadata.json"), "w") as f:
         json.dump(meta, f, indent=2)
+
+    # Keep only the last MAX_MODEL_VERSIONS versioned files — delete oldest
+    versioned = sorted([
+        f for f in os.listdir(MODEL_DIR)
+        if f.startswith("model_") and f.endswith(".pkl") and f not in {"model.pkl", "model_backup.pkl"}
+    ])
+    for old in versioned[:-MAX_MODEL_VERSIONS]:
+        os.remove(os.path.join(MODEL_DIR, old))
+        logger.info(f"🗑️ Old model version removed → {old}")
+
     logger.info(f"✅ Model version saved → {ver_path}")
 
 
