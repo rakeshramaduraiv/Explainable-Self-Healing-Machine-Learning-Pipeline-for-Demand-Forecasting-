@@ -19,7 +19,8 @@ REPORT_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file
 
 st.set_page_config(page_title="Demand Forecasting", layout="wide", page_icon="📦")
 
-for _key in ["drift_level", "actual_df", "data_ready", "ks_stat", "psi"]:
+for _key in ["drift_level", "actual_df", "data_ready", "ks_stat", "psi",
+             "drift_result", "model_updated", "forecast_df"]:
     if _key not in st.session_state:
         st.session_state[_key] = None
 
@@ -42,17 +43,23 @@ with st.sidebar:
 
     _drift_path = os.path.join(REPORT_DIR, "latest_drift.json")
     if os.path.exists(_drift_path):
-        with open(_drift_path) as _f:
-            _d = json.load(_f)
-        _lvl   = _d.get("level", "?")
-        _color = {"low": "🟢", "medium": "🟡", "high": "🔴"}.get(_lvl, "⚪")
-        st.markdown(f"Last drift: {_color} **{_lvl.upper()}**")
+        try:
+            with open(_drift_path) as _f:
+                _d = json.load(_f)
+            _lvl   = _d.get("level", "?")
+            _color = {"low": "🟢", "medium": "🟡", "high": "🔴"}.get(_lvl, "⚪")
+            st.markdown(f"Last drift: {_color} **{_lvl.upper()}**")
+        except (json.JSONDecodeError, OSError) as _je:
+            st.caption(f"Drift status unavailable: {_je}")
 
     _meta_path = os.path.join(MODEL_DIR, "metadata.json")
     if os.path.exists(_meta_path):
-        with open(_meta_path) as _f:
-            _m = json.load(_f)
-        st.caption(f"Model: `{_m.get('version','?')}` | RMSE: {_m.get('rmse','?')}")
+        try:
+            with open(_meta_path) as _f:
+                _m = json.load(_f)
+            st.caption(f"Model: `{_m.get('version','?')}` | RMSE: {_m.get('rmse','?')}")
+        except (json.JSONDecodeError, OSError) as _me:
+            st.caption(f"Model metadata unavailable: {_me}")
 
 st.title("📦 Real-Time Demand Forecasting Dashboard")
 
@@ -71,15 +78,18 @@ if _missing:
 
 # Auto-bootstrap encoders.pkl if missing
 if not os.path.exists(os.path.join(PROCESSED_DIR, "encoders.pkl")):
-    with st.spinner("Bootstrapping encoders from training data..."):
-        bootstrap_encoders()
-    st.success("✅ Encoders initialised")
+    try:
+        with st.spinner("Bootstrapping encoders from training data..."):
+            bootstrap_encoders()
+        st.success("✅ Encoders initialised")
+    except Exception as _be:
+        st.error(f"❌ Encoder bootstrap failed: {_be}")
+        st.stop()
 
 # ─────────────────────────────────────────────
 # SECTION 1: Upload Actual Month Data
 # ─────────────────────────────────────────────
 
-# Expected month note — shown above the uploader
 try:
     _ey, _em = get_expected_upload_month()
     st.info(
@@ -122,7 +132,13 @@ COLS_14 = ["item_id","dept_id","cat_id","store_id","state_id",
 uploaded = st.file_uploader("Upload CSV", type=["csv"])
 
 if uploaded:
-    actual_df = pd.read_csv(uploaded, parse_dates=["date"])
+    try:
+        actual_df = pd.read_csv(uploaded)
+    except (pd.errors.ParserError, pd.errors.EmptyDataError) as _csv_e:
+        st.error(f"❌ Invalid CSV file: {_csv_e}")
+        st.stop()
+
+    actual_df["date"] = pd.to_datetime(actual_df["date"], errors="coerce")
 
     if actual_df["date"].isna().any():
         st.error("Invalid date format. Use YYYY-MM-DD.")
@@ -183,7 +199,6 @@ if uploaded:
                 st.error(f"❌ {e}")
             st.stop()
 
-        # Enforce upload sequence — must be the next expected month
         try:
             validate_upload_month(actual_df)
         except ValueError as _e:
@@ -207,35 +222,41 @@ if st.session_state["actual_df"] is not None:
     pred_path_hist = f"{PROCESSED_DIR}/predictions.parquet"
     if os.path.exists(pred_path_hist):
         st.subheader("📊 Actual vs Predicted (Uploaded Month)")
-        preds_hist         = pd.read_parquet(pred_path_hist)
-        preds_hist["date"] = pd.to_datetime(preds_hist["date"])
-        preds_hist["id"]   = preds_hist["id"].str.replace("_validation$", "", regex=True)
-        actual_cmp         = actual_df.copy()
-        actual_cmp["id"]   = actual_cmp["id"].str.replace("_validation$", "", regex=True)
-        actual_cmp["date"] = pd.to_datetime(actual_cmp["date"])
+        try:
+            preds_hist = pd.read_parquet(pred_path_hist)
+        except (OSError, Exception) as _ph_e:
+            st.warning(f"Could not load predictions for comparison: {_ph_e}")
+            preds_hist = None
+        if preds_hist is not None and "yhat" in preds_hist.columns:
+            preds_hist["date"] = pd.to_datetime(preds_hist["date"])
+            preds_hist["id"]   = preds_hist["id"].str.replace("_validation$", "", regex=True)
+            actual_cmp         = actual_df.copy()
+            actual_cmp["id"]   = actual_cmp["id"].str.replace("_validation$", "", regex=True)
+            actual_cmp["date"] = pd.to_datetime(actual_cmp["date"])
 
-        merged_cmp = actual_cmp.merge(preds_hist, on=["id", "date"], how="inner")
-        if len(merged_cmp) > 100:
-            daily_cmp = (
-                merged_cmp.groupby("date")
-                .agg(actual=("sales", "sum"), predicted=("yhat", "sum"))
-                .reset_index()
-            )
-            fig_cmp, ax_cmp = plt.subplots(figsize=(10, 3))
-            ax_cmp.plot(daily_cmp["date"], daily_cmp["actual"],    label="Actual",    color="tab:blue",   linewidth=2)
-            ax_cmp.plot(daily_cmp["date"], daily_cmp["predicted"], label="Predicted", color="tab:orange", linewidth=2, linestyle="--")
-            ax_cmp.fill_between(daily_cmp["date"], daily_cmp["actual"], daily_cmp["predicted"], alpha=0.12, color="red")
-            ax_cmp.set_title("Actual vs Predicted — Uploaded Month")
-            ax_cmp.legend(); plt.xticks(rotation=30)
-            st.pyplot(fig_cmp)
+            merged_cmp = actual_cmp.merge(preds_hist, on=["id", "date"], how="inner")
+            if len(merged_cmp) > 100:
+                daily_cmp = (
+                    merged_cmp.groupby("date")
+                    .agg(actual=("sales", "sum"), predicted=("yhat", "sum"))
+                    .reset_index()
+                )
+                fig_cmp, ax_cmp = plt.subplots(figsize=(10, 3))
+                ax_cmp.plot(daily_cmp["date"], daily_cmp["actual"],    label="Actual",    color="tab:blue",   linewidth=2)
+                ax_cmp.plot(daily_cmp["date"], daily_cmp["predicted"], label="Predicted", color="tab:orange", linewidth=2, linestyle="--")
+                ax_cmp.fill_between(daily_cmp["date"], daily_cmp["actual"], daily_cmp["predicted"], alpha=0.12, color="red")
+                ax_cmp.set_title("Actual vs Predicted — Uploaded Month")
+                ax_cmp.legend(); plt.xticks(rotation=30)
+                st.pyplot(fig_cmp)
+                plt.close(fig_cmp)
 
-            _mae_cmp  = np.abs(merged_cmp["sales"] - merged_cmp["yhat"]).mean()
-            _mape_cmp = (np.abs(merged_cmp["sales"] - merged_cmp["yhat"]) / (merged_cmp["sales"] + 1)).mean() * 100
-            c1, c2 = st.columns(2)
-            c1.metric("MAE (this month)",  f"{_mae_cmp:.2f}")
-            c2.metric("MAPE (this month)", f"{_mape_cmp:.1f}%")
-        else:
-            st.info("Not enough overlapping rows between upload and predictions to compare.")
+                _mae_cmp  = np.abs(merged_cmp["sales"] - merged_cmp["yhat"]).mean()
+                _mape_cmp = (np.abs(merged_cmp["sales"] - merged_cmp["yhat"]) / (merged_cmp["sales"] + 1)).mean() * 100
+                c1, c2 = st.columns(2)
+                c1.metric("MAE (this month)",  f"{_mae_cmp:.2f}")
+                c2.metric("MAPE (this month)", f"{_mape_cmp:.1f}%")
+            else:
+                st.info("Not enough overlapping rows between upload and predictions to compare.")
 
     # ─────────────────────────────────────────────
     # SECTION 2: Drift Detection
@@ -248,19 +269,33 @@ if st.session_state["actual_df"] is not None:
         st.stop()
 
     if st.button("▶ Run Drift Check"):
-        # Feature engineering must run before drift — actual_month_features.parquet required
-        with st.spinner("Engineering features for new data..."):
-            create_features_for_new_data(actual_df)
-        with st.spinner("Running drift analysis (KS + PSI + Error-Based)..."):
-            result = run_drift_check()
+        try:
+            with st.spinner("Engineering features for new data..."):
+                create_features_for_new_data(actual_df)
+        except Exception as _fe:
+            st.error(f"❌ Feature engineering failed: {_fe}")
+            st.stop()
 
-        ks          = result.get("ks_stat")
-        psi         = result.get("psi")
-        mae_val     = result.get("mae")
-        error_level = result.get("error_level", "N/A")
-        drift_score = result.get("drift_score")
-        feat_drift  = result.get("feature_drift", {})
-        level       = result.get("level", "unknown")
+        try:
+            with st.spinner("Running drift analysis (KS + PSI + Error-Based)..."):
+                result = run_drift_check()
+            st.session_state["drift_result"] = result
+            st.session_state["drift_level"]  = result.get("level", "unknown")
+            st.session_state["ks_stat"]      = result.get("ks_stat")
+            st.session_state["psi"]          = result.get("psi")
+        except Exception as _de:
+            st.error(f"❌ Drift check failed: {_de}")
+            st.stop()
+
+    # ── Drift results — rendered from session_state, persist across reruns ──
+    _dr = st.session_state.get("drift_result") or {}
+    if _dr:
+        ks          = _dr.get("ks_stat")
+        psi         = _dr.get("psi")
+        mae_val     = _dr.get("mae")
+        error_level = _dr.get("error_level", "N/A")
+        drift_score = _dr.get("drift_score")
+        level       = _dr.get("level", "unknown")
 
         col1, col2, col3, col4, col5 = st.columns(5)
         col1.metric("KS Statistic",  f"{ks:.4f}"          if ks          is not None else "N/A", help="Concept Drift")
@@ -269,7 +304,7 @@ if st.session_state["actual_df"] is not None:
         col4.metric("Drift Score",   f"{drift_score:.4f}" if drift_score is not None else "N/A", help="Weighted: 0.35×PSI + 0.35×KS + 0.30×Error")
         col5.metric("Final Decision", level.upper())
 
-        if ks is not None:
+        if ks is not None and psi is not None:
             color = {"low": "green", "medium": "orange", "high": "red"}.get(level, "gray")
             fig, axes = plt.subplots(1, 3, figsize=(13, 1.2))
 
@@ -292,21 +327,27 @@ if st.session_state["actual_df"] is not None:
             axes[2].set_xlim(0, 1); axes[2].set_yticks([])
             axes[2].set_title(f"Error = {str(error_level).upper()}"); axes[2].legend(fontsize=7)
             st.pyplot(fig)
+            plt.close(fig)
 
-        # Feature-wise PSI table
-        if feat_drift:
+        # Feature-wise PSI table — always from session_state, no local variable dependency
+        _feat_drift = _dr.get("feature_drift", {})
+        if _feat_drift:
             st.markdown("**Feature-wise PSI**")
-            fd_df = pd.DataFrame(feat_drift.items(), columns=["Feature", "PSI"])
+            fd_df = pd.DataFrame(_feat_drift.items(), columns=["Feature", "PSI"])
             fd_df["Status"] = fd_df["PSI"].apply(
                 lambda x: "🟢 Stable" if x < 0.1 else ("🟡 Moderate" if x < 0.25 else "🔴 High")
             )
             st.dataframe(fd_df, use_container_width=True)
 
-        # Drift history chart
+        # Drift history chart — outside button block, always visible after first run
         drift_log = os.path.join(REPORT_DIR, "drift_history.csv")
         if os.path.exists(drift_log):
             st.markdown("**Drift History**")
-            dh = pd.read_csv(drift_log)
+            try:
+                dh = pd.read_csv(drift_log)
+            except (OSError, pd.errors.ParserError) as _dh_e:
+                st.caption(f"Drift history unavailable: {_dh_e}")
+                dh = pd.DataFrame()
             if len(dh) > 1:
                 fig_h, ax_h = plt.subplots(figsize=(10, 2.5))
                 ax_h.plot(dh["date"], dh["psi"],         label="PSI",         marker="o")
@@ -317,7 +358,9 @@ if st.session_state["actual_df"] is not None:
                 ax_h.set_title("Drift Metrics Over Time")
                 ax_h.legend(fontsize=8); plt.xticks(rotation=30)
                 st.pyplot(fig_h)
+                plt.close(fig_h)
 
+        # Drift verdict banner — always visible after first run — always visible after first run
         if level == "low":
             st.success("✅ LOW drift — model is stable.")
         elif level == "medium":
@@ -326,10 +369,6 @@ if st.session_state["actual_df"] is not None:
             st.error("🚨 HIGH drift — sliding window retrain required.")
         else:
             st.warning("Could not compute drift — check that sales data is valid.")
-
-        st.session_state["drift_level"] = level
-        st.session_state["ks_stat"]     = ks
-        st.session_state["psi"]         = psi
 
     # ─────────────────────────────────────────────
     # SECTION 3: Model Update
@@ -345,28 +384,40 @@ if st.session_state["actual_df"] is not None:
         elif level == "medium":
             st.warning("⚠️ MEDIUM drift — Fine-tuning recommended.")
             st.markdown("**Fine-tuning** continues training the existing model on new month data.")
-            if st.button("🔧 Fine-Tune Model"):
-                with st.spinner("Fine-tuning model..."):
-                    metrics = fine_tune()
-                st.success("✅ Fine-tuning complete!")
-                c1, c2, c3 = st.columns(3)
-                c1.metric("MAE",  f"{metrics.get('MAE',  0):.4f}")
-                c2.metric("RMSE", f"{metrics.get('RMSE', 0):.4f}")
-                c3.metric("MAPE", f"{metrics.get('MAPE', 0):.4f}")
-                st.session_state["model_updated"] = True
+            if not st.session_state["model_updated"]:
+                if st.button("🔧 Fine-Tune Model"):
+                    try:
+                        with st.spinner("Fine-tuning model..."):
+                            metrics = fine_tune()
+                        st.success("✅ Fine-tuning complete!")
+                        c1, c2, c3 = st.columns(3)
+                        c1.metric("MAE",  f"{metrics.get('MAE',  0):.4f}")
+                        c2.metric("RMSE", f"{metrics.get('RMSE', 0):.4f}")
+                        c3.metric("MAPE", f"{metrics.get('MAPE', 0):.4f}")
+                        st.session_state["model_updated"] = True
+                    except Exception as _fte:
+                        st.error(f"❌ Fine-tune failed: {_fte}")
+            else:
+                st.success("✅ Model already updated this session.")
 
         elif level == "high":
             st.error("🚨 HIGH drift — Sliding Window Retrain required.")
             st.markdown("**Sliding window retrain** rebuilds the model using the last 6 months of data.")
-            if st.button("🔁 Sliding Window Retrain"):
-                with st.spinner("Retraining model with sliding window (last 6 months)..."):
-                    metrics = sliding_window_retrain()
-                st.success("✅ Retrain complete!")
-                c1, c2, c3 = st.columns(3)
-                c1.metric("MAE",  f"{metrics.get('MAE',  0):.4f}")
-                c2.metric("RMSE", f"{metrics.get('RMSE', 0):.4f}")
-                c3.metric("MAPE", f"{metrics.get('MAPE', 0):.4f}")
-                st.session_state["model_updated"] = True
+            if not st.session_state["model_updated"]:
+                if st.button("🔁 Sliding Window Retrain"):
+                    try:
+                        with st.spinner("Retraining model with sliding window (last 6 months)..."):
+                            metrics = sliding_window_retrain()
+                        st.success("✅ Retrain complete!")
+                        c1, c2, c3 = st.columns(3)
+                        c1.metric("MAE",  f"{metrics.get('MAE',  0):.4f}")
+                        c2.metric("RMSE", f"{metrics.get('RMSE', 0):.4f}")
+                        c3.metric("MAPE", f"{metrics.get('MAPE', 0):.4f}")
+                        st.session_state["model_updated"] = True
+                    except Exception as _rte:
+                        st.error(f"❌ Retrain failed: {_rte}")
+            else:
+                st.success("✅ Model already updated this session.")
 
         # ─────────────────────────────────────────────
         # SECTION 4: Predict Next Month
@@ -374,55 +425,80 @@ if st.session_state["actual_df"] is not None:
         st.header("4. Predict Next Month")
 
         if st.button("🔮 Generate Next Month Forecast"):
-            with st.spinner("Generating recursive forecast..."):
-                out_df = predict_next_month()
+            try:
+                with st.spinner("Generating recursive forecast..."):
+                    out_df = predict_next_month()
+                st.session_state["forecast_df"] = out_df
+            except Exception as _pte:
+                st.error(f"❌ Forecast failed: {_pte}")
 
-            st.success(f"✅ Predicted {len(out_df):,} rows for next month.")
-            st.dataframe(out_df.head(20), use_container_width=True)
+        # Render forecast results from session_state — persists across reruns
+        out_df = st.session_state.get("forecast_df")
+        if out_df is not None:
+            _required_cols = {"predicted_sales", "upper", "lower", "date", "id"}
+            if not _required_cols.issubset(out_df.columns):
+                st.error(f"❌ Forecast output missing columns: {_required_cols - set(out_df.columns)}")
+            else:
+                st.success(f"✅ Predicted {len(out_df):,} rows for next month.")
+                st.dataframe(out_df.head(20), use_container_width=True)
 
-            # Aggregated daily chart with confidence band
-            agg = out_df.groupby("date").agg(
-                predicted_sales=("predicted_sales", "sum"),
-                upper=("upper", "sum"),
-                lower=("lower", "sum"),
-            ).reset_index()
-            fig2, ax2 = plt.subplots(figsize=(10, 4))
-            ax2.plot(agg["date"], agg["predicted_sales"], color="tab:blue", linewidth=2, label="Forecast")
-            ax2.fill_between(agg["date"], agg["lower"], agg["upper"], alpha=0.15, color="tab:blue", label="95% CI")
-            ax2.set_title("Next Month — Total Predicted Daily Sales")
-            ax2.set_xlabel("Date"); ax2.set_ylabel("Units")
-            ax2.legend(); plt.xticks(rotation=30)
-            st.pyplot(fig2)
+                try:
+                    agg = out_df.groupby("date").agg(
+                        predicted_sales=("predicted_sales", "sum"),
+                        upper=("upper", "sum"),
+                        lower=("lower", "sum"),
+                    ).reset_index()
+                    fig2, ax2 = plt.subplots(figsize=(10, 4))
+                    ax2.plot(agg["date"], agg["predicted_sales"], color="tab:blue", linewidth=2, label="Forecast")
+                    ax2.fill_between(agg["date"], agg["lower"], agg["upper"], alpha=0.15, color="tab:blue", label="95% CI")
+                    ax2.set_title("Next Month — Total Predicted Daily Sales")
+                    ax2.set_xlabel("Date"); ax2.set_ylabel("Units")
+                    ax2.legend(); plt.xticks(rotation=30)
+                    st.pyplot(fig2)
+                    plt.close(fig2)
+                except Exception as _chart_e:
+                    st.warning(f"Could not render forecast chart: {_chart_e}")
 
-            # Store-level breakdown if store_id available
-            if "store_id" in out_df.columns:
-                st.markdown("**Store-Level Forecast**")
-                store_agg = out_df.groupby("store_id")["predicted_sales"].sum().reset_index().sort_values("predicted_sales", ascending=False)
-                fig3, ax3 = plt.subplots(figsize=(10, 3))
-                ax3.bar(store_agg["store_id"].astype(str), store_agg["predicted_sales"], color="tab:green")
-                ax3.set_title("Total Predicted Sales by Store")
-                ax3.set_xlabel("Store"); ax3.set_ylabel("Units")
-                plt.xticks(rotation=45)
-                st.pyplot(fig3)
+                # Parse store_id from id column
+                try:
+                    out_df["store_id"] = out_df["id"].str.replace("_validation$", "", regex=True).str.rsplit("_", n=2).str[-2]
+                    st.markdown("**Store-Level Forecast**")
+                    store_agg = out_df.groupby("store_id")["predicted_sales"].sum().reset_index().sort_values("predicted_sales", ascending=False)
+                    fig3, ax3 = plt.subplots(figsize=(10, 3))
+                    ax3.bar(store_agg["store_id"].astype(str), store_agg["predicted_sales"], color="tab:green")
+                    ax3.set_title("Total Predicted Sales by Store")
+                    ax3.set_xlabel("Store"); ax3.set_ylabel("Units")
+                    plt.xticks(rotation=45)
+                    st.pyplot(fig3)
+                    plt.close(fig3)
+                except Exception as _store_e:
+                    st.warning(f"Could not render store chart: {_store_e}")
 
-            csv = out_df.to_csv(index=False).encode("utf-8")
-            st.download_button(
-                label="⬇️ Download Predictions as CSV",
-                data=csv,
-                file_name=f"next_month_predictions_{out_df['date'].min().date()}.csv",
-                mime="text/csv"
-            )
+                try:
+                    csv = out_df.to_csv(index=False).encode("utf-8")
+                    st.download_button(
+                        label="⬇️ Download Predictions as CSV",
+                        data=csv,
+                        file_name=f"next_month_predictions_{out_df['date'].min().date()}.csv",
+                        mime="text/csv"
+                    )
+                except Exception as _dl_e:
+                    st.warning(f"Download unavailable: {_dl_e}")
 
 else:
     st.info("👆 Upload the actual month CSV to get started.")
 
     pred_path = f"{PROCESSED_DIR}/predictions.parquet"
     if os.path.exists(pred_path):
-        st.subheader("Last Known Predictions")
-        df  = pd.read_parquet(pred_path)
-        agg = df.groupby("date")["yhat"].sum().reset_index()
-        fig, ax = plt.subplots(figsize=(10, 3))
-        ax.plot(agg["date"], agg["yhat"], color="tab:orange")
-        ax.set_title("Aggregated Predicted Sales (Last Run)")
-        ax.set_xlabel("Date"); ax.set_ylabel("Units")
-        st.pyplot(fig)
+        try:
+            st.subheader("Last Known Predictions")
+            df  = pd.read_parquet(pred_path)
+            agg = df.groupby("date")["yhat"].sum().reset_index()
+            fig, ax = plt.subplots(figsize=(10, 3))
+            ax.plot(agg["date"], agg["yhat"], color="tab:orange")
+            ax.set_title("Aggregated Predicted Sales (Last Run)")
+            ax.set_xlabel("Date"); ax.set_ylabel("Units")
+            st.pyplot(fig)
+            plt.close(fig)
+        except (OSError, KeyError) as _pred_e:
+            st.warning(f"Could not load last predictions: {_pred_e}")
