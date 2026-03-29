@@ -31,14 +31,14 @@ with st.sidebar:
         _max  = pd.to_datetime(_feat["date"]).max()
         st.success(f"✅ Data up to: **{_max.date()}**")
         del _feat
-    except Exception:
-        st.error("❌ No feature data found")
+    except (FileNotFoundError, OSError, KeyError) as _e:
+        st.error(f"❌ No feature data found: {_e}")
 
     try:
         _ey, _em = get_expected_upload_month()
         st.info(f"📅 Next upload: **{cal.month_name[_em]} {_ey}**")
-    except Exception:
-        pass
+    except (FileNotFoundError, OSError, ValueError) as _e:
+        st.caption(f"Expected upload month unavailable: {_e}")
 
     _drift_path = os.path.join(REPORT_DIR, "latest_drift.json")
     if os.path.exists(_drift_path):
@@ -86,8 +86,8 @@ try:
         f"📅 **Upload required:** Actual sales for **{cal.month_name[_em]} {_ey}**  \n"
         f"The model has predicted this month. Upload the real sales to continue the forecast cycle."
     )
-except Exception:
-    pass
+except (FileNotFoundError, OSError, ValueError) as _note_e:
+    st.caption(f"Expected upload month unavailable: {_note_e}")
 
 st.header("1. Upload Actual Month Data")
 
@@ -175,8 +175,8 @@ if uploaded:
         ref_ids = None
         try:
             ref_ids = pd.read_parquet(f"{PROCESSED_DIR}/features.parquet")["id"].unique()
-        except Exception:
-            pass
+        except (FileNotFoundError, OSError) as _ref_e:
+            st.warning(f"⚠️ Could not load reference IDs for SKU validation: {_ref_e}")
         upload_errors = validate_upload(actual_df, ref_ids)
         if upload_errors:
             for e in upload_errors:
