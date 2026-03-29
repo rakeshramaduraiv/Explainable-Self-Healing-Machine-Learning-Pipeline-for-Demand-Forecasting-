@@ -1,5 +1,7 @@
 import os
 import sys
+import json
+import calendar as cal
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -11,7 +13,7 @@ from pipelines.utils import PROCESSED_DIR, MODEL_DIR
 from pipelines._drift import run_drift_check
 from pipelines._06_retrain import fine_tune, sliding_window_retrain, predict_next_month
 from pipelines._03_features import create_features_for_new_data, bootstrap_encoders
-from pipelines._02_validate import validate_upload
+from pipelines._02_validate import validate_upload, validate_upload_month, get_expected_upload_month
 
 REPORT_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "reports")
 
@@ -21,9 +23,40 @@ for _key in ["drift_level", "actual_df", "data_ready", "ks_stat", "psi"]:
     if _key not in st.session_state:
         st.session_state[_key] = None
 
+# ── Sidebar: Pipeline Status ──────────────────────────────
+with st.sidebar:
+    st.markdown("### 🔄 Pipeline Status")
+    try:
+        _feat = pd.read_parquet(os.path.join(PROCESSED_DIR, "features.parquet"))
+        _max  = pd.to_datetime(_feat["date"]).max()
+        st.success(f"✅ Data up to: **{_max.date()}**")
+        del _feat
+    except Exception:
+        st.error("❌ No feature data found")
+
+    try:
+        _ey, _em = get_expected_upload_month()
+        st.info(f"📅 Next upload: **{cal.month_name[_em]} {_ey}**")
+    except Exception:
+        pass
+
+    _drift_path = os.path.join(REPORT_DIR, "latest_drift.json")
+    if os.path.exists(_drift_path):
+        with open(_drift_path) as _f:
+            _d = json.load(_f)
+        _lvl   = _d.get("level", "?")
+        _color = {"low": "🟢", "medium": "🟡", "high": "🔴"}.get(_lvl, "⚪")
+        st.markdown(f"Last drift: {_color} **{_lvl.upper()}**")
+
+    _meta_path = os.path.join(MODEL_DIR, "metadata.json")
+    if os.path.exists(_meta_path):
+        with open(_meta_path) as _f:
+            _m = json.load(_f)
+        st.caption(f"Model: `{_m.get('version','?')}` | RMSE: {_m.get('rmse','?')}")
+
 st.title("📦 Real-Time Demand Forecasting Dashboard")
 
-# ── System init check (Fix 3) ─────────────────────────────
+# ── System init check ─────────────────────────────────────
 _required = {
     "Model":          os.path.join(MODEL_DIR,     "model.pkl"),
     "Features":       os.path.join(PROCESSED_DIR, "features.parquet"),
@@ -36,7 +69,7 @@ if _missing:
     st.info("Run the training pipeline first: `python pipelines/flow.py`")
     st.stop()
 
-# Auto-bootstrap encoders.pkl if missing (Fix 2)
+# Auto-bootstrap encoders.pkl if missing
 if not os.path.exists(os.path.join(PROCESSED_DIR, "encoders.pkl")):
     with st.spinner("Bootstrapping encoders from training data..."):
         bootstrap_encoders()
@@ -45,6 +78,17 @@ if not os.path.exists(os.path.join(PROCESSED_DIR, "encoders.pkl")):
 # ─────────────────────────────────────────────
 # SECTION 1: Upload Actual Month Data
 # ─────────────────────────────────────────────
+
+# Expected month note — shown above the uploader
+try:
+    _ey, _em = get_expected_upload_month()
+    st.info(
+        f"📅 **Upload required:** Actual sales for **{cal.month_name[_em]} {_ey}**  \n"
+        f"The model has predicted this month. Upload the real sales to continue the forecast cycle."
+    )
+except Exception:
+    pass
+
 st.header("1. Upload Actual Month Data")
 
 upload_mode = st.radio(
@@ -127,7 +171,6 @@ if uploaded:
     col3.metric("Date Range", f"{actual_df['date'].min().date()} to {actual_df['date'].max().date()}")
     st.dataframe(actual_df.head(10), use_container_width=True)
 
-    # Upgrade A: ID integrity + upload validation
     if "sales" in actual_df.columns and len(actual_df) > 0:
         ref_ids = None
         try:
@@ -139,6 +182,14 @@ if uploaded:
             for e in upload_errors:
                 st.error(f"❌ {e}")
             st.stop()
+
+        # Enforce upload sequence — must be the next expected month
+        try:
+            validate_upload_month(actual_df)
+        except ValueError as _e:
+            st.error(f"❌ {_e}")
+            st.stop()
+
         actual_df.to_parquet(f"{PROCESSED_DIR}/actual_month.parquet", index=False)
         st.session_state["actual_df"]  = actual_df
         st.session_state["data_ready"] = True
@@ -151,6 +202,42 @@ if st.session_state["actual_df"] is not None:
     actual_df = st.session_state["actual_df"]
 
     # ─────────────────────────────────────────────
+    # SECTION 1b: Actual vs Predicted Analysis
+    # ─────────────────────────────────────────────
+    pred_path_hist = f"{PROCESSED_DIR}/predictions.parquet"
+    if os.path.exists(pred_path_hist):
+        st.subheader("📊 Actual vs Predicted (Uploaded Month)")
+        preds_hist         = pd.read_parquet(pred_path_hist)
+        preds_hist["date"] = pd.to_datetime(preds_hist["date"])
+        preds_hist["id"]   = preds_hist["id"].str.replace("_validation$", "", regex=True)
+        actual_cmp         = actual_df.copy()
+        actual_cmp["id"]   = actual_cmp["id"].str.replace("_validation$", "", regex=True)
+        actual_cmp["date"] = pd.to_datetime(actual_cmp["date"])
+
+        merged_cmp = actual_cmp.merge(preds_hist, on=["id", "date"], how="inner")
+        if len(merged_cmp) > 100:
+            daily_cmp = (
+                merged_cmp.groupby("date")
+                .agg(actual=("sales", "sum"), predicted=("yhat", "sum"))
+                .reset_index()
+            )
+            fig_cmp, ax_cmp = plt.subplots(figsize=(10, 3))
+            ax_cmp.plot(daily_cmp["date"], daily_cmp["actual"],    label="Actual",    color="tab:blue",   linewidth=2)
+            ax_cmp.plot(daily_cmp["date"], daily_cmp["predicted"], label="Predicted", color="tab:orange", linewidth=2, linestyle="--")
+            ax_cmp.fill_between(daily_cmp["date"], daily_cmp["actual"], daily_cmp["predicted"], alpha=0.12, color="red")
+            ax_cmp.set_title("Actual vs Predicted — Uploaded Month")
+            ax_cmp.legend(); plt.xticks(rotation=30)
+            st.pyplot(fig_cmp)
+
+            _mae_cmp  = np.abs(merged_cmp["sales"] - merged_cmp["yhat"]).mean()
+            _mape_cmp = (np.abs(merged_cmp["sales"] - merged_cmp["yhat"]) / (merged_cmp["sales"] + 1)).mean() * 100
+            c1, c2 = st.columns(2)
+            c1.metric("MAE (this month)",  f"{_mae_cmp:.2f}")
+            c2.metric("MAPE (this month)", f"{_mape_cmp:.1f}%")
+        else:
+            st.info("Not enough overlapping rows between upload and predictions to compare.")
+
+    # ─────────────────────────────────────────────
     # SECTION 2: Drift Detection
     # ─────────────────────────────────────────────
     st.header("2. Drift Detection")
@@ -161,6 +248,9 @@ if st.session_state["actual_df"] is not None:
         st.stop()
 
     if st.button("▶ Run Drift Check"):
+        # Feature engineering must run before drift — actual_month_features.parquet required
+        with st.spinner("Engineering features for new data..."):
+            create_features_for_new_data(actual_df)
         with st.spinner("Running drift analysis (KS + PSI + Error-Based)..."):
             result = run_drift_check()
 
@@ -172,12 +262,11 @@ if st.session_state["actual_df"] is not None:
         feat_drift  = result.get("feature_drift", {})
         level       = result.get("level", "unknown")
 
-        # Upgrade C: 5 metric cards including weighted drift score
         col1, col2, col3, col4, col5 = st.columns(5)
         col1.metric("KS Statistic",  f"{ks:.4f}"          if ks          is not None else "N/A", help="Concept Drift")
         col2.metric("PSI",           f"{psi:.4f}"         if psi         is not None else "N/A", help="Data Drift")
         col3.metric("Current MAE",   f"{mae_val:.4f}"     if mae_val     is not None else "N/A", help="Error-Based Drift")
-        col4.metric("Drift Score",   f"{drift_score:.4f}" if drift_score is not None else "N/A", help="Weighted: 0.4×PSI + 0.3×KS + 0.3×Error")
+        col4.metric("Drift Score",   f"{drift_score:.4f}" if drift_score is not None else "N/A", help="Weighted: 0.35×PSI + 0.35×KS + 0.30×Error")
         col5.metric("Final Decision", level.upper())
 
         if ks is not None:
@@ -213,7 +302,7 @@ if st.session_state["actual_df"] is not None:
             )
             st.dataframe(fd_df, use_container_width=True)
 
-        # Upgrade F: Drift history chart
+        # Drift history chart
         drift_log = os.path.join(REPORT_DIR, "drift_history.csv")
         if os.path.exists(drift_log):
             st.markdown("**Drift History**")
@@ -257,8 +346,6 @@ if st.session_state["actual_df"] is not None:
             st.warning("⚠️ MEDIUM drift — Fine-tuning recommended.")
             st.markdown("**Fine-tuning** continues training the existing model on new month data.")
             if st.button("🔧 Fine-Tune Model"):
-                with st.spinner("Engineering features for new data..."):
-                    create_features_for_new_data(actual_df)
                 with st.spinner("Fine-tuning model..."):
                     metrics = fine_tune()
                 st.success("✅ Fine-tuning complete!")
@@ -272,8 +359,6 @@ if st.session_state["actual_df"] is not None:
             st.error("🚨 HIGH drift — Sliding Window Retrain required.")
             st.markdown("**Sliding window retrain** rebuilds the model using the last 6 months of data.")
             if st.button("🔁 Sliding Window Retrain"):
-                with st.spinner("Engineering features for new data..."):
-                    create_features_for_new_data(actual_df)
                 with st.spinner("Retraining model with sliding window (last 6 months)..."):
                     metrics = sliding_window_retrain()
                 st.success("✅ Retrain complete!")
@@ -295,15 +380,21 @@ if st.session_state["actual_df"] is not None:
             st.success(f"✅ Predicted {len(out_df):,} rows for next month.")
             st.dataframe(out_df.head(20), use_container_width=True)
 
-            # Aggregated daily chart
-            agg = out_df.groupby("date")["predicted_sales"].sum().reset_index()
+            # Aggregated daily chart with confidence band
+            agg = out_df.groupby("date").agg(
+                predicted_sales=("predicted_sales", "sum"),
+                upper=("upper", "sum"),
+                lower=("lower", "sum"),
+            ).reset_index()
             fig2, ax2 = plt.subplots(figsize=(10, 4))
-            ax2.plot(agg["date"], agg["predicted_sales"], color="tab:blue", linewidth=2)
+            ax2.plot(agg["date"], agg["predicted_sales"], color="tab:blue", linewidth=2, label="Forecast")
+            ax2.fill_between(agg["date"], agg["lower"], agg["upper"], alpha=0.15, color="tab:blue", label="95% CI")
             ax2.set_title("Next Month — Total Predicted Daily Sales")
             ax2.set_xlabel("Date"); ax2.set_ylabel("Units")
+            ax2.legend(); plt.xticks(rotation=30)
             st.pyplot(fig2)
 
-            # Upgrade F: store-level breakdown if store_id available
+            # Store-level breakdown if store_id available
             if "store_id" in out_df.columns:
                 st.markdown("**Store-Level Forecast**")
                 store_agg = out_df.groupby("store_id")["predicted_sales"].sum().reset_index().sort_values("predicted_sales", ascending=False)

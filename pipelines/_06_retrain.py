@@ -7,7 +7,7 @@ import joblib
 import shutil
 import json
 import os
-from datetime import date
+from datetime import date, datetime
 
 REPORT_DIR          = os.path.join(os.path.dirname(os.path.dirname(__file__)), "reports")
 WINDOW_MONTHS       = 6
@@ -89,7 +89,7 @@ def _update_predictions(model, df):
 
 
 def _save_version(model, metrics, X_cols, label):
-    version  = f"{label}_{date.today()}"
+    version  = f"{label}_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
     ver_path = os.path.join(MODEL_DIR, f"model_{version}.pkl")
     joblib.dump(model, ver_path)
     meta = {
@@ -105,9 +105,11 @@ def _save_version(model, metrics, X_cols, label):
 
 
 def _dual_eval(old_model, new_model, X_new, y_new, df_full, X_cols):
-    val_df = df_full.sort_values("date").tail(30)
-    X_val  = val_df[X_cols]
-    y_val  = val_df["sales"]
+    # Use last full month as validation — tail(30) was only 30 rows across 30K SKUs
+    max_date = df_full["date"].max()
+    val_df   = df_full[df_full["date"] >= max_date - pd.DateOffset(months=1)]
+    X_val    = val_df[X_cols]
+    y_val    = val_df["sales"]
 
     old_new, _ = _eval_metrics(old_model, X_new, y_new)
     new_new, _ = _eval_metrics(new_model, X_new, y_new)
@@ -161,8 +163,10 @@ def fine_tune():
         logger.error("❌ Feature schema mismatch — aborting fine-tune")
         return {}
 
-    recent   = df_full.sort_values("date").tail(int(len(df_full) / df_full["date"].nunique() * 90))
-    train_df = pd.concat([recent, df_new], ignore_index=True).drop_duplicates(["id", "date"])
+    # Date-based 90-day window — tail() row count breaks when dataset size changes
+    cutoff_date = df_full["date"].max() - pd.DateOffset(days=90)
+    recent      = df_full[df_full["date"] >= cutoff_date]
+    train_df    = pd.concat([recent, df_new], ignore_index=True).drop_duplicates(["id", "date"])
 
     X_train    = train_df[X_cols]
     y_train    = train_df["sales"]
@@ -241,8 +245,9 @@ def sliding_window_retrain():
                   callbacks=[lgb.early_stopping(100), lgb.log_evaluation(200)])
     new_metrics, _ = _eval_metrics(new_model, X_va, y_va)
 
-    # regression check on old val slice
-    old_val_df     = df.sort_values("date").tail(30)
+    # regression check on last full month — tail(30) was 30 rows, not 30 days
+    max_date_full  = df["date"].max()
+    old_val_df     = df[df["date"] >= max_date_full - pd.DateOffset(months=1)]
     new_old, _     = _eval_metrics(new_model, old_val_df[X_cols], old_val_df["sales"])
     old_old, _     = _eval_metrics(old_model, old_val_df[X_cols], old_val_df["sales"])
     no_regression  = new_old["RMSE"] <= old_old["RMSE"] * 1.05
@@ -290,15 +295,18 @@ def predict_next_month():
 
     last_known = df.sort_values("date").groupby("id").last().reset_index()
 
-    # Fix 2: pad buffer to exactly 28 entries for every SKU
-    buf = (
-        df.sort_values("date")
-          .groupby("id")
-          .tail(28)[["id", "sales"]]
-          .groupby("id")["sales"]
-          .apply(lambda x: np.pad(x.values, (max(0, 28 - len(x)), 0), constant_values=0.0))
-          .to_dict()
-    )
+    # Per-SKU mean for padding — zero-padding biases lag features downward
+    sku_means = df.groupby("id")["sales"].mean().to_dict()
+
+    buf = {}
+    for id_, grp in df.groupby("id"):
+        vals    = grp.sort_values("date")["sales"].values[-28:]
+        pad_n   = max(0, 28 - len(vals))
+        pad_val = sku_means.get(id_, 0.0)
+        buf[id_] = np.pad(vals, (pad_n, 0), constant_values=pad_val)
+
+    # Per-SKU historical std for confidence intervals
+    sku_std = df.groupby("id")["sales"].std().fillna(0).to_dict()
 
     results = []
 
@@ -342,10 +350,10 @@ def predict_next_month():
         preds = model.predict(X_day).clip(0)
         day_rows["predicted_sales"] = preds
 
-        # Fix 9: confidence interval (±1.96σ across SKUs per day)
-        day_std = preds.std()
-        day_rows["upper"] = (preds + 1.96 * day_std).clip(0)
-        day_rows["lower"] = (preds - 1.96 * day_std).clip(0)
+        # Per-SKU confidence interval using historical sales std
+        per_sku_std       = np.array([sku_std.get(i, 0.0) for i in ids])
+        day_rows["upper"] = (preds + 1.96 * per_sku_std).clip(0)
+        day_rows["lower"] = (preds - 1.96 * per_sku_std).clip(0)
 
         for i, id_ in enumerate(ids):
             buf[id_] = np.append(buf[id_], preds[i])[-28:]

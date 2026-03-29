@@ -1,5 +1,6 @@
 from pipelines.utils import logger, PROCESSED_DIR
 import pandas as pd
+import os
 
 CRITICAL_COLS = ["sales", "date", "id"]
 MIN_SKUS      = 30_000
@@ -99,6 +100,27 @@ def validate_upload(actual_df, reference_ids):
             errors.append(f"{len(unknown):,} unknown SKU IDs not in training data")
 
     return errors
+
+
+def get_expected_upload_month():
+    """Returns (year, month) of the next expected upload based on features.parquet max date."""
+    feat = pd.read_parquet(os.path.join(PROCESSED_DIR, "features.parquet"))
+    max_date = pd.to_datetime(feat["date"]).max()
+    nxt = (max_date + pd.Timedelta(days=1)).replace(day=1)
+    return nxt.year, int(nxt.month)
+
+
+def validate_upload_month(actual_df):
+    """Raises ValueError if uploaded data is not exactly the next expected month."""
+    feat = pd.read_parquet(os.path.join(PROCESSED_DIR, "features.parquet"))
+    max_date = pd.to_datetime(feat["date"]).max()
+    expected_start = (max_date + pd.Timedelta(days=1)).replace(day=1)
+    upload_start   = pd.to_datetime(actual_df["date"]).min().replace(day=1)
+    if upload_start != expected_start:
+        raise ValueError(
+            f"Wrong month uploaded. Expected {expected_start.strftime('%B %Y')}, "
+            f"got {upload_start.strftime('%B %Y')}."
+        )
 
 
 if __name__ == "__main__":
