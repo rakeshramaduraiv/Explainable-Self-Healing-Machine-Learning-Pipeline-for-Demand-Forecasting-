@@ -107,3 +107,84 @@
 2026-03-29 06:10:54,106 | INFO | 🔮 Predicting next month (vectorized recursive)...
 2026-03-29 06:13:13,135 | INFO | 🔮 Predicting next month (vectorized recursive)...
 2026-03-29 06:14:15,521 | INFO | 🔮 Predicting next month (vectorized recursive)...
+2026-03-29 06:15:22,465 | INFO | Aligned rows: 24,800 | actual_sales: 24800 | pred_sales: 24800
+2026-03-29 06:15:23,235 | INFO | 🔥 Top drift features: [('rmean_28', 0.4845), ('rmean_7', 0.2839), ('lag_28', 0.0328)]
+2026-03-29 06:15:23,236 | INFO | 📊 PSI:0.172 | KS:0.0038 | MAE:0.577065 | Score:0.0615 → LOW
+2026-03-29 06:15:23,254 | INFO | 📝 Drift logged → c:\Users\balan\OneDrive\Desktop\forecasting\reports\drift_history.csv
+2026-03-29 06:15:23,286 | WARNING | ⚠️ Continuous drift trend detected (3-run avg > 0.25) — consider full retrain
+2026-03-29 06:15:23,721 | INFO | Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-03-29 06:15:23,722 | INFO | Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-03-29 06:15:23,739 | INFO | Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-03-29 06:15:23,740 | INFO | Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-03-29 06:15:23,743 | INFO | Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-03-29 06:15:23,752 | INFO | Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-03-29 06:15:44,257 | INFO | 🔮 Predicting next month (vectorized recursive)...
+2026-03-29 06:15:50,360 | INFO |   📅 2016-06-01 — 800 SKUs
+2026-03-29 06:15:50,509 | INFO |   📅 2016-06-02 — 800 SKUs
+2026-03-29 06:15:50,645 | INFO |   📅 2016-06-03 — 800 SKUs
+2026-03-29 06:15:50,779 | INFO |   📅 2016-06-04 — 800 SKUs
+2026-03-29 06:15:50,929 | INFO |   📅 2016-06-05 — 800 SKUs
+2026-03-29 06:15:51,073 | INFO |   📅 2016-06-06 — 800 SKUs
+2026-03-29 06:15:51,217 | INFO |   📅 2016-06-07 — 800 SKUs
+2026-03-29 06:15:51,328 | INFO |   📅 2016-06-08 — 800 SKUs
+2026-03-29 06:15:51,448 | INFO |   📅 2016-06-09 — 800 SKUs
+2026-03-29 06:15:51,598 | INFO |   📅 2016-06-10 — 800 SKUs
+2026-03-29 06:15:51,740 | INFO |   📅 2016-06-11 — 800 SKUs
+2026-03-29 06:15:51,859 | INFO |   📅 2016-06-12 — 800 SKUs
+2026-03-29 06:15:52,007 | INFO |   📅 2016-06-13 — 800 SKUs
+2026-03-29 06:15:52,133 | INFO |   📅 2016-06-14 — 800 SKUs
+2026-03-29 06:15:52,264 | INFO |   📅 2016-06-15 — 800 SKUs
+2026-03-29 06:15:52,399 | INFO |   📅 2016-06-16 — 800 SKUs
+2026-03-29 06:15:52,526 | INFO |   📅 2016-06-17 — 800 SKUs
+2026-03-29 06:15:52,657 | INFO |   📅 2016-06-18 — 800 SKUs
+2026-03-29 06:15:52,788 | INFO |   📅 2016-06-19 — 800 SKUs
+2026-03-29 06:15:52,916 | INFO |   📅 2016-06-20 — 800 SKUs
+2026-03-29 06:15:53,040 | INFO |   📅 2016-06-21 — 800 SKUs
+2026-03-29 06:15:53,163 | INFO |   📅 2016-06-22 — 800 SKUs
+2026-03-29 06:15:53,283 | INFO |   📅 2016-06-23 — 800 SKUs
+2026-03-29 06:15:53,440 | INFO |   📅 2016-06-24 — 800 SKUs
+2026-03-29 06:15:53,556 | INFO |   📅 2016-06-25 — 800 SKUs
+2026-03-29 06:15:53,684 | INFO |   📅 2016-06-26 — 800 SKUs
+2026-03-29 06:15:53,834 | INFO |   📅 2016-06-27 — 800 SKUs
+2026-03-29 06:15:54,023 | INFO |   📅 2016-06-28 — 800 SKUs
+2026-03-29 06:15:54,146 | INFO |   📅 2016-06-29 — 800 SKUs
+2026-03-29 06:15:54,313 | INFO |   📅 2016-06-30 — 800 SKUs
+2026-03-29 06:15:54,410 | INFO | ✅ Forecast complete → 24,000 rows | 2016-06-01 → 2016-06-30
+2026-03-29 14:21:20,434 | INFO | Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-03-29 14:21:20,439 | INFO | Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-03-29 14:25:06,002 | INFO | Aligned rows: 24,800 | actual_sales: 24800 | pred_sales: 24800
+2026-03-29 14:25:07,813 | INFO | 🔥 Top drift features: [('rmean_28', 0.4845), ('rmean_7', 0.2839), ('lag_28', 0.0328)]
+2026-03-29 14:25:07,817 | INFO | 📊 PSI:0.172 | KS:0.0038 | MAE:0.577065 | Score:0.0615 → LOW
+2026-03-29 14:25:07,937 | INFO | 📝 Drift logged → c:\Users\balan\OneDrive\Desktop\forecasting\reports\drift_history.csv
+2026-03-29 14:25:39,267 | INFO | 🔮 Predicting next month (vectorized recursive)...
+2026-03-29 14:25:50,616 | INFO |   📅 2016-06-01 — 800 SKUs
+2026-03-29 14:25:50,978 | INFO |   📅 2016-06-02 — 800 SKUs
+2026-03-29 14:25:51,330 | INFO |   📅 2016-06-03 — 800 SKUs
+2026-03-29 14:25:51,681 | INFO |   📅 2016-06-04 — 800 SKUs
+2026-03-29 14:25:52,045 | INFO |   📅 2016-06-05 — 800 SKUs
+2026-03-29 14:25:52,396 | INFO |   📅 2016-06-06 — 800 SKUs
+2026-03-29 14:25:52,717 | INFO |   📅 2016-06-07 — 800 SKUs
+2026-03-29 14:25:53,083 | INFO |   📅 2016-06-08 — 800 SKUs
+2026-03-29 14:25:53,427 | INFO |   📅 2016-06-09 — 800 SKUs
+2026-03-29 14:25:53,764 | INFO |   📅 2016-06-10 — 800 SKUs
+2026-03-29 14:25:54,127 | INFO |   📅 2016-06-11 — 800 SKUs
+2026-03-29 14:25:54,484 | INFO |   📅 2016-06-12 — 800 SKUs
+2026-03-29 14:25:54,832 | INFO |   📅 2016-06-13 — 800 SKUs
+2026-03-29 14:25:55,180 | INFO |   📅 2016-06-14 — 800 SKUs
+2026-03-29 14:25:55,520 | INFO |   📅 2016-06-15 — 800 SKUs
+2026-03-29 14:25:55,883 | INFO |   📅 2016-06-16 — 800 SKUs
+2026-03-29 14:25:56,243 | INFO |   📅 2016-06-17 — 800 SKUs
+2026-03-29 14:25:56,629 | INFO |   📅 2016-06-18 — 800 SKUs
+2026-03-29 14:25:56,999 | INFO |   📅 2016-06-19 — 800 SKUs
+2026-03-29 14:25:57,337 | INFO |   📅 2016-06-20 — 800 SKUs
+2026-03-29 14:25:57,675 | INFO |   📅 2016-06-21 — 800 SKUs
+2026-03-29 14:25:58,066 | INFO |   📅 2016-06-22 — 800 SKUs
+2026-03-29 14:25:58,534 | INFO |   📅 2016-06-23 — 800 SKUs
+2026-03-29 14:25:59,042 | INFO |   📅 2016-06-24 — 800 SKUs
+2026-03-29 14:25:59,482 | INFO |   📅 2016-06-25 — 800 SKUs
+2026-03-29 14:25:59,848 | INFO |   📅 2016-06-26 — 800 SKUs
+2026-03-29 14:26:00,248 | INFO |   📅 2016-06-27 — 800 SKUs
+2026-03-29 14:26:00,864 | INFO |   📅 2016-06-28 — 800 SKUs
+2026-03-29 14:26:01,246 | INFO |   📅 2016-06-29 — 800 SKUs
+2026-03-29 14:26:01,592 | INFO |   📅 2016-06-30 — 800 SKUs
+2026-03-29 14:26:01,853 | INFO | ✅ Forecast complete → 24,000 rows | 2016-06-01 → 2016-06-30
