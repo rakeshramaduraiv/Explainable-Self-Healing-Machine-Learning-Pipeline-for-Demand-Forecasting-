@@ -254,16 +254,40 @@ def drift(month: str = ""):
     dist_chart = None
     if ks is not None:
         actual = pd.read_parquet(f"{PROCESSED_DIR}/actual_month.parquet")
-        preds  = pd.read_parquet(f"{PROCESSED_DIR}/predictions.parquet")
-        merged = actual.merge(preds, on=["id","date"], how="inner")
-        if not merged.empty:
-            fig, ax = plt.subplots(figsize=(10,4))
-            dark(fig, ax)
-            ax.hist(merged["sales"], bins=30, alpha=0.6, label="Actual",    color="#89b4fa")
-            ax.hist(merged["yhat"],  bins=30, alpha=0.6, label="Predicted", color="#fab387")
-            ax.set_title("Actual vs Predicted Distribution", color="#cba6f7")
-            ax.legend(facecolor="#313244", labelcolor="#cdd6f4")
-            dist_chart = fig_to_b64(fig)
+        actual["date"] = pd.to_datetime(actual["date"])
+        actual_min = actual["date"].min()
+
+        # Use same smart source as drift check
+        preds_path     = f"{PROCESSED_DIR}/predictions.parquet"
+        next_pred_path = f"{PROCESSED_DIR}/next_month_predictions.parquet"
+        preds = None
+        if os.path.exists(preds_path):
+            _p = pd.read_parquet(preds_path)
+            _p["date"] = pd.to_datetime(_p["date"])
+            if _p["date"].max() >= actual_min:
+                preds = _p
+        if preds is None and os.path.exists(next_pred_path):
+            _p = pd.read_parquet(next_pred_path)
+            _p["date"] = pd.to_datetime(_p["date"])
+            if "predicted_sales" in _p.columns:
+                _p = _p.rename(columns={"predicted_sales": "yhat"})
+            preds = _p
+
+        if preds is not None and "yhat" in preds.columns:
+            actual["id"] = actual["id"].str.replace("_validation$", "", regex=True)
+            preds["id"]  = preds["id"].str.replace("_validation$", "", regex=True)
+            merged = actual.merge(preds[["id","date","yhat"]], on=["id","date"], how="inner")
+            if not merged.empty:
+                fig, ax = plt.subplots(figsize=(10,4))
+                ax.hist(merged["sales"], bins=30, alpha=0.6, label="Actual",    color="#3b82f6")
+                ax.hist(merged["yhat"],  bins=30, alpha=0.6, label="Predicted", color="#f97316")
+                ax.set_title("Actual vs Predicted Distribution", fontsize=13)
+                ax.set_xlabel("Sales"); ax.set_ylabel("Frequency")
+                ax.legend()
+                fig.patch.set_facecolor("#ffffff")
+                ax.set_facecolor("#f8fafc")
+                plt.tight_layout()
+                dist_chart = fig_to_b64(fig)
 
     # Auto-generate SHAP explanation
     explanation = get_shap_explanation(result, month or "Current Month")

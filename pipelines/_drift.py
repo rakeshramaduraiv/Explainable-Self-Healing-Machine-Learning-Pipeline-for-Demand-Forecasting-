@@ -154,24 +154,59 @@ def _check_drift_trend():
 
 # ── Main Entry Point ─────────────────────────────────────
 def run_drift_check():
-    actual      = pd.read_parquet(f"{PROCESSED_DIR}/actual_month.parquet")
-    preds       = pd.read_parquet(f"{PROCESSED_DIR}/predictions.parquet")
-    train       = pd.read_parquet(f"{PROCESSED_DIR}/features.parquet")
+    actual = pd.read_parquet(f"{PROCESSED_DIR}/actual_month.parquet")
+    train  = pd.read_parquet(f"{PROCESSED_DIR}/features.parquet")
 
     actual["date"] = pd.to_datetime(actual["date"])
-    preds["date"]  = pd.to_datetime(preds["date"])
     train["date"]  = pd.to_datetime(train["date"])
 
     _EMPTY = {"ks_stat": None, "psi": None, "mae": None,
               "error_level": None, "drift_score": None,
               "feature_drift": {}, "level": "unknown"}
 
-    if "sales" not in actual.columns or "yhat" not in preds.columns:
-        logger.warning("⚠️ Missing sales or yhat column")
+    if "sales" not in actual.columns:
+        logger.warning("Missing sales column in actual upload")
         return _EMPTY
 
-    # Fix 2: align actual + predictions by id + date
-    # Normalise id — strip _validation suffix if present so both sides match
+    # ── Smart predictions source selection ───────────────
+    # Use next_month_predictions.parquet when upload dates don't overlap
+    # with training predictions.parquet (i.e. user uploaded the forecasted month)
+    actual_min = actual["date"].min()
+    actual_max = actual["date"].max()
+
+    preds_path      = f"{PROCESSED_DIR}/predictions.parquet"
+    next_pred_path  = f"{PROCESSED_DIR}/next_month_predictions.parquet"
+
+    preds = None
+
+    # Try training predictions first
+    if os.path.exists(preds_path):
+        _p = pd.read_parquet(preds_path)
+        _p["date"] = pd.to_datetime(_p["date"])
+        if _p["date"].max() >= actual_min:
+            preds = _p
+            logger.info("Using predictions.parquet for drift check")
+
+    # Fall back to next_month_predictions.parquet
+    if preds is None and os.path.exists(next_pred_path):
+        _p = pd.read_parquet(next_pred_path)
+        _p["date"] = pd.to_datetime(_p["date"])
+        # rename predicted_sales -> yhat for consistent merge
+        if "predicted_sales" in _p.columns and "yhat" not in _p.columns:
+            _p = _p.rename(columns={"predicted_sales": "yhat"})
+        if _p["date"].max() >= actual_min:
+            preds = _p
+            logger.info("Using next_month_predictions.parquet for drift check")
+
+    if preds is None:
+        logger.warning("No predictions file covers the uploaded date range")
+        return _EMPTY
+
+    if "yhat" not in preds.columns:
+        logger.warning("yhat column missing from predictions")
+        return _EMPTY
+
+    # Normalise id — strip _validation suffix so both sides match
     actual_clean = actual[["id", "date", "sales"]].copy()
     preds_clean  = preds[["id", "date", "yhat"]].copy()
     actual_clean["id"] = actual_clean["id"].str.replace("_validation$", "", regex=True)
@@ -179,18 +214,17 @@ def run_drift_check():
 
     merged = actual_clean.merge(preds_clean, on=["id", "date"], how="inner")
     if len(merged) == 0:
-        logger.warning("⚠️ No matching (id, date) rows between actual and predictions — check id format or date range")
+        logger.warning("No matching (id, date) rows between actual and predictions")
         return _EMPTY
 
     actual_sales = merged["sales"].values
     pred_sales   = merged["yhat"].values
 
-    # Fix 7: minimum data guard
     if len(actual_sales) < MIN_SAMPLES:
-        logger.warning(f"⚠️ Only {len(actual_sales)} aligned rows — too few for reliable drift")
+        logger.warning(f"Only {len(actual_sales)} aligned rows — too few for reliable drift")
         return _EMPTY
 
-    logger.info(f"Aligned rows: {len(merged):,} | actual_sales: {len(actual_sales)} | pred_sales: {len(pred_sales)}")
+    logger.info(f"Aligned rows: {len(merged):,}")
 
     # Feature consistency check — actual features must match training schema
     actual_feat_path = f"{PROCESSED_DIR}/actual_month_features.parquet"
