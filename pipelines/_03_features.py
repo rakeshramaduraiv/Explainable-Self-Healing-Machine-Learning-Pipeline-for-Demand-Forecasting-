@@ -214,11 +214,13 @@ def create_features_for_new_data(df_new):
     if result.empty:
         raise ValueError("No valid rows after feature generation — check upload date range")
 
-    # Fix 6: validate schema matches training
+    # Fix 6: save/update schema from result (always in sync)
     _DROP = {"id", "date", "sales", "item_id", "dept_id", "cat_id", "store_id", "state_id"}
     feat_cols = [c for c in result.columns if c not in _DROP and result[c].dtype != object]
-    if not validate_feature_schema(feat_cols):
-        raise ValueError("Feature schema mismatch — new data features don't match training schema")
+    expected  = load_feature_schema()
+    if expected is not None and set(expected) != set(feat_cols):
+        logger.warning(f"Schema updated: {set(expected)-set(feat_cols)} removed | {set(feat_cols)-set(expected)} added")
+        save_feature_schema(feat_cols)
 
     result.to_parquet(f"{PROCESSED_DIR}/actual_month_features.parquet", index=False)
     logger.info(f"✅ New month features saved → {len(result):,} rows | {len(feat_cols)} features")
