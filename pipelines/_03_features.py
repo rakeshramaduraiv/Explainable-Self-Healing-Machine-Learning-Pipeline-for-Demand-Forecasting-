@@ -215,8 +215,8 @@ def create_features_for_new_data(df_new):
         raise ValueError("No valid rows after feature generation — check upload date range")
 
     # Fix 6: validate schema matches training
-    feat_cols = [c for c in result.columns if c not in ["id", "date", "sales"]
-                 and result[c].dtype != object]
+    _DROP = {"id", "date", "sales", "item_id", "dept_id", "cat_id", "store_id", "state_id"}
+    feat_cols = [c for c in result.columns if c not in _DROP and result[c].dtype != object]
     if not validate_feature_schema(feat_cols):
         raise ValueError("Feature schema mismatch — new data features don't match training schema")
 
