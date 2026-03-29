@@ -1,5 +1,5 @@
 from pipelines.utils import logger, RAW_DIR, PROCESSED_DIR
-from pipelines._drift import save_feature_schema, validate_feature_schema
+from pipelines._drift import save_feature_schema, validate_feature_schema, load_feature_schema
 import pandas as pd
 import numpy as np
 from sklearn.preprocessing import LabelEncoder
