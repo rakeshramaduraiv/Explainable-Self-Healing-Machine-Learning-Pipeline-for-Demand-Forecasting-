@@ -38,16 +38,49 @@ def _fit_and_save_encoders(df):
     return df
 
 
+# ── Bootstrap encoders from existing features.parquet ────
+def bootstrap_encoders():
+    """Build and save encoders.pkl from already-existing features.parquet.
+    Called automatically when encoders.pkl is missing.
+    """
+    logger.info("🔧 Bootstrapping encoders from features.parquet...")
+    feat_path = os.path.join(PROCESSED_DIR, "features.parquet")
+    if not os.path.exists(feat_path):
+        raise FileNotFoundError("features.parquet not found — run create_features() first")
+    df = pd.read_parquet(feat_path)
+    # rebuild original string labels from raw_merged if available
+    raw_path = os.path.join(PROCESSED_DIR, "raw_merged.parquet")
+    if os.path.exists(raw_path):
+        raw = pd.read_parquet(raw_path, columns=[c for c in CAT_COLS if c in pd.read_parquet(raw_path, columns=CAT_COLS).columns])
+        encoders = {}
+        for col in CAT_COLS:
+            if col in raw.columns:
+                le = LabelEncoder()
+                le.fit(raw[col].astype(str).unique())
+                encoders[col] = le
+    else:
+        # fallback: fit on integer codes already in features.parquet
+        encoders = {}
+        for col in CAT_COLS:
+            if col in df.columns:
+                le = LabelEncoder()
+                le.fit(df[col].astype(str).unique())
+                encoders[col] = le
+    joblib.dump(encoders, ENCODER_PATH)
+    logger.info(f"✅ Encoders bootstrapped → {ENCODER_PATH}")
+    return encoders
+
+
 # ── Fix 1: apply saved encoders on new data ───────────────
 def _apply_encoders(df):
     if not os.path.exists(ENCODER_PATH):
-        raise FileNotFoundError("encoders.pkl not found — run create_features() first")
+        logger.warning("⚠️ encoders.pkl missing — auto-bootstrapping")
+        bootstrap_encoders()
     encoders = joblib.load(ENCODER_PATH)
     for col in CAT_COLS:
         if col in df.columns and df[col].dtype == object:
-            le = encoders[col]
-            # handle unseen labels gracefully
-            known = set(le.classes_)
+            le      = encoders[col]
+            known   = set(le.classes_)
             df[col] = df[col].astype(str).apply(lambda x: x if x in known else le.classes_[0])
             df[col] = le.transform(df[col])
     return df

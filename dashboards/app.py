@@ -10,7 +10,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from pipelines.utils import PROCESSED_DIR, MODEL_DIR
 from pipelines._drift import run_drift_check
 from pipelines._06_retrain import fine_tune, sliding_window_retrain, predict_next_month
-from pipelines._03_features import create_features_for_new_data
+from pipelines._03_features import create_features_for_new_data, bootstrap_encoders
 from pipelines._02_validate import validate_upload
 
 REPORT_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "reports")
@@ -22,6 +22,25 @@ for _key in ["drift_level", "actual_df", "data_ready", "ks_stat", "psi"]:
         st.session_state[_key] = None
 
 st.title("📦 Real-Time Demand Forecasting Dashboard")
+
+# ── System init check (Fix 3) ─────────────────────────────
+_required = {
+    "Model":          os.path.join(MODEL_DIR,     "model.pkl"),
+    "Features":       os.path.join(PROCESSED_DIR, "features.parquet"),
+    "Predictions":    os.path.join(PROCESSED_DIR, "predictions.parquet"),
+    "Feature Schema": os.path.join(MODEL_DIR,     "feature_schema.pkl"),
+}
+_missing = [name for name, path in _required.items() if not os.path.exists(path)]
+if _missing:
+    st.error(f"⚠️ System not initialised. Missing: {', '.join(_missing)}")
+    st.info("Run the training pipeline first: `python pipelines/flow.py`")
+    st.stop()
+
+# Auto-bootstrap encoders.pkl if missing (Fix 2)
+if not os.path.exists(os.path.join(PROCESSED_DIR, "encoders.pkl")):
+    with st.spinner("Bootstrapping encoders from training data..."):
+        bootstrap_encoders()
+    st.success("✅ Encoders initialised")
 
 # ─────────────────────────────────────────────
 # SECTION 1: Upload Actual Month Data
