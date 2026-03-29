@@ -1,34 +1,20 @@
-# Node modules
+# Virtual environment
+venv/
+.env
+
+# Node modules and build
 frontend/node_modules/
 frontend/dist/
-
-# Data files
-data/raw/*.csv
-data/processed/*.parquet
-data/processed/*.csv
-data/upload_months/*.csv
-
-# Model files
-models/lightgbm/*.pkl
 
 # Python cache
 __pycache__/
 pipelines/__pycache__/
 *.pyc
 *.pyo
-
-# Virtual environment
-venv/
-.env
+*.pyd
 
 # Jupyter checkpoints
 .ipynb_checkpoints/
-
-# Reports (generated)
-reports/*.png
-reports/*.pdf
-reports/*.parquet
-reports/*.csv
 
 # OS files
 .DS_Store
