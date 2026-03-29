@@ -1,3 +1,7 @@
+# Node modules
+frontend/node_modules/
+frontend/dist/
+
 # Data files
 data/raw/*.csv
 data/processed/*.parquet
