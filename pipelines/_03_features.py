@@ -159,9 +159,8 @@ def create_features_for_new_data(df_new):
     # combine with history
     hist_cols = ["id", "date", "sales", "item_id", "dept_id", "cat_id",
                  "store_id", "state_id", "wm_yr_wk", "sell_price"]
-    hist = pd.read_parquet(f"{PROCESSED_DIR}/features.parquet")[
-        [c for c in hist_cols if c in pd.read_parquet(f"{PROCESSED_DIR}/features.parquet").columns]
-    ]
+    hist_full = pd.read_parquet(f"{PROCESSED_DIR}/features.parquet")
+    hist = hist_full[[c for c in hist_cols if c in hist_full.columns]]
     hist["date"] = pd.to_datetime(hist["date"])
 
     shared = [c for c in hist_cols if c in df_new.columns]

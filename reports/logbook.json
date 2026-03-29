@@ -1,0 +1,71 @@
+[
+  {
+    "id": "20260329_170823",
+    "timestamp": "29 Mar 2026 17:08",
+    "month": "Current Month",
+    "drift_level": "LOW",
+    "drift_score": 0.0615,
+    "ks_stat": 0.0038,
+    "psi": 0.172,
+    "mae_before": 0.7825,
+    "rmse_before": 2.014,
+    "mae_after": null,
+    "rmse_after": null,
+    "action_taken": "monitor",
+    "action_label": "Monitor Only",
+    "action_why": "Drift is minimal \u2014 the model is still accurate enough.",
+    "action_what": "No changes made to the model.",
+    "action_detail": "We continue using the current model and will check again next month.",
+    "decision_reasoning": "The drift score (0.061) is below 0.1. KS statistic (0.004) shows actual sales distribution closely matches training data. PSI (0.172) confirms feature distributions are stable. Current MAE (0.5771) is within acceptable range. Conclusion: Model is performing well \u2014 no intervention needed.",
+    "plain_english": "Your model is working great this month! The sales patterns haven't changed much from what the model learned. No updates needed \u2014 we'll check again when you upload next month's data.",
+    "drift_summary": "The main drivers of drift are: Average sales last 28 days (PSI=0.484), Average sales last 7 days (PSI=0.284). These features changed significantly compared to training data.",
+    "narrative": "\ud83d\udcc5 Month: Current Month\n\ud83d\udcca Drift Level: LOW (score: 0.0615)\n\n\ud83d\udd0d What happened: The main drivers of drift are: Average sales last 28 days (PSI=0.484), Average sales last 7 days (PSI=0.284). These features changed significantly compared to training data.\n\n\u26a1 Action taken: Monitor Only\n   Why: Drift is minimal \u2014 the model is still accurate enough.\n   What it does: No changes made to the model.\n\n\ud83d\udd25 Top drift features:\n   \u2022 Average sales last 28 days \u2014 PSI=0.484 (HIGH) \u2014 56.3% of total drift\n   \u2022 Average sales last 7 days \u2014 PSI=0.284 (HIGH) \u2014 33.0% of total drift\n   \u2022 Sales same day last month \u2014 PSI=0.033 (LOW) \u2014 3.8% of total drift\n   \u2022 Sales same day last week \u2014 PSI=0.030 (LOW) \u2014 3.5% of total drift\n   \u2022 Current selling price \u2014 PSI=0.028 (LOW) \u2014 3.3% of total drift",
+    "top_drift_features": [
+      {
+        "feature": "rmean_28",
+        "desc": "Average sales last 28 days",
+        "psi": 0.4845,
+        "severity": "HIGH",
+        "contribution_pct": 56.3,
+        "impact": "This feature changed drastically (PSI=0.484). It is a major driver of drift.",
+        "suggestion": "Long-term average sales changed significantly. Structural demand change."
+      },
+      {
+        "feature": "rmean_7",
+        "desc": "Average sales last 7 days",
+        "psi": 0.2839,
+        "severity": "HIGH",
+        "contribution_pct": 33.0,
+        "impact": "This feature changed drastically (PSI=0.284). It is a major driver of drift.",
+        "suggestion": "Short-term average sales changed a lot. Sudden demand spike or drop."
+      },
+      {
+        "feature": "lag_28",
+        "desc": "Sales same day last month",
+        "psi": 0.0328,
+        "severity": "LOW",
+        "contribution_pct": 3.8,
+        "impact": "This feature is stable (PSI=0.033). Not a significant drift driver.",
+        "suggestion": "No action needed for this feature."
+      },
+      {
+        "feature": "lag_7",
+        "desc": "Sales same day last week",
+        "psi": 0.0304,
+        "severity": "LOW",
+        "contribution_pct": 3.5,
+        "impact": "This feature is stable (PSI=0.030). Not a significant drift driver.",
+        "suggestion": "No action needed for this feature."
+      },
+      {
+        "feature": "sell_price",
+        "desc": "Current selling price",
+        "psi": 0.0284,
+        "severity": "LOW",
+        "contribution_pct": 3.3,
+        "impact": "This feature is stable (PSI=0.028). Not a significant drift driver.",
+        "suggestion": "No action needed for this feature."
+      }
+    ]
+  }
+]

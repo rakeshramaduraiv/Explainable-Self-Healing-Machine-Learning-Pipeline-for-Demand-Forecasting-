@@ -6,6 +6,7 @@ import pandas as pd
 import numpy as np
 import joblib
 import os
+import shap
 from datetime import date
 
 REPORT_DIR     = os.path.join(os.path.dirname(os.path.dirname(__file__)), "reports")
@@ -78,7 +79,7 @@ def compute_psi(expected, actual, bins=10):
 def compute_ks(train_sales, actual_sales):
     scaler   = MinMaxScaler()
     t_scaled = scaler.fit_transform(train_sales.reshape(-1, 1)).flatten()
-    a_scaled = scaler.fit_transform(actual_sales.reshape(-1, 1)).flatten()
+    a_scaled = scaler.transform(actual_sales.reshape(-1, 1)).flatten()
     stat, _  = ks_2samp(t_scaled, a_scaled)
     return round(float(stat), 4)
 
@@ -258,3 +259,100 @@ def run_drift_check():
     _check_drift_trend()  # Fix 9
 
     return result
+
+
+# ── SHAP Explanation ────────────────────────────────────
+def run_shap_explanation(sample_n: int = 500) -> dict:
+    """
+    Runs SHAP on a sample of actual_month_features.parquet.
+    Returns:
+      - shap_df: DataFrame with mean |SHAP| per feature, sorted descending
+      - summary_str: human-readable top-5 feature string for logbook
+      - plain_text: full plain-English explanation paragraph
+    """
+    feat_path = os.path.join(PROCESSED_DIR, "actual_month_features.parquet")
+    if not os.path.exists(feat_path):
+        logger.warning("⚠️ SHAP skipped — actual_month_features.parquet not found")
+        return {}
+
+    model = joblib.load(os.path.join(MODEL_DIR, "model.pkl"))
+    X_cols = load_feature_schema()
+    if X_cols is None:
+        logger.warning("⚠️ SHAP skipped — feature schema not found")
+        return {}
+
+    df = pd.read_parquet(feat_path)
+    available = [c for c in X_cols if c in df.columns]
+    X = df[available].dropna().sample(min(sample_n, len(df)), random_state=42)
+
+    explainer   = shap.TreeExplainer(model)
+    shap_values = explainer.shap_values(X)
+
+    mean_abs = pd.Series(
+        np.abs(shap_values).mean(axis=0),
+        index=available
+    ).sort_values(ascending=False)
+
+    shap_df = mean_abs.reset_index()
+    shap_df.columns = ["feature", "mean_abs_shap"]
+    shap_df["mean_abs_shap"] = shap_df["mean_abs_shap"].round(4)
+
+    top5 = shap_df.head(5)
+    summary_str = ", ".join(f"{r.feature}({r.mean_abs_shap})" for _, r in top5.iterrows())
+
+    # Plain-English explanation
+    lines = []
+    for _, r in top5.iterrows():
+        lines.append(f"  • {_shap_feature_explain(r.feature, r.mean_abs_shap)}")
+    plain_text = (
+        "The model's predictions this month were most influenced by:\n" +
+        "\n".join(lines) +
+        "\n\nFeatures with higher SHAP values had a stronger effect on whether "
+        "the model predicted high or low sales for each SKU."
+    )
+
+    logger.info(f"🧠 SHAP top features: {summary_str}")
+    return {
+        "shap_df":     shap_df,
+        "summary_str": summary_str,
+        "plain_text":  plain_text,
+    }
+
+
+_FEATURE_DESCRIPTIONS = {
+    "sell_price":  "Selling price of the item",
+    "lag_1":       "Yesterday's actual sales",
+    "lag_7":       "Sales from 7 days ago (same weekday last week)",
+    "lag_14":      "Sales from 14 days ago",
+    "lag_28":      "Sales from 28 days ago (same weekday last month)",
+    "rmean_7":     "Average sales over the last 7 days",
+    "rmean_14":    "Average sales over the last 14 days",
+    "rmean_28":    "Average sales over the last 28 days",
+    "rstd_7":      "Sales variability over the last 7 days",
+    "rstd_14":     "Sales variability over the last 14 days",
+    "rstd_28":     "Sales variability over the last 28 days",
+    "dayofweek":   "Day of the week (0=Monday, 6=Sunday)",
+    "is_weekend":  "Whether the day is a weekend",
+    "month":       "Month of the year",
+    "year":        "Year",
+    "weekofyear":  "Week number within the year",
+    "wm_yr_wk":    "Walmart fiscal week number",
+    "snap_CA":     "SNAP benefit active in California",
+    "snap_TX":     "SNAP benefit active in Texas",
+    "snap_WI":     "SNAP benefit active in Wisconsin",
+    "price_norm":  "Normalised price (0=cheapest, 1=most expensive for this SKU)",
+    "price_max":   "Maximum historical price for this SKU",
+    "price_min":   "Minimum historical price for this SKU",
+    "dow_sin":     "Cyclical encoding of day-of-week (sine)",
+    "dow_cos":     "Cyclical encoding of day-of-week (cosine)",
+    "item_id":     "Encoded product identifier",
+    "dept_id":     "Encoded department (e.g. FOODS_1)",
+    "cat_id":      "Encoded category (FOODS / HOBBIES / HOUSEHOLD)",
+    "store_id":    "Encoded store identifier",
+    "state_id":    "Encoded state (CA / TX / WI)",
+}
+
+
+def _shap_feature_explain(feature: str, shap_val: float) -> str:
+    desc = _FEATURE_DESCRIPTIONS.get(feature, feature)
+    return f"{desc} — average impact on prediction: {shap_val:.4f} units"

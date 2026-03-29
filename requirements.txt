@@ -16,6 +16,7 @@ lightgbm
 xgboost
 statsmodels
 optuna
+shap
 
 # Data Validation
 pandera
