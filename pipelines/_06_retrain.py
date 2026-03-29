@@ -31,10 +31,21 @@ def _save_meta(meta):
         json.dump(meta, f, indent=2)
 
 
+# Must match _03_features._DROP exactly
+_DROP = {"id", "date", "sales"}
+
+
 # ── Fix 1: schema-based feature cols — never recompute from dtype ──
 def _get_feature_cols(df=None):
-    """Always load from saved schema. df is accepted for compatibility but ignored."""
-    return get_schema_feature_cols()
+    """Load from saved schema. Falls back to deriving from df if schema missing."""
+    try:
+        return get_schema_feature_cols()
+    except FileNotFoundError:
+        if df is None:
+            raise
+        cols = [c for c in df.columns if c not in _DROP and df[c].dtype != object]
+        save_feature_schema(cols)
+        return cols
 
 
 def _eval_metrics(model, X, y):
@@ -271,14 +282,11 @@ def predict_next_month():
     # Fix 1: schema-based feature cols
     X_cols = _get_feature_cols()
 
-    # Fix 3: load calendar + prices for price feature updates
+    # Fix 3: load calendar for wm_yr_wk updates
     calendar = pd.read_csv(f"{RAW_DIR}/calendar.csv", usecols=["date", "wm_yr_wk"])
     calendar["date"] = pd.to_datetime(calendar["date"])
-    prices = pd.read_csv(f"{RAW_DIR}/sell_prices.csv")
 
-    # price stats per SKU from history (for price_norm)
-    price_stats = df.groupby(["store_id", "item_id"])["sell_price"].agg(["max", "min"]).reset_index()
-    price_stats.columns = ["store_id", "item_id", "price_max", "price_min"]
+    # price_norm stats already in last_known from features.parquet — no merge needed
 
     last_known = df.sort_values("date").groupby("id").last().reset_index()
 
@@ -300,27 +308,18 @@ def predict_next_month():
         day_rows["month"]      = d.month
         day_rows["year"]       = d.year
         day_rows["dayofweek"]  = d.dayofweek
+        day_rows["weekofyear"] = d.isocalendar().week
         day_rows["is_weekend"] = int(d.dayofweek >= 5)
         day_rows["dow_sin"]    = np.sin(2 * np.pi * d.dayofweek / 7)
         day_rows["dow_cos"]    = np.cos(2 * np.pi * d.dayofweek / 7)
 
-        # Fix 3: update wm_yr_wk + sell_price for this forecast date
+        # update wm_yr_wk and weekofyear for this forecast date
         wm = calendar.loc[calendar["date"] == d, "wm_yr_wk"]
         if len(wm) > 0:
             day_rows["wm_yr_wk"] = wm.values[0]
-            week_prices = prices[prices["wm_yr_wk"] == wm.values[0]][["store_id", "item_id", "sell_price"]]
-            if len(week_prices) > 0:
-                day_rows = day_rows.merge(week_prices, on=["store_id", "item_id"], how="left", suffixes=("", "_new"))
-                day_rows["sell_price"] = day_rows["sell_price_new"].fillna(day_rows["sell_price"])
-                day_rows.drop(columns=["sell_price_new"], inplace=True, errors="ignore")
+        day_rows["weekofyear"] = d.isocalendar().week
 
-        # recompute price_norm with historical stats
-        day_rows = day_rows.merge(price_stats, on=["store_id", "item_id"], how="left", suffixes=("", "_ps"))
-        for col in ["price_max", "price_min"]:
-            ps_col = f"{col}_ps"
-            if ps_col in day_rows.columns:
-                day_rows[col] = day_rows[ps_col].fillna(day_rows.get(col, 0))
-                day_rows.drop(columns=[ps_col], inplace=True, errors="ignore")
+        # recompute price_norm using already-present price_max/price_min from last_known
         day_rows["price_norm"] = (
             (day_rows["sell_price"] - day_rows["price_min"]) /
             (day_rows["price_max"] - day_rows["price_min"] + 1e-9)

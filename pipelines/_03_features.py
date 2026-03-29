@@ -11,6 +11,8 @@ CAT_COLS     = ["item_id", "dept_id", "cat_id", "store_id", "state_id"]
 LAG_COLS     = [1, 7, 14, 28]
 ROLL_WINDOWS = [7, 14, 28]
 CAL_COLS     = ["date", "wm_yr_wk", "snap_CA", "snap_TX", "snap_WI"]
+# Single DROP set used everywhere — must match _06_retrain._get_feature_cols
+_DROP = {"id", "date", "sales"}
 
 
 # ── Fix 2: correct M5 id parsing ─────────────────────────
@@ -103,6 +105,7 @@ def _add_date_price_features(df):
     df["month"]      = df["date"].dt.month
     df["year"]       = df["date"].dt.year
     df["dayofweek"]  = df["date"].dt.dayofweek
+    df["weekofyear"] = df["date"].dt.isocalendar().week.astype(int)
     df["is_weekend"] = (df["dayofweek"] >= 5).astype(int)
     df["dow_sin"]    = np.sin(2 * np.pi * df["dayofweek"] / 7)
     df["dow_cos"]    = np.cos(2 * np.pi * df["dayofweek"] / 7)
@@ -138,9 +141,8 @@ def create_features():
     out = f"{PROCESSED_DIR}/features.parquet"
     df.to_parquet(out, index=False)
 
-    # Fix 6: save feature schema for retrain validation
-    feat_cols = [c for c in df.columns if c not in ["id", "date", "sales"]
-                 and df[c].dtype != object]
+    # save feature schema
+    feat_cols = [c for c in df.columns if c not in _DROP and df[c].dtype != object]
     save_feature_schema(feat_cols)
 
     logger.info(f"✅ Features saved → {out} | {len(df):,} rows | {len(feat_cols)} features")
@@ -214,13 +216,12 @@ def create_features_for_new_data(df_new):
     if result.empty:
         raise ValueError("No valid rows after feature generation — check upload date range")
 
-    # Fix 6: save/update schema from result (always in sync)
-    _DROP = {"id", "date", "sales", "item_id", "dept_id", "cat_id", "store_id", "state_id"}
+    # keep schema in sync — auto-update if columns changed
     feat_cols = [c for c in result.columns if c not in _DROP and result[c].dtype != object]
     expected  = load_feature_schema()
-    if expected is not None and set(expected) != set(feat_cols):
-        logger.warning(f"Schema updated: {set(expected)-set(feat_cols)} removed | {set(feat_cols)-set(expected)} added")
+    if expected is None or set(expected) != set(feat_cols):
         save_feature_schema(feat_cols)
+        logger.info(f"✅ Schema synced → {len(feat_cols)} features")
 
     result.to_parquet(f"{PROCESSED_DIR}/actual_month_features.parquet", index=False)
     logger.info(f"✅ New month features saved → {len(result):,} rows | {len(feat_cols)} features")

@@ -1,7 +1,7 @@
 {
-  "version": "retrain_2026-03-29",
+  "version": "finetune_2026-03-29",
   "trained_on": "2026-03-29",
-  "mae": 0.9462,
-  "rmse": 1.4393,
+  "mae": 0.578,
+  "rmse": 0.8564,
   "n_features": 30
 }
