@@ -1,52 +1,8 @@
-# Core Data Stack
-pandas
-numpy
-pyarrow
-openpyxl
-scipy
-
-# Visualization
-matplotlib
-seaborn
-plotly
-
-# Machine Learning
-scikit-learn
-lightgbm
-xgboost
-statsmodels
-optuna
-shap
-
-# Data Validation
-pandera
-pyyaml
-
-# Monitoring
-mlflow
-evidently
-psutil
-
-# Orchestration
-prefect
-croniter
-
-# Dashboard / API
-streamlit
-fastapi
-uvicorn
-
-# Logging & Utilities
-loguru
-tqdm
-joblib
-rich
-
-# Testing
-pytest
-pytest-cov
-
-# Deployment
-requests
-python-dotenv
-boto3
+fastapi==0.135.2
+uvicorn==0.42.0
+pandas==2.3.3
+numpy==2.4.3
+lightgbm==4.6.0
+scikit-learn>=1.3.0
+scipy>=1.11.0
+python-multipart>=0.0.6
