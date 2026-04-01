@@ -96,6 +96,7 @@ NEXT_MONTH    = None   # first day of the month being predicted
 PREDICTION    = None
 PRODUCT_CACHE = None
 STATUS_CACHE  = None
+MODEL_TRAIN_INFO = {"window": "Full dataset (2015-2018)", "rows": 0, "date_range": ""}
 
 FEATURE_LIST = [
     # Raw (7)
@@ -332,7 +333,9 @@ def rebuild_status_cache() -> None:
     STATUS_CACHE = {
         "total_orders":     len(TRAIN_DF),
         "daily_rows":       len(FEATURED_DF) if FEATURED_DF is not None else 0,
-        "train_date_range": f"{TRAIN_DF['Order Date'].min().date()} to {TRAIN_CUTOFF.date()}",
+        "train_date_range": MODEL_TRAIN_INFO.get("date_range", f"{TRAIN_DF['Order Date'].min().date()} to {TRAIN_CUTOFF.date()}"),
+        "model_trained_on": MODEL_TRAIN_INFO.get("window", "Full dataset"),
+        "model_train_rows": MODEL_TRAIN_INFO.get("rows", 0),
         "categories":  TRAIN_DF["Category"].unique().tolist(),
         "regions":     TRAIN_DF["Region"].unique().tolist(),
         "segments":    TRAIN_DF["Segment"].unique().tolist() if has_segment else [],
@@ -602,6 +605,11 @@ try:
     BASELINE_MAE    = METRICS["mae"]
     ORIGINAL_BASELINE_MAE = METRICS["mae"]   # Fix #8: Never changes
     PRE_UPLOAD_ROWS = len(FEATURED_DF)
+    MODEL_TRAIN_INFO = {
+        "window": "Full dataset (2015-2018)",
+        "rows": len(FEATURED_DF),
+        "date_range": f"{FEATURED_DF['date'].min().date()} to {FEATURED_DF['date'].max().date()}"
+    }
 
     log_action("Trained", f"MAE=${METRICS['mae']} MAPE={METRICS['mape']}%  [baseline locked]")
 
@@ -1060,10 +1068,10 @@ def get_training_window(feat_df: pd.DataFrame, window_months: int, min_rows: int
 # ── Fix #12: Model validation helper ──────────────────────────────────────────
 
 def validate_and_deploy(candidate_model, candidate_metrics, candidate_importance,
-                        method_label: str):
+                        method_label: str, window_info: dict = None):
     """Validate candidate model vs current. Deploy only if >5% MAE improvement."""
     global MODEL, METRICS, IMPORTANCE, PREDICTION, BASELINE_MAE, RETRAIN_COUNT
-    global LAST_RETRAIN_TIME
+    global LAST_RETRAIN_TIME, MODEL_TRAIN_INFO
 
     old_model      = MODEL
     old_metrics    = METRICS.copy()
@@ -1091,6 +1099,8 @@ def validate_and_deploy(candidate_model, candidate_metrics, candidate_importance
         LAST_RETRAIN_TIME = datetime.now()
         RETRAIN_COUNT += 1
         deployed = True
+        if window_info:
+            MODEL_TRAIN_INFO = window_info
 
         rebuild_error_cache()
         PREDICTION = make_prediction(MODEL, FEATURED_DF, NEXT_MONTH)
@@ -1127,19 +1137,21 @@ def ep_sliding():
         if FEATURED_DF is None or NEXT_MONTH is None:
             raise HTTPException(503, "Model not ready")
 
-        window_df, window_label = get_training_window(FEATURED_DF, 36, min_rows=100)
+        window_df, window_label = get_training_window(FEATURED_DF, 24, min_rows=100)
 
         log_action("Retrain", f"Sliding window: {window_label} ({len(window_df)} rows)")
 
         candidate_model, candidate_metrics, candidate_importance = do_train(window_df)
 
         result = validate_and_deploy(candidate_model, candidate_metrics,
-                                     candidate_importance, "sliding_window_36m")
+                                     candidate_importance, "sliding_window_24m",
+                                     {"window": window_label, "rows": len(window_df),
+                                      "date_range": f"{window_df['date'].min().date()} to {window_df['date'].max().date()}"})
         return {
             "status":          "success" if result["deployed"] else "rollback",
             "method":          "sliding_window",
             "window":          window_label,
-            "window_months":   36,
+            "window_months":   24,
             "rows_used":       len(window_df),
             "metrics":         {"MAE": METRICS["mae"], "RMSE": METRICS["rmse"], "MAPE": METRICS["mape"]},
             **result,
@@ -1167,7 +1179,9 @@ def ep_finetune():
         candidate_model, candidate_metrics, candidate_importance = do_train(window_df)
 
         result = validate_and_deploy(candidate_model, candidate_metrics,
-                                     candidate_importance, "fine_tune_9m")
+                                     candidate_importance, "fine_tune_9m",
+                                     {"window": window_label, "rows": len(window_df),
+                                      "date_range": f"{window_df['date'].min().date()} to {window_df['date'].max().date()}"})
         return {
             "status":          "success" if result["deployed"] else "rollback",
             "method":          "fine_tune",

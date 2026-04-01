@@ -301,7 +301,16 @@ function PipelinePage() {
               <Alert type={driftResult.level === "low" ? "success" : driftResult.level === "medium" ? "warning" : "danger"}>
                 {driftResult.level === "low" && "Low drift. Model is still accurate. You can proceed to predict the next month."}
                 {driftResult.level === "medium" && "Medium drift detected. Fine-tuning recommended to maintain accuracy."}
-                {driftResult.level === "high" && "High drift detected. Full model retrain required."}
+                {driftResult.level === "high" && (() => {
+                  const cutoff = uploadResult?.analysis?.new_train_cutoff || '';
+                  let windowStart = '';
+                  if (cutoff) {
+                    const d = new Date(cutoff);
+                    d.setMonth(d.getMonth() - 24);
+                    windowStart = d.toISOString().split('T')[0];
+                  }
+                  return `High drift detected. Model retrain required using 24-month sliding window${windowStart ? ` (${windowStart} to ${cutoff})` : ''}.`;
+                })()}
               </Alert>
             </div>
           )}
@@ -337,10 +346,28 @@ function PipelinePage() {
               )}
               {driftResult.level === "high" && (
                 <div>
-                  <Alert type="danger">High drift. Full retrain will rebuild the model with all available data.</Alert>
+                  <Alert type="danger">{(() => {
+                    const cutoff = uploadResult?.analysis?.new_train_cutoff || '';
+                    let windowStart = '';
+                    if (cutoff) {
+                      const d = new Date(cutoff);
+                      d.setMonth(d.getMonth() - 24);
+                      windowStart = d.toISOString().split('T')[0];
+                    }
+                    return `High drift. Retrain will use data from ${windowStart || '?'} to ${cutoff || '?'} (24-month sliding window). If the new model is worse, it will rollback to the current model.`;
+                  })()}</Alert>
                   <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
                     <button className="btn btn-danger" onClick={() => handleUpdate("sliding")} disabled={loading}>
-                      {loading ? <><Spinner /> Retraining...</> : "Full Retrain (Sliding Window)"}
+                      {loading ? <><Spinner /> Retraining...</> : (() => {
+                        const cutoff = uploadResult?.analysis?.new_train_cutoff || '';
+                        let windowStart = '';
+                        if (cutoff) {
+                          const d = new Date(cutoff);
+                          d.setMonth(d.getMonth() - 24);
+                          windowStart = d.toISOString().split('T')[0];
+                        }
+                        return `Retrain (${windowStart || '?'} to ${cutoff || '?'})`;
+                      })()}
                     </button>
                   </div>
                 </div>
@@ -348,12 +375,35 @@ function PipelinePage() {
             </div>
           ) : (
             <div>
-              <Alert type="success">Model updated! Method: {updateResult.method}</Alert>
-              <div className="metric-grid" style={{ marginTop: 12, gridTemplateColumns: "repeat(3, 1fr)", maxWidth: 360 }}>
-                <MetricBox label="New MAE" value={`$${updateResult.metrics.MAE}`} color="#10b981" />
-                <MetricBox label="New RMSE" value={`$${updateResult.metrics.RMSE}`} color="#f59e0b" />
-                <MetricBox label="New MAPE" value={`${updateResult.metrics.MAPE}%`} color="#ef4444" />
-              </div>
+              {updateResult.deployed === false ? (
+                <>
+                  <Alert type="warning">
+                    Rollback! New model was not better than current model. Kept the existing model.
+                    <br/><span style={{ fontSize: 12 }}>{updateResult.message}</span>
+                  </Alert>
+                  <div className="metric-grid" style={{ marginTop: 12, gridTemplateColumns: "repeat(3, 1fr)", maxWidth: 500 }}>
+                    <MetricBox label="Current MAE (kept)" value={`$${updateResult.current_mae}`} color="#10b981" />
+                    <MetricBox label="New MAE (rejected)" value={`$${updateResult.candidate_mae}`} color="#ef4444" />
+                    <MetricBox label="Improvement" value={`${updateResult.improvement_pct}%`} color={updateResult.improvement_pct > 0 ? '#f59e0b' : '#ef4444'} />
+                  </div>
+                  <div style={{ marginTop: 12, padding: 10, background: '#fffbeb', borderRadius: 8, border: '1px solid #f59e0b', fontSize: 12, color: '#92400e' }}>
+                    The retrained model (last 24 months) had MAE ${updateResult.candidate_mae} vs current MAE ${updateResult.current_mae}. 
+                    Need &gt;5% improvement to deploy. Model unchanged.
+                  </div>
+                </>
+              ) : (
+                <>
+                  <Alert type="success">
+                    Model retrained and deployed! Method: {updateResult.method} ({updateResult.window})
+                    <br/><span style={{ fontSize: 12 }}>{updateResult.message}</span>
+                  </Alert>
+                  <div className="metric-grid" style={{ marginTop: 12, gridTemplateColumns: "repeat(3, 1fr)", maxWidth: 360 }}>
+                    <MetricBox label="New MAE" value={`$${updateResult.metrics.MAE}`} color="#10b981" />
+                    <MetricBox label="New RMSE" value={`$${updateResult.metrics.RMSE}`} color="#f59e0b" />
+                    <MetricBox label="New MAPE" value={`${updateResult.metrics.MAPE}%`} color="#ef4444" />
+                  </div>
+                </>
+              )}
               <button className="btn btn-success" onClick={handleNextCycle} disabled={loading} style={{ marginTop: 16 }}>
                 {loading ? <><Spinner /> Predicting...</> : `Predict ${uploadResult?.next_prediction?.predicting_month || "Next Month"}`}
               </button>
