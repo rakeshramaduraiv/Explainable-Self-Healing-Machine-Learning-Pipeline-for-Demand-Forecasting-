@@ -79,8 +79,8 @@ export default function Logbook() {
             <ResponsiveContainer width="100%" height={200}>
               <LineChart data={driftData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                <XAxis dataKey="cycle" stroke="#6b7280" fontSize={11} />
-                <YAxis stroke="#6b7280" fontSize={11} />
+                <XAxis dataKey="cycle" stroke="#6b7280" fontSize={11} label={{ value: 'Pipeline Cycle', position: 'insideBottom', offset: -5, style: { fill: '#6b7280', fontSize: 10 } }} />
+                <YAxis stroke="#6b7280" fontSize={11} label={{ value: 'Drift Score (0=no drift, 1=max drift)', angle: -90, position: 'insideLeft', style: { fill: '#6b7280', fontSize: 10 } }} />
                 <Tooltip formatter={v => v.toFixed(4)} />
                 <Line type="monotone" dataKey="drift" stroke="#f59e0b" strokeWidth={2} dot={{ r: 3 }} />
               </LineChart>
@@ -95,8 +95,8 @@ export default function Logbook() {
           <ResponsiveContainer width="100%" height={150}>
             <BarChart data={actionData}>
               <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-              <XAxis dataKey="cycle" stroke="#6b7280" fontSize={11} />
-              <YAxis stroke="#6b7280" fontSize={11} ticks={[1, 2, 3]} tickFormatter={v => v === 1 ? 'Monitor' : v === 2 ? 'Tune' : 'Retrain'} />
+              <XAxis dataKey="cycle" stroke="#6b7280" fontSize={11} label={{ value: 'Pipeline Cycle', position: 'insideBottom', offset: -5, style: { fill: '#6b7280', fontSize: 10 } }} />
+              <YAxis stroke="#6b7280" fontSize={11} ticks={[1, 2, 3]} tickFormatter={v => v === 1 ? 'Monitor' : v === 2 ? 'Tune' : 'Retrain'} label={{ value: 'Action Taken', angle: -90, position: 'insideLeft', style: { fill: '#6b7280', fontSize: 10 } }} />
               <Tooltip formatter={(v, name, props) => props.payload.action} />
               <Bar dataKey="value" radius={[4, 4, 0, 0]}>
                 {actionData.map((d, i) => <Cell key={i} fill={actColor[d.action] || '#6b7280'} />)}

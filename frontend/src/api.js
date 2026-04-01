@@ -12,4 +12,5 @@ export const api = {
   logbook:         ()      => axios.get(`${B}/logbook`),
   storeXAI:        (data)  => axios.post(`${B}/xai/store-explanation`, data),
   downloadCSV:     ()      => `${B}/predict/download`,
+  product:         (name)  => axios.get(`${B}/product/${encodeURIComponent(name)}`),
 };

@@ -61,8 +61,8 @@ export default function XAISlide() {
           <ResponsiveContainer width="100%" height={250}>
             <BarChart data={top5} layout="vertical">
               <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-              <XAxis type="number" stroke="#6b7280" fontSize={11} />
-              <YAxis type="category" dataKey="feature" stroke="#6b7280" fontSize={11} width={140} />
+              <XAxis type="number" stroke="#6b7280" fontSize={11} label={{ value: 'Importance Score (how much this feature drives predictions)', position: 'insideBottom', offset: -5, style: { fill: '#6b7280', fontSize: 10 } }} />
+              <YAxis type="category" dataKey="feature" stroke="#6b7280" fontSize={11} width={140} label={{ value: 'Feature Name', angle: -90, position: 'insideLeft', offset: 20, style: { fill: '#6b7280', fontSize: 10 } }} />
               <Tooltip formatter={v => `${(v * 100).toFixed(1)}% importance`} />
               <Bar dataKey="importance" radius={[0, 4, 4, 0]}>
                 {top5.map((f, i) => <Cell key={i} fill={C[f.type] || '#6b7280'} />)}
@@ -98,53 +98,95 @@ export default function XAISlide() {
 
         {drift && (
           <div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12, marginBottom: 16 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: 12, marginBottom: 16 }}>
               <div style={{ background: '#f9fafb', borderRadius: 8, padding: 12, textAlign: 'center', border: '1px solid #e5e7eb' }}>
                 <div style={{ color: drift.level === 'low' ? '#10b981' : drift.level === 'medium' ? '#f59e0b' : '#ef4444', fontSize: 20, fontWeight: 700 }}>{drift.level?.toUpperCase()}</div>
                 <div style={{ color: '#6b7280', fontSize: 11 }}>Drift Level</div>
               </div>
               <div style={{ background: '#f9fafb', borderRadius: 8, padding: 12, textAlign: 'center', border: '1px solid #e5e7eb' }}>
                 <div style={{ color: '#3b82f6', fontSize: 20, fontWeight: 700 }}>{drift.drift_score}</div>
-                <div style={{ color: '#6b7280', fontSize: 11 }}>Drift Score</div>
+                <div style={{ color: '#6b7280', fontSize: 11 }}>Composite Score</div>
               </div>
               <div style={{ background: '#f9fafb', borderRadius: 8, padding: 12, textAlign: 'center', border: '1px solid #e5e7eb' }}>
                 <div style={{ color: '#8b5cf6', fontSize: 20, fontWeight: 700 }}>{drift.action === 'monitor' ? 'Monitor' : drift.action === 'fine_tune' ? 'Fine-Tune' : 'Retrain'}</div>
                 <div style={{ color: '#6b7280', fontSize: 11 }}>Recommended</div>
               </div>
+              <div style={{ background: '#f9fafb', borderRadius: 8, padding: 12, textAlign: 'center', border: '1px solid #e5e7eb' }}>
+                <div style={{ color: '#06b6d4', fontSize: 16, fontWeight: 700 }}>{drift.threshold_method === 'dynamic' ? 'Dynamic' : 'Static'}</div>
+                <div style={{ color: '#6b7280', fontSize: 11 }}>Threshold (Run #{drift.drift_history_count || 1})</div>
+              </div>
+              {drift.thresholds && (
+                <div style={{ background: '#f9fafb', borderRadius: 8, padding: 12, textAlign: 'center', border: '1px solid #e5e7eb' }}>
+                  <div style={{ color: '#f59e0b', fontSize: 14, fontWeight: 700 }}>{drift.thresholds.medium} / {drift.thresholds.high}</div>
+                  <div style={{ color: '#6b7280', fontSize: 11 }}>Med / High Thresholds</div>
+                </div>
+              )}
             </div>
+            {drift.tests_used && (
+              <div style={{ display: 'flex', gap: 8, marginBottom: 12, flexWrap: 'wrap' }}>
+                {drift.tests_used.map(t => (
+                  <span key={t} style={{ background: '#f0f9ff', color: '#3b82f6', padding: '3px 10px', borderRadius: 6, fontSize: 11, fontWeight: 600, border: '1px solid #3b82f6' }}>{t}</span>
+                ))}
+                <span style={{ color: '#6b7280', fontSize: 11, alignSelf: 'center' }}>Composite = max(KS, JS, PSI/0.25) per feature, Overall = max(features)</span>
+              </div>
+            )}
 
-            {drift.feature_drift && (
+            {drift.accuracy_drop !== undefined && (
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12, marginBottom: 12 }}>
+                <div style={{ background: '#f9fafb', borderRadius: 8, padding: 10, textAlign: 'center', border: '1px solid #e5e7eb' }}>
+                  <div style={{ color: '#ef4444', fontSize: 16, fontWeight: 700 }}>{(drift.accuracy_drop * 100).toFixed(1)}%</div>
+                  <div style={{ color: '#6b7280', fontSize: 11 }}>Accuracy Drop</div>
+                </div>
+                <div style={{ background: '#f9fafb', borderRadius: 8, padding: 10, textAlign: 'center', border: '1px solid #e5e7eb' }}>
+                  <div style={{ color: '#3b82f6', fontSize: 16, fontWeight: 700 }}>${drift.baseline_mae}</div>
+                  <div style={{ color: '#6b7280', fontSize: 11 }}>Baseline MAE</div>
+                </div>
+                <div style={{ background: '#f9fafb', borderRadius: 8, padding: 10, textAlign: 'center', border: '1px solid #e5e7eb' }}>
+                  <div style={{ color: drift.high_feature_count >= 2 ? '#ef4444' : '#10b981', fontSize: 16, fontWeight: 700 }}>{drift.high_feature_count}</div>
+                  <div style={{ color: '#6b7280', fontSize: 11 }}>Features HIGH</div>
+                </div>
+              </div>
+            )}
+
+            {(drift.top_drift_features || []).length > 0 && (
               <div>
                 <div style={{ fontSize: 14, fontWeight: 600, color: '#1f2937', marginBottom: 8 }}>Which Features Drifted and Why</div>
-                {Object.entries(drift.feature_drift).map(([feat, vals]) => {
-                  const sev = vals.ks_stat > 0.2 ? 'HIGH' : vals.ks_stat > 0.1 ? 'MEDIUM' : 'LOW';
-                  return (
-                    <div key={feat} style={{ background: '#f9fafb', border: '1px solid #e5e7eb', borderRadius: 8, padding: 12, marginBottom: 8 }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
-                        <span style={{ color: '#1f2937', fontWeight: 600, fontSize: 14 }}>{feat}</span>
-                        <div style={{ display: 'flex', gap: 8 }}>
-                          <span style={{ background: sevColor[sev] + '20', color: sevColor[sev], padding: '2px 8px', borderRadius: 6, fontSize: 11, fontWeight: 600 }}>{sev}</span>
-                          <span style={{ color: '#6b7280', fontSize: 12 }}>KS: {vals.ks_stat}</span>
-                        </div>
-                      </div>
-                      <div style={{ color: '#6b7280', fontSize: 12 }}>
-                        {feat === 'sales_momentum' && 'Demand trend direction changed - short-term vs long-term averages diverging'}
-                        {feat === 'rmean_28' && 'Long-term baseline demand level shifted significantly'}
-                        {feat === 'trend_slope' && 'Direction of sales trend changed (upward to downward or vice versa)'}
-                        {feat === 'sales_volatility' && 'Demand predictability changed - sales becoming more or less erratic'}
-                        {feat === 'relative_demand' && 'Category performance relative to region norms shifted'}
+                {drift.top_drift_features.map(fd => (
+                  <div key={fd.feature} style={{ background: '#f9fafb', border: '1px solid #e5e7eb', borderRadius: 8, padding: 12, marginBottom: 8 }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
+                      <span style={{ color: '#1f2937', fontWeight: 600, fontSize: 14 }}>{fd.feature}</span>
+                      <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                        <span style={{ background: sevColor[fd.severity] + '20', color: sevColor[fd.severity], padding: '2px 8px', borderRadius: 6, fontSize: 11, fontWeight: 600 }}>{fd.severity}{drift.threshold_method === 'dynamic' ? ' (adaptive)' : ''}</span>
+                        <span style={{ color: '#6b7280', fontSize: 11 }}>C: {fd.composite}</span>
                       </div>
                     </div>
-                  );
-                })}
+                    <div style={{ display: 'flex', gap: 12, fontSize: 11, color: '#6b7280', marginBottom: 4 }}>
+                      <span>KS: {fd.ks_stat}</span>
+                      <span>PSI: {fd.psi}</span>
+                      <span>JS: {fd.js_divergence}</span>
+                    </div>
+                    <div style={{ color: '#6b7280', fontSize: 12 }}>
+                      {fd.feature === 'dayofweek' && 'Day-of-week distribution shifted — different shopping day patterns'}
+                      {fd.feature === 'month' && 'Monthly seasonality changed — different time of year patterns'}
+                      {fd.feature === 'order_count' && 'Number of daily orders changed — demand volume shift'}
+                      {fd.feature === 'avg_order_value' && 'Average order value shifted — buying behavior change'}
+                      {fd.feature === 'ship_speed' && 'Shipping speed preferences changed — urgency shift'}
+                      {fd.feature === 'segment_encoded' && 'Customer segment mix changed — different buyer types'}
+                    </div>
+                  </div>
+                ))}
               </div>
             )}
 
             <div style={{ marginTop: 12, padding: 12, background: drift.level === 'low' ? '#f0fdf4' : drift.level === 'medium' ? '#fffbeb' : '#fef2f2', borderRadius: 8, border: `1px solid ${drift.level === 'low' ? '#10b981' : drift.level === 'medium' ? '#f59e0b' : '#ef4444'}`, fontSize: 13 }}>
               <strong>Action Explanation:</strong>{' '}
-              {drift.level === 'low' && 'Drift is minimal. Feature distributions are stable. Model is still accurate - continue monitoring.'}
-              {drift.level === 'medium' && 'Moderate drift detected. Some features shifted. Fine-tuning will adjust the model to recent patterns without full retraining.'}
-              {drift.level === 'high' && 'Significant drift. Feature distributions changed substantially. Full retrain needed to capture new data patterns.'}
+              {drift.level === 'low' && 'Feature drift minimal and accuracy stable (<5% drop). Model is still accurate — continue monitoring.'}
+              {drift.level === 'medium' && 'Moderate drift or accuracy drop (<15%). Fine-tuning on last 9 months will adjust to recent patterns.'}
+              {drift.level === 'high' && 'Significant drift or accuracy degradation. Full retrain on last 12 months (sliding window) to capture new patterns.'}
+            </div>
+            <div style={{ marginTop: 8, padding: 10, background: '#f0f9ff', borderRadius: 8, border: '1px solid #3b82f6', fontSize: 12, color: '#1f2937' }}>
+              <strong>Threshold Method:</strong> {drift.threshold_method === 'dynamic' ? `Dynamic (μ+0.5σ/μ+1.5σ from last ${drift.drift_history_count} runs, σ≥0.03). Boundaries: medium ≥ ${drift.thresholds?.medium}, high ≥ ${drift.thresholds?.high}` : `Static (first runs — building history). Boundaries: medium ≥ 0.1, high ≥ 0.2. After 2 runs, switches to adaptive.`}
+              {drift.accuracy_drop !== undefined && <><br/><strong>Decision Logic:</strong> drift={drift.drift_score} + accuracy_drop={(drift.accuracy_drop * 100).toFixed(1)}% + {drift.high_feature_count} features HIGH → {drift.action}</>}
             </div>
           </div>
         )}
@@ -160,8 +202,8 @@ export default function XAISlide() {
             <ResponsiveContainer width="100%" height={500}>
               <BarChart data={fi} layout="vertical">
                 <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                <XAxis type="number" stroke="#6b7280" fontSize={11} />
-                <YAxis type="category" dataKey="feature" stroke="#6b7280" fontSize={9} width={140} />
+                <XAxis type="number" stroke="#6b7280" fontSize={11} label={{ value: 'Importance Score (contribution to prediction)', position: 'insideBottom', offset: -5, style: { fill: '#6b7280', fontSize: 10 } }} />
+                <YAxis type="category" dataKey="feature" stroke="#6b7280" fontSize={9} width={140} label={{ value: 'Feature Name', angle: -90, position: 'insideLeft', offset: 20, style: { fill: '#6b7280', fontSize: 10 } }} />
                 <Tooltip formatter={v => `${(v * 100).toFixed(1)}%`} />
                 <Bar dataKey="importance" radius={[0, 4, 4, 0]}>
                   {fi.map((f, i) => <Cell key={i} fill={C[f.type] || '#6b7280'} />)}

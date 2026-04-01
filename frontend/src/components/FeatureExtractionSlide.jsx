@@ -119,8 +119,8 @@ export default function FeatureExtractionSlide() {
           <ResponsiveContainer width="100%" height={500}>
             <BarChart data={realFI.map(f => ({ ...f, name: FEATURES.find(x => x.feature === f.feature)?.name || f.feature }))} layout="vertical">
               <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-              <XAxis type="number" stroke="#6b7280" fontSize={11} />
-              <YAxis type="category" dataKey="name" stroke="#6b7280" fontSize={9} width={130} />
+              <XAxis type="number" stroke="#6b7280" fontSize={11} label={{ value: 'Importance Score (how much each feature matters)', position: 'insideBottom', offset: -5, style: { fill: '#6b7280', fontSize: 10 } }} />
+              <YAxis type="category" dataKey="name" stroke="#6b7280" fontSize={9} width={130} label={{ value: 'Feature Name', angle: -90, position: 'insideLeft', offset: 15, style: { fill: '#6b7280', fontSize: 10 } }} />
               <Tooltip formatter={v => v.toFixed(4)} />
               <Bar dataKey="importance" radius={[0, 4, 4, 0]}>
                 {realFI.map((f, i) => <Cell key={i} fill={f.type === 'engineered' ? '#10b981' : f.type === 'aggregated' ? '#f59e0b' : '#3b82f6'} />)}
