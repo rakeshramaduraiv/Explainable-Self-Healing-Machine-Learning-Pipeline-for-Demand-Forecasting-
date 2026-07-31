@@ -19,8 +19,8 @@ def print_banner():
     print("   Features :  5 raw + 7 aggregated + 7 engineered")
     print("=" * 60)
     print("   Frontend :  http://localhost:5173")
-    print("   Backend  :  http://localhost:8000")
-    print("   API Docs :  http://localhost:8000/docs")
+    print("   Backend  :  http://localhost:8001")
+    print("   API Docs :  http://localhost:8001/docs")
     print("=" * 60)
     print()
 

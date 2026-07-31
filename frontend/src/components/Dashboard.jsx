@@ -32,10 +32,11 @@ export default function Dashboard() {
   const [loadingProduct, setLoadingProduct] = useState(false);
 
   useEffect(() => {
+    let attempts = 0;
     const load = () => {
       Promise.all([api.status(), api.metrics(), api.fi()])
         .then(([s,m,f]) => { setData(s.data); setMetrics(m.data); setFi(f.data); setLoading(false); })
-        .catch(() => { setLoading(false); setTimeout(load, 2000); });
+        .catch(() => { attempts++; if (attempts < 3) setTimeout(load, 3000); else setLoading(false); });
     };
     load();
   }, []);
