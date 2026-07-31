@@ -1,0 +1,8 @@
+2026-07-31 10:51:14 | INFO | Startup - Training on base data 2015-2018 (one-time)
+2026-07-31 10:51:14 | INFO | Data - 9800 orders | 2015-01-03 \u2192 2018-12-30
+2026-07-31 10:51:16 | INFO | Trained - MAE=$27.921 MAPE=15.9%  [baseline locked]
+2026-07-31 10:51:22 | INFO | Ready - Predicting January 2019: $23,573
+INFO:     Started server process [5528]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
