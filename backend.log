@@ -6,3 +6,2055 @@ INFO:     Started server process [5528]
 INFO:     Waiting for application startup.
 INFO:     Application startup complete.
 INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     127.0.0.1:55545 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:52593 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:57218 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:56962 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:52949 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:50976 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:62793 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:61987 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:55819 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:62456 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:55497 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:61137 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:55886 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:49754 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:61273 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:50178 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:60089 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:62006 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:49672 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:51511 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:53200 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:52382 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:55751 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:50063 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:54145 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:60254 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:57268 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:65532 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:52499 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:56356 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:64139 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:64511 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:65126 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:63406 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:60893 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:54878 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:55622 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:65299 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:57158 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:52715 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:53071 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:56463 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:64440 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:55921 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:60521 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:53909 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:55418 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:57639 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:62756 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:64121 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:60003 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:64134 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:56805 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:50684 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:57512 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:51283 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:59851 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:60384 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:62549 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:55554 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:60711 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:54997 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:58756 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:57224 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:64437 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:62701 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:60489 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:50481 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:61882 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:52687 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:55275 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:63409 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:51569 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:52297 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:51045 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:54507 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:56560 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:57100 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:61020 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:58790 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:53632 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:57647 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:64789 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:53116 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:51835 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:64473 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:64802 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:55629 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:51400 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:54685 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:57755 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:55943 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:64123 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:59575 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:65501 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:49672 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:61915 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:52913 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:51540 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:52356 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:51633 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:52867 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:59891 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:63895 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:50354 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:60857 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:63162 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:65291 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:58790 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:53666 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:53255 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:61538 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:56363 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:61324 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:62381 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:54895 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:57839 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:54857 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:61881 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:53520 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:61735 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:61325 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:50882 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:54611 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:59751 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:57674 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:62286 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:53029 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:53564 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:58825 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:57723 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:57398 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:62033 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:63464 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:49672 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:65130 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:58742 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:52236 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:63453 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:49361 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:55854 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:56481 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:52930 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:50769 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:51104 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:56867 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:65256 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:64143 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:53368 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:51634 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:60135 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:54811 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:59919 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:59253 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:59903 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:55251 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:63853 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:64070 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:49819 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:56131 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:50294 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:55355 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:57728 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:60170 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:61019 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:64487 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:57998 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:64423 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:63206 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:62501 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:49702 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:49848 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:62646 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:51935 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:61854 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:54999 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:63410 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:51997 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:60887 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:52508 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:61498 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:56352 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:63878 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:53833 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:61054 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:59318 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:52027 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:53283 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:64392 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:65049 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:61645 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:56780 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:53575 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:52677 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:55607 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:63439 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:60053 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:64801 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:60087 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:61620 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:55923 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:58823 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:59464 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:49715 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:55849 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:55301 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:64486 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:59116 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:61704 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:56645 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:63577 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:61931 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:64356 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:54277 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:56458 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:61985 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:64844 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:57488 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:63407 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:60626 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:51728 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:63015 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:58267 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:50735 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:58525 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:59637 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:56068 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:58717 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:54228 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:56320 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:60947 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:58216 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:52487 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:64207 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:63539 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:50991 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:64831 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:61547 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:62520 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:63238 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:59436 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:64366 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:51716 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:54061 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:57925 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:50141 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:56290 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:55812 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:56036 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:60786 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:56991 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:60665 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:49290 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:59293 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:64584 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:54444 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:54434 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:61553 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:62205 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:53367 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:58112 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:64176 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:57117 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:53065 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:61356 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:52530 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:57784 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:59646 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:55438 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:49855 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:64839 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:61339 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:53059 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:54558 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:52769 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:57490 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:54074 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:54099 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:64636 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:63998 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:59393 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:65317 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:58923 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:57732 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:57779 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:50819 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:57325 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:51756 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:65428 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:51626 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:57559 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:58167 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:56488 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:51633 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:52006 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:53398 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:62433 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:55654 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:58948 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:63256 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:60688 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:57361 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:49673 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:57250 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:59559 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:57158 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:50359 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:52416 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:50755 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:56691 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:59752 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:63874 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:61051 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:51140 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:60440 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:58193 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:61390 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:55585 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:55067 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:54712 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:59437 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:51542 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:57661 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:49673 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:52675 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:50680 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:65453 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:61330 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:51969 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:53519 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:62899 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:58924 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:50124 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:56768 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:52378 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:62548 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:52347 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:55102 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:57816 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:60446 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:51766 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:64222 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:54385 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:62063 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:58499 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:57360 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:49674 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:64147 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:63911 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:53120 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:59794 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:54597 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:50673 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:52649 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:65100 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:53881 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:60343 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:51866 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:52226 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:54488 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:51104 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:51522 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:54476 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:52613 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:52619 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:64898 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:53516 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:63231 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:60226 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:64643 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:64396 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:49936 - "GET /api/v1/graph/schema/info HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64848 - "GET /api/v1/dashboard/risk HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:59148 - "GET /api/v1/dashboard/tpke HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:49396 - "GET /api/v1/dataset/analytics HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:57741 - "GET /api/v1/dataset/summary HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:54824 - "GET /api/v1/dashboard/graph HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:49936 - "GET /api/v1/health HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64848 - "GET /api/v1/business/alerts HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:59148 - "GET /api/v1/dashboard/trends HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:49396 - "GET /api/v1/tpke/edges HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:57741 - "GET /api/v1/graph/statistics HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:54824 - "GET /api/v1/dashboard/forecast HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:49936 - "GET /api/v1/rca/statistics HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64848 - "GET /api/v1/dashboard/rootcause HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:59148 - "GET /api/v1/rca/history HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:49396 - "GET /api/v1/dashboard/kpis HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:57741 - "GET /api/v1/graphrag/statistics HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:56018 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:56730 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:61249 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:58092 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:54645 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:51743 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:58081 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:58401 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:52484 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:50432 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:51524 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:65053 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:65342 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:49749 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:54948 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:59695 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:62828 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:54258 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:53273 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:49674 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:59350 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:64582 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:51454 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:55678 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:51400 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:60461 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:52907 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:63997 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:56181 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:49676 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:49678 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:62755 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:53544 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:53342 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:52593 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:60379 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:61211 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:64351 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:63743 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:57378 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:51491 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:54214 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:60960 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:53701 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:63481 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:51578 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:53368 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:60528 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:62083 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:63357 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:53996 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:50362 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:62363 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:53126 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:55379 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:51507 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:51083 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:60455 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:62076 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:51548 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:65064 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:60008 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:65217 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:54668 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:57224 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:65190 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:53139 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:65005 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:64359 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:60434 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:65136 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:57109 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:51397 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:53752 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:60796 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:51980 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:57378 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:58147 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:52382 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:64624 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:54536 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:62417 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:55845 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:49200 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:60041 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:58540 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:61675 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:65403 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:52847 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:55703 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:62665 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:57695 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:54106 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:64464 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:60359 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:58798 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:59546 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:59040 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:61320 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:64841 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:51833 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:49851 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:63452 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:51258 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:58910 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:59227 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:52506 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:57188 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:64811 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:59591 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:60149 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:50374 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:52941 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:62518 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:63470 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:52543 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:58291 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:61524 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:57017 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:57709 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:55820 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:57351 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:56765 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:58239 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:56925 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:59828 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:51461 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:63626 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:65270 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:57244 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:63335 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:61812 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:53106 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:61346 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:56887 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:59125 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:56908 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:51213 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:59047 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:64156 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:64973 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:65117 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:50826 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:60356 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:51768 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:57614 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:62264 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:53866 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:65130 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:59156 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:64062 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:61661 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:50323 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:51981 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:64200 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:54323 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:59015 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:63216 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:54057 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:49673 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:59819 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:63446 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:52070 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:49328 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:51877 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:58274 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:49674 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:63806 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:61082 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:63169 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:56619 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:59192 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:55171 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:57342 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:65074 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:56109 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:58117 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:62963 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:62778 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:60705 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:65250 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:54460 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:64112 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:62282 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:60006 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:54617 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:64269 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:55955 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:49673 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:59188 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:56761 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:54998 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:50711 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:50939 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:56281 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:59255 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:53196 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:65210 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:60473 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:63771 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:64505 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:49244 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:60225 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:59577 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:60312 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:55203 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:55966 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:50431 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:55900 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:54639 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:54036 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:63272 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:61244 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:51278 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:57395 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:53226 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:56747 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:61314 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:63412 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:55072 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:54601 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:58207 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:65294 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:55873 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:63326 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:49187 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:59280 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:55843 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:55232 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:51605 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:57473 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:51936 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:60204 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:58234 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:65423 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:57948 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:51357 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:52824 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:60422 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:53456 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:60172 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:61835 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:52815 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:63582 - "GET /api/v1/dataset/summary HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:52565 - "GET /api/v1/dataset/analytics HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:60312 - "GET /api/v1/dataset/auto-forecast HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50514 - "GET /api/v1/business/alerts HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:55810 - "GET /api/v1/health HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:65416 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:55810 - "GET /api/v1/business/alerts HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:52565 - "GET /api/v1/health HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:63582 - "GET /api/v1/dataset/summary HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50514 - "GET /api/v1/dataset/analytics HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:60312 - "GET /api/v1/dataset/auto-forecast HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:60312 - "GET /api/v1/business/alerts HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:60312 - "GET /api/v1/health HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50514 - "GET /api/v1/dataset/summary HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:63582 - "GET /api/v1/dataset/analytics HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:52565 - "GET /api/v1/dataset/auto-forecast HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:58597 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:52565 - "GET /api/v1/dataset/summary HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:63582 - "GET /api/v1/dataset/analytics HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50514 - "GET /api/v1/dashboard/graph HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:60312 - "GET /api/v1/graph/schema/info HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:55810 - "GET /api/v1/dashboard/tpke HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:52565 - "GET /api/v1/tpke/edges HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:63582 - "GET /api/v1/graph/statistics HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:52686 - "GET /api/v1/dashboard/rootcause HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50514 - "GET /api/v1/dashboard/risk HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:60312 - "GET /api/v1/dashboard/trends HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:55810 - "GET /api/v1/dashboard/forecast HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:52565 - "GET /api/v1/rca/statistics HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:63582 - "GET /api/v1/rca/history HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:52686 - "GET /api/v1/dashboard/kpis HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50514 - "GET /api/v1/graphrag/statistics HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64323 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:50514 - "GET /api/v1/dataset/summary HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:52686 - "GET /api/v1/dataset/analytics HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:63582 - "GET /api/v1/dashboard/graph HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:52686 - "GET /api/v1/graph/schema/info HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50514 - "GET /api/v1/dashboard/tpke HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:63582 - "GET /api/v1/tpke/edges HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:52565 - "GET /api/v1/graph/statistics HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:55810 - "GET /api/v1/dashboard/rootcause HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:60312 - "GET /api/v1/dashboard/risk HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:52686 - "GET /api/v1/dashboard/trends HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50514 - "GET /api/v1/dashboard/forecast HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:63582 - "GET /api/v1/rca/statistics HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:52565 - "GET /api/v1/rca/history HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:55810 - "GET /api/v1/dashboard/kpis HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:60312 - "GET /api/v1/graphrag/statistics HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:60312 - "GET /api/v1/dataset/summary HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:55810 - "GET /api/v1/dataset/analytics HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:52565 - "GET /api/v1/dashboard/graph HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:52565 - "GET /api/v1/graph/schema/info HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:52565 - "GET /api/v1/dashboard/tpke HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:55810 - "GET /api/v1/tpke/edges HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:60312 - "GET /api/v1/graph/statistics HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:63582 - "GET /api/v1/dashboard/rootcause HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50514 - "GET /api/v1/dashboard/risk HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:52686 - "GET /api/v1/dashboard/trends HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:52565 - "GET /api/v1/dashboard/forecast HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:55810 - "GET /api/v1/rca/statistics HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:60312 - "GET /api/v1/rca/history HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:63582 - "GET /api/v1/dashboard/kpis HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50514 - "GET /api/v1/graphrag/statistics HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:52686 - "GET /api/v1/business/alerts HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:52686 - "GET /api/v1/health HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:58675 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:64528 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:52686 - "GET /api/v1/dataset/summary HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:63582 - "GET /api/v1/dataset/analytics HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50514 - "GET /api/v1/dashboard/graph HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50514 - "GET /api/v1/graph/schema/info HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50514 - "GET /api/v1/dashboard/tpke HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:63582 - "GET /api/v1/tpke/edges HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:52686 - "GET /api/v1/graph/statistics HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:60312 - "GET /api/v1/dashboard/rootcause HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:55810 - "GET /api/v1/dashboard/risk HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:52565 - "GET /api/v1/dashboard/trends HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50514 - "GET /api/v1/dashboard/forecast HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:63582 - "GET /api/v1/rca/statistics HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:52686 - "GET /api/v1/rca/history HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:60312 - "GET /api/v1/dashboard/kpis HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:55810 - "GET /api/v1/graphrag/statistics HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64811 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:51081 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:55706 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:63232 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:57366 - "GET /api/v1/business/alerts HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:57366 - "GET /api/v1/business/alerts HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:65159 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:64348 - "WebSocket /api/v1/ws" 403
+INFO:     connection rejected (403 Forbidden)
+INFO:     connection closed
+INFO:     127.0.0.1:57366 - "GET /api/v1/business/alerts HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:57366 - "GET /api/v1/dataset/summary HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:57366 - "GET /api/v1/dataset/analytics HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:57365 - "GET /api/v1/dashboard/graph HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:57365 - "GET /api/v1/graph/schema/info HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:57365 - "GET /api/v1/dashboard/tpke HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:57365 - "GET /api/v1/tpke/edges HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:57366 - "GET /api/v1/graph/statistics HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:57365 - "GET /api/v1/dashboard/rootcause HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:57366 - "GET /api/v1/dashboard/risk HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:57366 - "GET /api/v1/dashboard/trends HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:57365 - "GET /api/v1/dashboard/forecast HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:57366 - "GET /api/v1/rca/statistics HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:57365 - "GET /api/v1/rca/history HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:57366 - "GET /api/v1/dashboard/kpis HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:57365 - "GET /api/v1/graphrag/statistics HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:57365 - "GET /api/v1/dataset/summary HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:57365 - "GET /api/v1/dataset/analytics HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:57366 - "GET /api/v1/dashboard/graph HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:57366 - "GET /api/v1/graph/schema/info HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:57366 - "GET /api/v1/dashboard/tpke HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:57366 - "GET /api/v1/tpke/edges HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:57365 - "GET /api/v1/graph/statistics HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:59419 - "GET /api/v1/dashboard/rootcause HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:49674 - "GET /api/v1/dashboard/risk HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:49674 - "GET /api/v1/dashboard/trends HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:59419 - "GET /api/v1/dashboard/forecast HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:57365 - "GET /api/v1/rca/statistics HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:57366 - "GET /api/v1/rca/history HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:61587 - "GET /api/v1/dashboard/kpis HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:65226 - "GET /api/v1/graphrag/statistics HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:65226 - "GET /api/v1/dataset/summary HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:61587 - "GET /api/v1/dataset/analytics HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:61587 - "GET /api/v1/dashboard/graph HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:61587 - "GET /api/v1/graph/schema/info HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:61587 - "GET /api/v1/dashboard/tpke HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:61587 - "GET /api/v1/tpke/edges HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:65226 - "GET /api/v1/graph/statistics HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:57366 - "GET /api/v1/dashboard/rootcause HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:57365 - "GET /api/v1/dashboard/risk HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:57365 - "GET /api/v1/dashboard/trends HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:57366 - "GET /api/v1/dashboard/forecast HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:65226 - "GET /api/v1/rca/statistics HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:61587 - "GET /api/v1/rca/history HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:61587 - "GET /api/v1/dashboard/kpis HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:65226 - "GET /api/v1/graphrag/statistics HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:65226 - "GET /api/v1/business/alerts HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:65226 - "GET /api/v1/dataset/summary HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:61587 - "GET /api/v1/dataset/analytics HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:61587 - "GET /api/v1/dashboard/graph HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:61587 - "GET /api/v1/graph/schema/info HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:61587 - "GET /api/v1/dashboard/tpke HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:61587 - "GET /api/v1/tpke/edges HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:65226 - "GET /api/v1/graph/statistics HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:57366 - "GET /api/v1/dashboard/rootcause HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:57365 - "GET /api/v1/dashboard/risk HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:57365 - "GET /api/v1/dashboard/trends HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:57366 - "GET /api/v1/dashboard/forecast HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:65226 - "GET /api/v1/rca/statistics HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:61587 - "GET /api/v1/rca/history HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:61587 - "GET /api/v1/dashboard/kpis HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:61587 - "GET /api/v1/graphrag/statistics HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:61587 - "GET /api/v1/health HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:61587 - "GET /api/v1/health HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:61587 - "GET /api/v1/health HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:61587 - "GET /api/v1/health HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:61587 - "GET /api/v1/business/alerts HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:61587 - "GET /api/v1/business/alerts HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:61587 - "GET /api/v1/business/alerts HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:61587 - "GET /api/v1/dataset/summary HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:61587 - "GET /api/v1/dataset/analytics HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:61587 - "GET /api/v1/dashboard/graph HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:61587 - "GET /api/v1/graph/schema/info HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:61587 - "GET /api/v1/dashboard/tpke HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:61587 - "GET /api/v1/tpke/edges HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:61587 - "GET /api/v1/graph/statistics HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:61587 - "GET /api/v1/dashboard/rootcause HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:61587 - "GET /api/v1/dashboard/risk HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:61587 - "GET /api/v1/dashboard/trends HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:61587 - "GET /api/v1/rca/statistics HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:61587 - "GET /api/v1/rca/history HTTP/1.1" 404 Not Found
