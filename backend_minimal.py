@@ -29,7 +29,8 @@ import numpy as np
 import pandas as pd
 from fastapi import FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import StreamingResponse
+from fastapi.responses import FileResponse, StreamingResponse
+from fastapi.staticfiles import StaticFiles
 from lightgbm import LGBMRegressor
 from scipy.spatial.distance import jensenshannon
 from scipy.stats import ks_2samp
@@ -56,6 +57,8 @@ DATA_PATH  = os.path.join(ROOT, "data", "raw", "train.csv")
 UPLOAD_DIR = os.path.join(ROOT, "data", "uploads")
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 os.makedirs(os.path.join(ROOT, "models"), exist_ok=True)
+
+FRONTEND_DIST = os.path.join(ROOT, "frontend", "dist")
 
 # ── Global state ──────────────────────────────────────────────────────────────
 SYSTEM_LOG:      list  = []
@@ -1339,6 +1342,16 @@ def ep_xai(explanation: dict):
     return {"status": "success"}
 
 
+# ── Serve React frontend (must be LAST — catches all non-API routes) ──────────
+if os.path.exists(FRONTEND_DIST):
+    app.mount("/assets", StaticFiles(directory=os.path.join(FRONTEND_DIST, "assets")), name="assets")
+
+    @app.get("/{full_path:path}")
+    def serve_frontend(full_path: str):
+        return FileResponse(os.path.join(FRONTEND_DIST, "index.html"))
+
+
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    port = int(os.environ.get("PORT", 8000))
+    uvicorn.run(app, host="0.0.0.0", port=port)
